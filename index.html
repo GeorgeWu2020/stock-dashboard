@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="300">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📊 量化選股 Dashboard — 2026-04-03</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4/dist/chart.umd.min.js"></script>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+  background: #f0f2f5; color: #1a1a2e; min-height: 100vh;
+}
+/* ─ Header ─ */
+.header {
+  background: linear-gradient(135deg, #1a2035 0%, #2c5f8a 100%);
+  color: #fff; padding: 20px 32px; display: flex;
+  align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+.header .meta { font-size: 12px; color: #aac4e0; line-height: 1.8; }
+.refresh-badge {
+  background: rgba(255,255,255,.15); border-radius: 20px;
+  padding: 6px 14px; font-size: 11px; color: #c8e6f9;
+}
+/* ─ Layout ─ */
+.container { max-width: 1600px; margin: 0 auto; padding: 20px 24px; }
+/* ─ KPI ─ */
+.kpi-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 22px; }
+.kpi-card {
+  background: #fff; border-radius: 12px; padding: 16px 22px;
+  text-align: center; min-width: 120px; flex: 1;
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+}
+.kpi-label { font-size: 12px; color: #888; margin-bottom: 6px; }
+.kpi-val { font-size: 28px; font-weight: 800; color: #1a2035; }
+/* ─ Cards ─ */
+.card {
+  background: #fff; border-radius: 12px;
+  padding: 20px 24px; margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+}
+.card-title {
+  font-size: 15px; font-weight: 700; color: #1a2035;
+  border-left: 4px solid #2471a3; padding-left: 10px; margin-bottom: 14px;
+}
+/* ─ Charts ─ */
+.chart-row { display: flex; gap: 20px; flex-wrap: wrap; }
+.chart-box {
+  flex: 1; min-width: 280px; background: #fff;
+  border-radius: 12px; padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+}
+.chart-title { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 12px; }
+/* ─ Table ─ */
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; min-width: 900px; }
+th {
+  background: #1a2035; color: #fff;
+  padding: 9px 8px; white-space: nowrap; text-align: center;
+  font-size: 11px; font-weight: 600;
+}
+td { padding: 0; border-bottom: 1px solid #eef0f3; }
+tr.stock-row:hover { filter: brightness(0.96); }
+tr.stock-row.expanded { filter: brightness(0.94); }
+tr.stock-row.expanded .expand-arrow { color: #2471a3 !important; transform: rotate(180deg); display:inline-block; }
+/* ─ Detail Row ─ */
+tr.detail-row td {
+  padding: 0; border: none; border-bottom: 2px solid #dde3ee;
+}
+.detail-panel {
+  padding: 18px 20px 20px;
+  background: #f4f7fb;
+  display: grid;
+  grid-template-columns: 180px 1fr 200px;
+  gap: 20px;
+  animation: slideDown .18s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* ─ Detail: identity ─ */
+.dp-identity {
+  display: flex; flex-direction: column; justify-content: center;
+  gap: 6px; padding: 14px 16px;
+  background: #fff; border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.08);
+  border-left: 5px solid var(--gc, #888);
+}
+.dp-ticker { font-size: 22px; font-weight: 800; color: #1a2035; }
+.dp-name   { font-size: 13px; color: #555; }
+.dp-grade  {
+  display: inline-block; padding: 3px 12px; border-radius: 14px;
+  font-size: 13px; font-weight: 700; color: #fff;
+  background: var(--gc, #888); width: fit-content;
+}
+.dp-score  { font-size: 12px; color: #777; }
+.dp-zone   { font-size: 12px; font-weight: 700; }
+/* ─ Detail: dimensions ─ */
+.dp-dims {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px; align-content: start;
+}
+.dim-card {
+  background: #fff; border-radius: 8px; padding: 10px 12px;
+  text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  border-top: 3px solid #ddd;
+}
+.dim-card.dim-pos { border-top-color: #18a058; background: #f0fff6; }
+.dim-card.dim-neg { border-top-color: #c0392b; background: #fff5f5; }
+.dim-card.dim-neu { border-top-color: #ccc; }
+.dim-label { font-size: 10px; color: #888; margin-bottom: 4px; font-weight: 600; letter-spacing:.5px }
+.dim-icon  { font-size: 16px; font-weight: 800; line-height: 1.3; }
+.dim-pos .dim-icon { color: #18a058; }
+.dim-neg .dim-icon { color: #c0392b; }
+.dim-neu .dim-icon { color: #aaa; }
+.dim-raw   { font-size: 10px; color: #aaa; margin-top: 2px; }
+/* ─ Detail: stats ─ */
+.dp-stats {
+  display: flex; flex-direction: column; gap: 8px;
+  background: #fff; border-radius: 10px; padding: 14px 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.08); font-size: 12px;
+}
+.dp-stats .stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid #f0f2f5; padding-bottom: 6px;
+}
+.dp-stats .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+.stat-label { color: #888; }
+.stat-val   { font-weight: 700; font-size: 13px; }
+.stat-divider { border: none; border-top: 1px dashed #ddd; margin: 2px 0; }
+/* ─ Legend ─ */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; font-size: 11px; }
+.leg { display: flex; align-items: center; gap: 5px; }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+/* ─ Footer ─ */
+.footer {
+  text-align: center; font-size: 11px; color: #aaa;
+  margin-top: 32px; padding-bottom: 24px;
+}
+/* ─ Tooltip ─ */
+.tip { position: relative; cursor: default; }
+.tip:hover::after {
+  content: attr(data-tip);
+  position: absolute; bottom: 100%; left: 50%;
+  transform: translateX(-50%); background: #333; color: #fff;
+  padding: 4px 8px; border-radius: 6px; font-size: 11px;
+  white-space: nowrap; z-index: 100;
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <div class="header h1">📊 量化選股 Dashboard</div>
+    <div class="meta">
+      信號日期：2026-04-03 &nbsp;·&nbsp; 產生時間：2026-04-07 21:50
+      &nbsp;·&nbsp; 量化選股系統 v2
+    </div>
+  </div>
+  <div class="refresh-badge">⏱ 每 5 分鐘自動重新整理</div>
+</div>
+
+<div class="container">
+
+  <!-- KPI Cards -->
+  <div class="kpi-row" style="margin-top:20px">
+    
+        <div class="kpi-card" style="border-top:4px solid #1a7f3c">
+          <div class="kpi-label">A級 精準命中</div>
+          <div class="kpi-val" style="color:#1a7f3c">1</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #1555a0">
+          <div class="kpi-label">B級 部分吻合</div>
+          <div class="kpi-val" style="color:#1555a0">4</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #8b5e00">
+          <div class="kpi-label">C級 方向吻合</div>
+          <div class="kpi-val" style="color:#8b5e00">9</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #999999">
+          <div class="kpi-label">X級 形態偏離</div>
+          <div class="kpi-val" style="color:#999999">12</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #1a2035">
+          <div class="kpi-label">今日總信號</div>
+          <div class="kpi-val">26</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #9b59b6">
+          <div class="kpi-label">A+B 精選</div>
+          <div class="kpi-val" style="color:#9b59b6">5</div>
+        </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="chart-row" style="margin-bottom:20px">
+    <div class="chart-box" style="flex:2;min-width:400px">
+      <div class="chart-title">📈 近 3 日各等級信號趨勢</div>
+      <canvas id="trendChart" height="110"></canvas>
+    </div>
+    <div class="chart-box" style="flex:1;min-width:240px">
+      <div class="chart-title">🎯 今日分數分佈</div>
+      <canvas id="scoreChart" height="150"></canvas>
+    </div>
+    <div class="chart-box" style="flex:1;min-width:220px">
+      <div class="chart-title">🥧 今日等級比例</div>
+      <canvas id="pieChart" height="150"></canvas>
+    </div>
+  </div>
+
+  <!-- Main Table -->
+  <div class="card">
+    <div class="card-title">今日推薦清單 — 依等級 × 吻合度 × 分數排序
+      <span style="font-size:11px;font-weight:400;color:#888;margin-left:10px">點擊列展開個股細項 ▼</span>
+    </div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:#1a7f3c"></div>A 精準命中（≥6/8維度）</div>
+      <div class="leg"><div class="leg-dot" style="background:#1555a0"></div>B 部分吻合（4~5/8）</div>
+      <div class="leg"><div class="leg-dot" style="background:#8b5e00"></div>C 方向吻合（fi+it正向）</div>
+      <div class="leg"><div class="leg-dot" style="background:#999"></div>X 形態偏離</div>
+      <div class="leg" style="margin-left:auto;color:#888">
+        維度符號：<b style="color:#18a058">✓✓✓</b>=強正向
+        <b style="color:#18a058">✓✓</b>=正向
+        <b style="color:#c0392b">✗✗</b>=強負向
+        <b style="color:#c0392b">✗</b>=負向 &nbsp;—=中性
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <tr>
+          <th>代號</th><th>名稱</th><th>等級</th><th>吻合</th>
+          <th>分數</th><th>持有</th><th>停利</th><th>停損</th>
+          <th>量能</th><th>價格帶</th><th>外資</th><th>投信</th><th>自營</th>
+          <th>融資</th><th>券資比</th><th>借券</th>
+          <th>歷史勝率</th><th>期望值</th><th></th>
+        </tr>
+        
+<tr class="stock-row" data-idx="0" style="border-left:4px solid #1a7f3c;background:#e8f8ee;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2356</td>
+  <td style="padding:7px 8px;white-space:nowrap">英業達</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">A</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">6/8</td>
+  <td style="text-align:center;font-weight:bold">60</td>
+  <td style="text-align:center">10天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">15%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-3%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;color:#555">85.7%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+9.48%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="1" style="border-left:4px solid #1555a0;background:#eaf0fb;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">3045</td>
+  <td style="padding:7px 8px;white-space:nowrap">台灣大</td>
+  <td style="text-align:center">
+    <span style="background:#1555a0;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">B</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#1555a0">4/8</td>
+  <td style="text-align:center;font-weight:bold">114</td>
+  <td style="text-align:center">10天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">2%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1a7f3c">↑↑多頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">90.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+2.73%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="2" style="border-left:4px solid #1555a0;background:#eaf0fb;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2308</td>
+  <td style="padding:7px 8px;white-space:nowrap">台達電</td>
+  <td style="text-align:center">
+    <span style="background:#1555a0;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">B</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#1555a0">4/8</td>
+  <td style="text-align:center;font-weight:bold">68</td>
+  <td style="text-align:center">10天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">▲無限</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-10%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1a7f3c">↑↑多頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;color:#555">80.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+8.40%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="3" style="border-left:4px solid #1555a0;background:#eaf0fb;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2885</td>
+  <td style="padding:7px 8px;white-space:nowrap">元大金</td>
+  <td style="text-align:center">
+    <span style="background:#1555a0;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">B</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#1555a0">4/8</td>
+  <td style="text-align:center;font-weight:bold">62</td>
+  <td style="text-align:center">7天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">5%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-3%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1555a0">↓↑偏強</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+3.96%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="4" style="border-left:4px solid #1555a0;background:#eaf0fb;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2880</td>
+  <td style="padding:7px 8px;white-space:nowrap">華南金</td>
+  <td style="text-align:center">
+    <span style="background:#1555a0;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">B</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#1555a0">4/8</td>
+  <td style="text-align:center;font-weight:bold">62</td>
+  <td style="text-align:center">10天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-7%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+5.05%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="5" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2891</td>
+  <td style="padding:7px 8px;white-space:nowrap">中信金</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">3/8</td>
+  <td style="text-align:center;font-weight:bold">110</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1555a0">↓↑偏強</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;color:#555">83.3%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+7.15%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="6" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2377</td>
+  <td style="padding:7px 8px;white-space:nowrap">微星</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">3/8</td>
+  <td style="text-align:center;font-weight:bold">98</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+5.88%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="7" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">1102</td>
+  <td style="padding:7px 8px;white-space:nowrap">亞泥</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">3/8</td>
+  <td style="text-align:center;font-weight:bold">66</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#d4850a">↑↓偏弱</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+2.95%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="8" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2886</td>
+  <td style="padding:7px 8px;white-space:nowrap">兆豐金</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">2/8</td>
+  <td style="text-align:center;font-weight:bold">116</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">81.8%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+3.38%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="9" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">8046</td>
+  <td style="padding:7px 8px;white-space:nowrap">南電</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">2/8</td>
+  <td style="text-align:center;font-weight:bold">104</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1a7f3c">↑↑多頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">83.3%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+13.71%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="10" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">8150</td>
+  <td style="padding:7px 8px;white-space:nowrap">南茂</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">2/8</td>
+  <td style="text-align:center;font-weight:bold">100</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;color:#555">75.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+4.88%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="11" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">3533</td>
+  <td style="padding:7px 8px;white-space:nowrap">嘉澤</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">2/8</td>
+  <td style="text-align:center;font-weight:bold">64</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1a7f3c">↑↑多頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+11.32%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="12" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2379</td>
+  <td style="padding:7px 8px;white-space:nowrap">瑞昱</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">1/8</td>
+  <td style="text-align:center;font-weight:bold">110</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#d4850a">↑↓偏弱</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">81.8%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+6.44%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="13" style="border-left:4px solid #8b5e00;background:#fff8e8;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">5269</td>
+  <td style="padding:7px 8px;white-space:nowrap">祥碩</td>
+  <td style="text-align:center">
+    <span style="background:#8b5e00;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">C</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#8b5e00">1/8</td>
+  <td style="text-align:center;font-weight:bold">74</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;color:#555">85.7%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+10.45%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="14" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">1477</td>
+  <td style="padding:7px 8px;white-space:nowrap">聚陽</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">3/8</td>
+  <td style="text-align:center;font-weight:bold">78</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+12.63%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="15" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2883</td>
+  <td style="padding:7px 8px;white-space:nowrap">開發金</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">3/8</td>
+  <td style="text-align:center;font-weight:bold">72</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1555a0">↓↑偏強</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+4.06%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="16" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2376</td>
+  <td style="padding:7px 8px;white-space:nowrap">技嘉</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">3/8</td>
+  <td style="text-align:center;font-weight:bold">62</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+9.24%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="17" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">1216</td>
+  <td style="padding:7px 8px;white-space:nowrap">統一</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">3/8</td>
+  <td style="text-align:center;font-weight:bold">60</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#d4850a">↑↓偏弱</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+2.68%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="18" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2344</td>
+  <td style="padding:7px 8px;white-space:nowrap">華邦電</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">3/8</td>
+  <td style="text-align:center;font-weight:bold">60</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;color:#555">85.7%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+14.72%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="19" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">3661</td>
+  <td style="padding:7px 8px;white-space:nowrap">世芯-KY</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">3/8</td>
+  <td style="text-align:center;font-weight:bold">54</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗✗</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+17.96%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="20" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2890</td>
+  <td style="padding:7px 8px;white-space:nowrap">永豐金</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">2/8</td>
+  <td style="text-align:center;font-weight:bold">92</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1555a0">↓↑偏強</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">85.7%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+2.94%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="21" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2347</td>
+  <td style="padding:7px 8px;white-space:nowrap">聯強</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">2/8</td>
+  <td style="text-align:center;font-weight:bold">68</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1a7f3c">↑↑多頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;color:#555">100.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+3.76%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="22" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">3036</td>
+  <td style="padding:7px 8px;white-space:nowrap">文曄</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">2/8</td>
+  <td style="text-align:center;font-weight:bold">60</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1555a0">↓↑偏強</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;color:#555">66.7%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+12.23%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="23" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2393</td>
+  <td style="padding:7px 8px;white-space:nowrap">億光</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">2/8</td>
+  <td style="text-align:center;font-weight:bold">50</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1a7f3c">↑↑多頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">71.4%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+3.84%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="24" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">3034</td>
+  <td style="padding:7px 8px;white-space:nowrap">聯詠</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">1/8</td>
+  <td style="text-align:center;font-weight:bold">64</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#1a7f3c">↑↑多頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓</td>
+  <td style="text-align:center;color:#555">60.0%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+9.91%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+<tr class="stock-row" data-idx="25" style="border-left:4px solid #999999;background:#f9f9f9;cursor:pointer">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px">2382</td>
+  <td style="padding:7px 8px;white-space:nowrap">廣達</td>
+  <td style="text-align:center">
+    <span style="background:#999999;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold">X</span>
+  </td>
+  <td style="text-align:center;font-weight:bold;color:#999999">1/8</td>
+  <td style="text-align:center;font-weight:bold">62</td>
+  <td style="text-align:center">5天</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">8%</td>
+  <td style="text-align:center;color:#c0392b;font-weight:bold">-5%</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;padding:6px 4px;font-size:11px;font-weight:bold;color:#c0392b">↓↓空頭</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#18a058;background:#f0fff4;padding:6px 4px">✓✓✓</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#c0392b;background:#fff5f5;padding:6px 4px">✗</td>
+  <td style="text-align:center;font-size:13px;font-weight:bold;color:#888;padding:6px 4px">—</td>
+  <td style="text-align:center;color:#555">57.6%</td>
+  <td style="text-align:center;color:#18a058;font-weight:bold">+4.04%</td>
+  <td style="text-align:center;color:#aaa;font-size:16px;padding:0 8px" class="expand-arrow">▼</td>
+</tr>
+      </table>
+    </div>
+    <div style="font-size:11px;color:#aaa;margin-top:10px">
+      共 26 檔信號 · 最佳操作標的請優先關注 A/B 等級
+    </div>
+  </div>
+
+  <!-- Indicator Guide -->
+  <div class="card" style="padding:16px 24px">
+    <div class="card-title">📖 8 維度指標說明</div>
+    <div style="display:flex;flex-wrap:wrap;gap:18px;font-size:12px;color:#555;line-height:1.8">
+      <div><b style="color:#1a2035">量能</b> — vol_pos=爆量配合方向 ✓✓</div>
+      <div><b style="color:#1a2035">價格帶</b> — ↑↑zone_A 多頭強勢區</div>
+      <div><b style="color:#1a2035">外資/投信/自營</b> — 強買✓✓✓ 買✓✓ 賣✗ 強賣✗✗</div>
+      <div><b style="color:#1a2035">融資（反指標）</b> — 強減✓✓✓=籌碼乾淨 / 強增✗✗=散戶過熱</div>
+      <div><b style="color:#1a2035">券資比（反指標）</b> — 高✓✓=軋空潛力 / 低✗=放空動能弱</div>
+      <div><b style="color:#1a2035">借券（反指標）</b> — 借券減✓✓=機構空單回補</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    量化選股系統 v2 · 本頁面每 5 分鐘自動刷新 · 資料僅供參考，投資須自負風險
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ── 趨勢圖 ────────────────────────────────────────────────────────────
+const trendCtx = document.getElementById('trendChart').getContext('2d');
+new Chart(trendCtx, {
+  type: 'line',
+  data: {
+    labels: ["03-30", "04-02", "04-03"],
+    datasets: [
+      {
+        label: 'A級', data: [0, 1, 1],
+        borderColor: '#1a7f3c', backgroundColor: 'rgba(26,127,60,.10)',
+        tension: 0.4, fill: false, pointRadius: 4, borderWidth: 2,
+      },
+      {
+        label: 'B級', data: [4, 9, 4],
+        borderColor: '#1555a0', backgroundColor: 'rgba(21,85,160,.08)',
+        tension: 0.4, fill: false, pointRadius: 4, borderWidth: 2,
+      },
+      {
+        label: 'C級', data: [4, 5, 9],
+        borderColor: '#d4850a', backgroundColor: 'rgba(212,133,10,.06)',
+        tension: 0.4, fill: false, pointRadius: 3, borderWidth: 1.5,
+      },
+      {
+        label: '總量', data: [27, 26, 26],
+        borderColor: '#aaa', backgroundColor: 'transparent',
+        tension: 0.4, fill: false, pointRadius: 2, borderWidth: 1,
+        borderDash: [4, 4],
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top', labels: { font: { size: 11 } } },
+      tooltip: { mode: 'index', intersect: false },
+    },
+    scales: {
+      y: { beginAtZero: true, ticks: { precision: 0 } },
+      x: { ticks: { font: { size: 10 } } },
+    }
+  }
+});
+
+// ── 分數分佈圖 ────────────────────────────────────────────────────────
+const scoreCtx = document.getElementById('scoreChart').getContext('2d');
+new Chart(scoreCtx, {
+  type: 'bar',
+  data: {
+    labels: ["0~9", "10~19", "20~29", "30~39", "40~49", "50~59", "60~69", "70~79", "80~89", "90~99"],
+    datasets: [{
+      label: '股票數',
+      data: [0, 0, 0, 0, 0, 2, 13, 3, 0, 8],
+      backgroundColor: [
+        '#e8e8e8','#c8d8f0','#a8c4e8','#7aaad0','#4a8fba',
+        '#2471a3','#1a5f8a','#155075','#114060','#0c3050',
+      ],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, ticks: { precision: 0 } },
+      x: { ticks: { font: { size: 9 }, maxRotation: 35 } },
+    }
+  }
+});
+
+// ── 等級比例餅圖 ──────────────────────────────────────────────────────
+const pieCtx = document.getElementById('pieChart').getContext('2d');
+new Chart(pieCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ["A\u7d1a 1", "B\u7d1a 4", "C\u7d1a 9", "D\u7d1a 0", "X\u7d1a 12"],
+    datasets: [{
+      data: [1, 4, 9, 0, 12],
+      backgroundColor: ['#1a7f3c','#1555a0','#d4850a','#555','#ccc'],
+      borderWidth: 2, borderColor: '#fff',
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 8 } },
+    }
+  }
+});
+
+// ── 個股展開細項 ──────────────────────────────────────────────────────
+const STOCKS_DATA = [{"ticker": "2356", "name": "英業達", "grade": "A", "score": 60.0, "n_match": 6.0, "hold_days": 10.0, "stop_loss": -3.0, "take_profit": 15.0, "hist_win_rate": 85.71, "hist_expect_val": 9.4801, "vol_state": "vol_neg", "zone": "zone_D", "fi_cat": "中性", "it_cat": "買", "dt_cat": "強買", "mg_trend": "持平", "ms_cat": "低券資", "lend_cat": "持平"}, {"ticker": "3045", "name": "台灣大", "grade": "B", "score": 114.0, "n_match": 4.0, "hold_days": 10.0, "stop_loss": -5.0, "take_profit": 2.0, "hist_win_rate": 90.0, "hist_expect_val": 2.731, "vol_state": "vol_neg", "zone": "zone_A", "fi_cat": "強買", "it_cat": "買", "dt_cat": "強買", "mg_trend": "持平", "ms_cat": "正常", "lend_cat": "借券減"}, {"ticker": "2308", "name": "台達電", "grade": "B", "score": 68.0, "n_match": 4.0, "hold_days": 10.0, "stop_loss": -10.0, "take_profit": 999.0, "hist_win_rate": 80.0, "hist_expect_val": 8.3985, "vol_state": "vol_pos", "zone": "zone_A", "fi_cat": "中性", "it_cat": "強買", "dt_cat": "強買", "mg_trend": "持平", "ms_cat": "低券資", "lend_cat": "持平"}, {"ticker": "2885", "name": "元大金", "grade": "B", "score": 62.0, "n_match": 4.0, "hold_days": 7.0, "stop_loss": -3.0, "take_profit": 5.0, "hist_win_rate": 100.0, "hist_expect_val": 3.9629, "vol_state": "vol_neu", "zone": "zone_B", "fi_cat": "中性", "it_cat": "強買", "dt_cat": "強買", "mg_trend": "持平", "ms_cat": "低券資", "lend_cat": "借券增"}, {"ticker": "2880", "name": "華南金", "grade": "B", "score": 62.0, "n_match": 4.0, "hold_days": 10.0, "stop_loss": -7.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 5.0541, "vol_state": "vol_neu", "zone": "zone_D", "fi_cat": "買", "it_cat": "中性", "dt_cat": "中性", "mg_trend": "增", "ms_cat": "低券資", "lend_cat": "借券增"}, {"ticker": "2891", "name": "中信金", "grade": "C", "score": 110.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 83.33, "hist_expect_val": 7.1549, "vol_state": "vol_neg", "zone": "zone_B", "fi_cat": "買", "it_cat": "強買", "dt_cat": "強買", "mg_trend": "減", "ms_cat": "低券資", "lend_cat": "借券增"}, {"ticker": "2377", "name": "微星", "grade": "C", "score": 98.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 5.8829, "vol_state": "vol_neg", "zone": "zone_D", "fi_cat": "買", "it_cat": "強買", "dt_cat": "強買", "mg_trend": "強減", "ms_cat": "低券資", "lend_cat": "借券增"}, {"ticker": "1102", "name": "亞泥", "grade": "C", "score": 66.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 2.9495, "vol_state": "vol_pos", "zone": "zone_C", "fi_cat": "買", "it_cat": "買", "dt_cat": "強買", "mg_trend": "減", "ms_cat": "正常", "lend_cat": "借券增"}, {"ticker": "2886", "name": "兆豐金", "grade": "C", "score": 116.0, "n_match": 2.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 81.82, "hist_expect_val": 3.3769, "vol_state": "vol_neu", "zone": "zone_D", "fi_cat": "強買", "it_cat": "買", "dt_cat": "強買", "mg_trend": "減", "ms_cat": "高券資", "lend_cat": "借券減"}, {"ticker": "8046", "name": "南電", "grade": "C", "score": 104.0, "n_match": 2.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 83.33, "hist_expect_val": 13.7082, "vol_state": "vol_neu", "zone": "zone_A", "fi_cat": "買", "it_cat": "強買", "dt_cat": "買", "mg_trend": "減", "ms_cat": "正常", "lend_cat": "借券減"}, {"ticker": "8150", "name": "南茂", "grade": "C", "score": 100.0, "n_match": 2.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 75.0, "hist_expect_val": 4.8753, "vol_state": "vol_neg", "zone": "zone_D", "fi_cat": "買", "it_cat": "買", "dt_cat": "買", "mg_trend": "持平", "ms_cat": "正常", "lend_cat": "持平"}, {"ticker": "3533", "name": "嘉澤", "grade": "C", "score": 64.0, "n_match": 2.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 11.3163, "vol_state": "vol_pos", "zone": "zone_A", "fi_cat": "買", "it_cat": "強買", "dt_cat": "中性", "mg_trend": "持平", "ms_cat": "低券資", "lend_cat": "借券減"}, {"ticker": "2379", "name": "瑞昱", "grade": "C", "score": 110.0, "n_match": 1.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 81.82, "hist_expect_val": 6.4447, "vol_state": "vol_neg", "zone": "zone_C", "fi_cat": "買", "it_cat": "強買", "dt_cat": "強買", "mg_trend": "持平", "ms_cat": "正常", "lend_cat": "借券減"}, {"ticker": "5269", "name": "祥碩", "grade": "C", "score": 74.0, "n_match": 1.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 85.71, "hist_expect_val": 10.4481, "vol_state": "vol_neg", "zone": "zone_D", "fi_cat": "買", "it_cat": "買", "dt_cat": "中性", "mg_trend": "減", "ms_cat": "低券資", "lend_cat": "借券增"}, {"ticker": "1477", "name": "聚陽", "grade": "X", "score": 78.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 12.6314, "vol_state": "vol_neu", "zone": "zone_D", "fi_cat": "強買", "it_cat": "中性", "dt_cat": "強買", "mg_trend": "強增", "ms_cat": "低券資", "lend_cat": "借券減"}, {"ticker": "2883", "name": "開發金", "grade": "X", "score": 72.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 4.0596, "vol_state": "vol_neu", "zone": "zone_B", "fi_cat": "買", "it_cat": "中性", "dt_cat": "強買", "mg_trend": "增", "ms_cat": "低券資", "lend_cat": "借券減"}, {"ticker": "2376", "name": "技嘉", "grade": "X", "score": 62.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 9.2391, "vol_state": "vol_neg", "zone": "zone_D", "fi_cat": "中性", "it_cat": "強買", "dt_cat": "強買", "mg_trend": "減", "ms_cat": "低券資", "lend_cat": "借券減"}, {"ticker": "1216", "name": "統一", "grade": "X", "score": 60.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 2.6834, "vol_state": "vol_neu", "zone": "zone_C", "fi_cat": "中性", "it_cat": "中性", "dt_cat": "強買", "mg_trend": "減", "ms_cat": "高券資", "lend_cat": "持平"}, {"ticker": "2344", "name": "華邦電", "grade": "X", "score": 60.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 85.71, "hist_expect_val": 14.7165, "vol_state": "vol_neu", "zone": "zone_D", "fi_cat": "中性", "it_cat": "中性", "dt_cat": "中性", "mg_trend": "持平", "ms_cat": "低券資", "lend_cat": "借券增"}, {"ticker": "3661", "name": "世芯-KY", "grade": "X", "score": 54.0, "n_match": 3.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 17.96, "vol_state": "vol_neu", "zone": "zone_D", "fi_cat": "中性", "it_cat": "買", "dt_cat": "買", "mg_trend": "持平", "ms_cat": "低券資", "lend_cat": "借券增"}, {"ticker": "2890", "name": "永豐金", "grade": "X", "score": 92.0, "n_match": 2.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 85.71, "hist_expect_val": 2.9422, "vol_state": "vol_neg", "zone": "zone_B", "fi_cat": "買", "it_cat": "中性", "dt_cat": "中性", "mg_trend": "減", "ms_cat": "低券資", "lend_cat": "借券減"}, {"ticker": "2347", "name": "聯強", "grade": "X", "score": 68.0, "n_match": 2.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 100.0, "hist_expect_val": 3.7594, "vol_state": "vol_pos", "zone": "zone_A", "fi_cat": "買", "it_cat": "中性", "dt_cat": "強買", "mg_trend": "強減", "ms_cat": "正常", "lend_cat": "持平"}, {"ticker": "3036", "name": "文曄", "grade": "X", "score": 60.0, "n_match": 2.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 66.67, "hist_expect_val": 12.2286, "vol_state": "vol_neg", "zone": "zone_B", "fi_cat": "中性", "it_cat": "中性", "dt_cat": "強買", "mg_trend": "持平", "ms_cat": "高券資", "lend_cat": "持平"}, {"ticker": "2393", "name": "億光", "grade": "X", "score": 50.0, "n_match": 2.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 71.43, "hist_expect_val": 3.8377, "vol_state": "vol_neg", "zone": "zone_A", "fi_cat": "強買", "it_cat": "賣", "dt_cat": "買", "mg_trend": "增", "ms_cat": "低券資", "lend_cat": "借券減"}, {"ticker": "3034", "name": "聯詠", "grade": "X", "score": 64.0, "n_match": 1.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 60.0, "hist_expect_val": 9.9145, "vol_state": "vol_pos", "zone": "zone_A", "fi_cat": "中性", "it_cat": "買", "dt_cat": "強買", "mg_trend": "持平", "ms_cat": "低券資", "lend_cat": "借券減"}, {"ticker": "2382", "name": "廣達", "grade": "X", "score": 62.0, "n_match": 1.0, "hold_days": 5.0, "stop_loss": -5.0, "take_profit": 8.0, "hist_win_rate": 57.58, "hist_expect_val": 4.0369, "vol_state": "vol_neg", "zone": "zone_D", "fi_cat": "中性", "it_cat": "強買", "dt_cat": "強買", "mg_trend": "持平", "ms_cat": "低券資", "lend_cat": "持平"}];
+
+const GRADE_COLOR = {
+  A:'#1a7f3c', B:'#1555a0', C:'#8b5e00', D:'#555555', X:'#999999'
+};
+const ZONE_LABEL = {
+  zone_A:'↑↑ 多頭強勢', zone_B:'↓↑ 偏強整理',
+  zone_C:'↑↓ 偏弱震盪', zone_D:'↓↓ 空頭格局',
+};
+const ZONE_COLOR = {
+  zone_A:'#1a7f3c', zone_B:'#1555a0', zone_C:'#d4850a', zone_D:'#c0392b',
+};
+const POS_SET = new Set(['強買','買','強減','減','借券減','高券資','vol_pos']);
+const NEG_SET = new Set(['強賣','賣','強增','增','借券增','低券資','vol_neg']);
+const DIM_ICON = {
+  強買:'✓✓✓', 買:'✓✓', 強減:'✓✓✓', 減:'✓✓',
+  借券減:'✓✓', 高券資:'✓✓', vol_pos:'✓✓',
+  強賣:'✗✗', 賣:'✗', 強增:'✗✗', 增:'✗',
+  借券增:'✗✗', 低券資:'✗', vol_neg:'✗',
+  中性:'—', 持平:'—', 正常:'—', vol_neu:'—',
+};
+
+function dimCls(v) {
+  if (!v) return 'dim-neu';
+  if (POS_SET.has(v)) return 'dim-pos';
+  if (NEG_SET.has(v)) return 'dim-neg';
+  return 'dim-neu';
+}
+function dimIcon(v) {
+  return DIM_ICON[v] || (v ? v.substring(0,3) : '—');
+}
+function dimCard(label, val) {
+  const v = val || '';
+  const cls = dimCls(v);
+  return `<div class="dim-card ${cls}">
+    <div class="dim-label">${label}</div>
+    <div class="dim-icon">${dimIcon(v)}</div>
+    <div class="dim-raw">${v || '—'}</div>
+  </div>`;
+}
+
+function fmt(v, dec, suf) {
+  if (v === null || v === undefined || isNaN(v)) return '—';
+  return v.toFixed(dec) + (suf||'');
+}
+
+function renderDetail(r) {
+  const gc = GRADE_COLOR[r.grade] || '#888';
+  const zoneLabel = ZONE_LABEL[r.zone] || r.zone || '—';
+  const zoneColor = ZONE_COLOR[r.zone] || '#888';
+  const tp = (r.take_profit !== null && r.take_profit < 900)
+    ? fmt(r.take_profit, 0, '%') : '▲ 無限';
+  const sl = fmt(r.stop_loss, 0, '%');
+  const wr = fmt(r.hist_win_rate, 1, '%');
+  const ev = r.hist_expect_val !== null
+    ? (r.hist_expect_val >= 0 ? '+' : '') + fmt(r.hist_expect_val, 2, '%')
+    : '—';
+  const evColor = (r.hist_expect_val !== null && r.hist_expect_val >= 0)
+    ? '#18a058' : '#c0392b';
+
+  return `
+  <div class="detail-panel" style="--gc:${gc}">
+    <!-- 個股識別 -->
+    <div class="dp-identity" style="border-left-color:${gc}">
+      <div class="dp-ticker">${r.ticker}</div>
+      <div class="dp-name">${r.name}</div>
+      <div class="dp-grade" style="background:${gc}">${r.grade} 級</div>
+      <div class="dp-score">分數 ${fmt(r.score,0)} &nbsp;·&nbsp; 吻合 ${fmt(r.n_match,0)}/8</div>
+      <div class="dp-zone" style="color:${zoneColor}">${zoneLabel}</div>
+    </div>
+    <!-- 8 維度卡片 -->
+    <div class="dp-dims">
+      ${dimCard('量能',      r.vol_state)}
+      ${dimCard('外資',      r.fi_cat)}
+      ${dimCard('投信',      r.it_cat)}
+      ${dimCard('自營',      r.dt_cat)}
+      ${dimCard('融資(反)',   r.mg_trend)}
+      ${dimCard('券資比(反)', r.ms_cat)}
+      ${dimCard('借券(反)',   r.lend_cat)}
+      <div class="dim-card dim-neu" style="justify-content:center;display:flex;flex-direction:column">
+        <div class="dim-label">持有期</div>
+        <div class="dim-icon" style="color:#555;font-size:14px">${fmt(r.hold_days,0,'天')}</div>
+      </div>
+    </div>
+    <!-- 交易參數 & 統計 -->
+    <div class="dp-stats">
+      <div class="stat-row">
+        <span class="stat-label">停利目標</span>
+        <span class="stat-val" style="color:#18a058">${tp}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">停損設定</span>
+        <span class="stat-val" style="color:#c0392b">${sl}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">持有天數</span>
+        <span class="stat-val">${fmt(r.hold_days,0,'天')}</span>
+      </div>
+      <hr class="stat-divider">
+      <div class="stat-row">
+        <span class="stat-label">歷史勝率</span>
+        <span class="stat-val">${wr}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">期望值</span>
+        <span class="stat-val" style="color:${evColor}">${ev}</span>
+      </div>
+      <hr class="stat-divider">
+      <div style="font-size:10px;color:#aaa;margin-top:2px;line-height:1.6">
+        正向維度：✓✓✓=強 &nbsp; ✓✓=中強<br>
+        反指標：減分/低=有利做多
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── 點擊展開 / 收起 ───────────────────────────────────────────────────
+document.querySelectorAll('tr.stock-row').forEach(tr => {
+  tr.addEventListener('click', function() {
+    const idx  = parseInt(this.dataset.idx);
+    const next = this.nextElementSibling;
+
+    // 若已展開 → 收起
+    if (next && next.classList.contains('detail-row')) {
+      next.remove();
+      this.classList.remove('expanded');
+      return;
+    }
+
+    // 關閉其他已展開的列
+    document.querySelectorAll('tr.detail-row').forEach(r => r.remove());
+    document.querySelectorAll('tr.stock-row.expanded').forEach(r => r.classList.remove('expanded'));
+
+    // 建立細項列
+    const detailTr = document.createElement('tr');
+    detailTr.className = 'detail-row';
+    const td = document.createElement('td');
+    td.colSpan = 19;
+    td.innerHTML = renderDetail(STOCKS_DATA[idx]);
+    detailTr.appendChild(td);
+    this.after(detailTr);
+    this.classList.add('expanded');
+  });
+});
+</script>
+</body>
+</html>
