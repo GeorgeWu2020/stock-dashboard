@@ -185,7 +185,7 @@ tr.detail-row td {
   <div>
     <div class="header h1">📊 量化選股 Dashboard</div>
     <div class="meta">
-      信號日期：2026-04-07 &nbsp;·&nbsp; 產生時間：2026-04-08 04:28
+      信號日期：2026-04-07 &nbsp;·&nbsp; 產生時間：2026-04-08 04:33
       &nbsp;·&nbsp; 量化選股系統 v2
     </div>
   </div>
@@ -194,9 +194,33 @@ tr.detail-row td {
 
 <div class="container">
 
-  <!-- KPI Cards -->
-  <div class="kpi-row" style="margin-top:20px">
-    
+  <!-- Charts Row -->
+  <div class="chart-row" style="margin-top:20px;margin-bottom:0">
+    <div class="chart-box" style="flex:2;min-width:400px">
+      <div class="chart-title">📈 近 5 日各等級信號趨勢</div>
+      <canvas id="trendChart" height="110"></canvas>
+    </div>
+    <div class="chart-box" style="flex:1;min-width:240px">
+      <div class="chart-title">🎯 今日分數分佈</div>
+      <canvas id="scoreChart" height="150"></canvas>
+    </div>
+    <div class="chart-box" style="flex:1;min-width:220px">
+      <div class="chart-title">🥧 今日等級比例</div>
+      <canvas id="pieChart" height="150"></canvas>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar" style="margin-top:24px">
+    <button class="tab-btn active" onclick="switchTab('long',this)">📈 多頭策略 (25 檔)</button>
+    <button class="tab-btn short-tab" onclick="switchTab('short',this)">📉 空頭策略 (14 檔)</button>
+  </div>
+
+  <!-- ── 多頭 Tab ── -->
+  <div id="tab-long" class="tab-pane active">
+    <!-- 多頭 KPI -->
+    <div class="kpi-row" style="margin-top:16px;margin-bottom:16px">
+      
         <div class="kpi-card" style="border-top:4px solid #1a7f3c">
           <div class="kpi-label">A級 精準命中</div>
           <div class="kpi-val" style="color:#1a7f3c">0</div>
@@ -221,32 +245,7 @@ tr.detail-row td {
           <div class="kpi-label">A+B 精選</div>
           <div class="kpi-val" style="color:#9b59b6">5</div>
         </div>
-  </div>
-
-  <!-- Charts Row -->
-  <div class="chart-row" style="margin-bottom:20px">
-    <div class="chart-box" style="flex:2;min-width:400px">
-      <div class="chart-title">📈 近 5 日各等級信號趨勢</div>
-      <canvas id="trendChart" height="110"></canvas>
     </div>
-    <div class="chart-box" style="flex:1;min-width:240px">
-      <div class="chart-title">🎯 今日分數分佈</div>
-      <canvas id="scoreChart" height="150"></canvas>
-    </div>
-    <div class="chart-box" style="flex:1;min-width:220px">
-      <div class="chart-title">🥧 今日等級比例</div>
-      <canvas id="pieChart" height="150"></canvas>
-    </div>
-  </div>
-
-  <!-- Tab Bar -->
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('long',this)">📈 多頭策略 (25 檔)</button>
-    <button class="tab-btn short-tab" onclick="switchTab('short',this)">📉 空頭策略 (14 檔)</button>
-  </div>
-
-  <!-- ── 多頭 Tab ── -->
-  <div id="tab-long" class="tab-pane active">
     <div class="card">
       <div class="card-title">多頭推薦清單 — 依等級 × 吻合度 × 分數排序
         <span style="font-size:11px;font-weight:400;color:#888;margin-left:10px">點擊列展開個股細項 ▼</span>
