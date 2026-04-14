@@ -131,7 +131,22 @@
     <h1>📋 實戰交易記錄</h1>
     <div class="sub">記錄每筆進出場，追蹤損益與勝率</div>
   </div>
-  <a href="index.html" class="back-link">← 返回 Dashboard</a>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <button onclick="gistPush()" class="btn btn-sm" id="btn-push"
+      style="background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.3)">
+      ⬆ 上傳雲端
+    </button>
+    <button onclick="gistPull()" class="btn btn-sm" id="btn-pull"
+      style="background:rgba(56,139,253,.1);color:var(--blue);border:1px solid rgba(56,139,253,.3)">
+      ⬇ 從雲端載入
+    </button>
+    <button onclick="openSettings()" class="btn btn-sm"
+      style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">
+      ⚙ 雲端設定
+    </button>
+    <span id="sync-status" style="font-size:11px;color:var(--text2)"></span>
+    <a href="index.html" class="back-link" style="margin-left:4px">← 返回 Dashboard</a>
+  </div>
 </div>
 
 <div class="container">
@@ -327,7 +342,44 @@
   </div>
 </div>
 
-<div class="footer">量化選股系統 v2 — 實戰記錄模組 · 資料儲存於本機 localStorage</div>
+<div class="footer">量化選股系統 v2 — 實戰記錄模組 · 本機 localStorage 儲存 · 雲端同步 via GitHub Gist</div>
+
+<!-- Toast -->
+<div id="toast" style="
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 20px;font-size:13px;color:var(--text);
+  opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;
+"></div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal" style="width:460px">
+    <h3 style="margin-bottom:6px">⚙ 雲端同步設定</h3>
+    <p style="margin-bottom:16px">資料將同步至你的私人 GitHub Gist，任何瀏覽器皆可讀取。</p>
+
+    <div class="fg">
+      <label>Personal Access Token（需有 gist 權限）</label>
+      <input type="password" id="cfg-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">
+        前往 GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens 或 Classic tokens，勾選 <b>gist</b> 權限
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Gist ID（空白＝自動建立新 Gist）</label>
+      <input type="text" id="cfg-gist-id" placeholder="例：a1b2c3d4e5f6...（32碼）">
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">
+        第一次留空即可，上傳後會自動填入
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-sm btn-ghost" style="width:auto" onclick="closeSettings()">取消</button>
+      <button class="btn btn-sm btn-primary" style="width:auto" onclick="saveSettings()">儲存設定</button>
+    </div>
+  </div>
+</div>
 
 <!-- Delete Modal -->
 <div class="modal-overlay" id="del-modal">
@@ -1100,6 +1152,148 @@ function esc(s) {
 document.getElementById('del-modal').addEventListener('click', function(e) {
   if (e.target === this) closeDelModal();
 });
+document.getElementById('settings-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSettings();
+});
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function showToast(msg, isError = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.borderColor = isError ? 'var(--red)' : 'var(--border)';
+  el.style.color = isError ? 'var(--red)' : 'var(--text)';
+  el.style.opacity = '1';
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 3000);
+}
+
+function setSyncStatus(msg, color = 'var(--text2)') {
+  const el = document.getElementById('sync-status');
+  el.textContent = msg;
+  el.style.color = color;
+}
+
+// ── Settings Modal ────────────────────────────────────────────────────────
+function openSettings() {
+  document.getElementById('cfg-token').value   = localStorage.getItem('gist_token') || '';
+  document.getElementById('cfg-gist-id').value = localStorage.getItem('gist_id') || '';
+  document.getElementById('settings-modal').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+function saveSettings() {
+  const token  = document.getElementById('cfg-token').value.trim();
+  const gistId = document.getElementById('cfg-gist-id').value.trim();
+  if (!token) { showToast('請填寫 Token', true); return; }
+  localStorage.setItem('gist_token', token);
+  localStorage.setItem('gist_id', gistId);
+  closeSettings();
+  showToast('✅ 設定已儲存');
+  updateSyncUI();
+}
+
+function updateSyncUI() {
+  const token  = localStorage.getItem('gist_token');
+  const gistId = localStorage.getItem('gist_id');
+  if (!token) {
+    setSyncStatus('尚未設定雲端');
+  } else if (!gistId) {
+    setSyncStatus('已設定 Token，尚未上傳', 'var(--yellow)');
+  } else {
+    setSyncStatus('雲端已連結 ✓', 'var(--green)');
+  }
+}
+updateSyncUI();
+
+// ── Gist Push（上傳） ────────────────────────────────────────────────────
+async function gistPush() {
+  const token = localStorage.getItem('gist_token');
+  if (!token) { openSettings(); return; }
+
+  const btn = document.getElementById('btn-push');
+  btn.textContent = '上傳中…'; btn.disabled = true;
+
+  const payload = { trades };
+  const body = {
+    description: '實戰交易記錄 — 量化選股系統',
+    public: false,
+    files: { 'trading-record-data.json': { content: JSON.stringify(payload, null, 2) } }
+  };
+
+  try {
+    const gistId = localStorage.getItem('gist_id');
+    let url = 'https://api.github.com/gists';
+    let method = 'POST';
+    if (gistId) { url = `https://api.github.com/gists/${gistId}`; method = 'PATCH'; }
+
+    const res = await fetch(url, {
+      method,
+      headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    localStorage.setItem('gist_id', data.id);
+    document.getElementById('cfg-gist-id').value = data.id;
+    const now = new Date().toLocaleTimeString('zh-TW');
+    setSyncStatus(`上次上傳：${now}`, 'var(--green)');
+    showToast(`✅ 已上傳至 Gist（${trades.length} 筆）`);
+  } catch(e) {
+    showToast(`❌ 上傳失敗：${e.message}`, true);
+    setSyncStatus('上傳失敗', 'var(--red)');
+  } finally {
+    btn.textContent = '⬆ 上傳雲端'; btn.disabled = false;
+  }
+}
+
+// ── Gist Pull（載入） ────────────────────────────────────────────────────
+async function gistPull() {
+  const token  = localStorage.getItem('gist_token');
+  const gistId = localStorage.getItem('gist_id');
+  if (!token || !gistId) { openSettings(); return; }
+
+  const btn = document.getElementById('btn-pull');
+  btn.textContent = '載入中…'; btn.disabled = true;
+
+  try {
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      headers: { Authorization: `token ${token}` }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    const content = data.files['trading-record-data.json']?.content;
+    if (!content) throw new Error('找不到資料檔案');
+
+    const parsed = JSON.parse(content);
+    if (!Array.isArray(parsed.trades)) throw new Error('資料格式錯誤');
+
+    if (trades.length > 0) {
+      if (!confirm(`本機有 ${trades.length} 筆資料，確定要覆蓋成雲端的 ${parsed.trades.length} 筆嗎？`)) {
+        btn.textContent = '⬇ 從雲端載入'; btn.disabled = false;
+        return;
+      }
+    }
+
+    trades = parsed.trades;
+    save();
+    render();
+    const now = new Date().toLocaleTimeString('zh-TW');
+    setSyncStatus(`上次載入：${now}`, 'var(--blue)');
+    showToast(`✅ 已載入 ${trades.length} 筆資料`);
+  } catch(e) {
+    showToast(`❌ 載入失敗：${e.message}`, true);
+    setSyncStatus('載入失敗', 'var(--red)');
+  } finally {
+    btn.textContent = '⬇ 從雲端載入'; btn.disabled = false;
+  }
+}
 </script>
 </body>
 </html>
