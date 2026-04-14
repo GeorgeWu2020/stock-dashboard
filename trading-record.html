@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>實戰交易記錄 — 量化選股系統</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117; --bg2: #161b22; --bg3: #21262d; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e;
+    --green: #3fb950; --red: #f85149; --yellow: #d29922;
+    --blue: #388bfd; --purple: #a371f7; --orange: #e3b341; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI','Microsoft JhengHei',sans-serif; font-size: 14px; }
+
+  /* Header */
+  .header { background: linear-gradient(135deg,#0d1117,#161b22); border-bottom: 1px solid var(--border); padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 20px; font-weight: 700; color: var(--accent); }
+  .header .sub { color: var(--text2); font-size: 13px; margin-top: 4px; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--text2); font-size: 13px; text-decoration: none; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; transition: all .2s; }
+  .back-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Container */
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+
+  /* Section title */
+  .sec { font-size: 14px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-left: 10px; border-left: 3px solid var(--accent); }
+
+  /* KPI row */
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+  @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .kpi-card.k-pnl::before  { background: var(--accent); }
+  .kpi-card.k-cnt::before  { background: var(--yellow); }
+  .kpi-card.k-win::before  { background: var(--green); }
+  .kpi-card.k-avg::before  { background: var(--purple); }
+  .kpi-card.k-hold::before { background: var(--orange); }
+  .kpi-label { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+  .kpi-val { font-size: 26px; font-weight: 700; }
+  .kpi-sub { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* Layout: form + table */
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+  /* Form panel */
+  .panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .panel-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fg { margin-bottom: 12px; }
+  .fg label { display: block; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+  .fg input, .fg select, .fg textarea {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); padding: 8px 10px; font-size: 13px;
+    outline: none; font-family: inherit; transition: border-color .15s;
+  }
+  .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--accent); }
+  .fg select option { background: var(--bg3); }
+  .fg textarea { resize: vertical; min-height: 56px; }
+
+  /* Preview box */
+  .preview-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .preview-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .preview-box .pl { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .preview-box .pv { font-size: 18px; font-weight: 700; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 18px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; transition: opacity .15s, transform .1s; }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--accent); color: #fff; width: 100%; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-ghost { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); width: 100%; margin-top: 8px; }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm { padding: 4px 10px; font-size: 11px; border-radius: 4px; }
+  .btn-edit { background: rgba(56,139,253,.12); color: var(--blue); border: 1px solid rgba(56,139,253,.3); }
+  .btn-del  { background: rgba(248,81,73,.1); color: var(--red); border: 1px solid rgba(248,81,73,.3); }
+  .btn-export { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+  .btn-export:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Table */
+  .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+  .tbar { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .tbar input { background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 6px 12px; font-size: 13px; width: 180px; outline: none; font-family: inherit; }
+  .tbar input:focus { border-color: var(--accent); }
+  .tbl-inner { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--bg3); }
+  th { padding: 10px 14px; text-align: left; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; cursor: pointer; user-select: none; }
+  th:hover { color: var(--accent); }
+  th.sa::after { content:' ↑'; color: var(--accent); } th.sd::after { content:' ↓'; color: var(--accent); }
+  td { padding: 9px 14px; border-top: 1px solid var(--border); font-size: 13px; white-space: nowrap; }
+  tr:hover td { background: rgba(88,166,255,.04); }
+
+  .sp { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .sp-long  { background: rgba(63,185,80,.15); color: var(--green); }
+  .sp-short { background: rgba(248,81,73,.12); color: var(--red); }
+  .pos { color: var(--green); font-weight: 600; }
+  .neg { color: var(--red); font-weight: 600; }
+  .dim { color: var(--text2); }
+
+  .empty-state { padding: 40px; text-align: center; color: var(--text2); }
+
+  /* Chart */
+  .chart-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+  .chart-container { position: relative; height: 220px; }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 100; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; width: 380px; max-width: 95vw; }
+  .modal h3 { font-size: 15px; margin-bottom: 10px; }
+  .modal p { color: var(--text2); font-size: 13px; line-height: 1.6; }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 20px; color: var(--text2); font-size: 12px; border-top: 1px solid var(--border); }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>📋 實戰交易記錄</h1>
+    <div class="sub">記錄每筆進出場，追蹤損益與勝率</div>
+  </div>
+  <a href="index.html" class="back-link">← 返回 Dashboard</a>
+</div>
+
+<div class="container">
+
+  <!-- KPI -->
+  <div class="sec">績效總覽</div>
+  <div class="kpi-row">
+    <div class="kpi-card k-pnl">
+      <div class="kpi-label">累積損益 (元)</div>
+      <div class="kpi-val" id="s-pnl">—</div>
+      <div class="kpi-sub">已結算交易</div>
+    </div>
+    <div class="kpi-card k-cnt">
+      <div class="kpi-label">交易筆數</div>
+      <div class="kpi-val" id="s-cnt" style="color:var(--yellow)">0</div>
+      <div class="kpi-sub" id="s-open">持倉中 0 筆</div>
+    </div>
+    <div class="kpi-card k-win">
+      <div class="kpi-label">勝率</div>
+      <div class="kpi-val" id="s-wr" style="color:var(--green)">—</div>
+      <div class="kpi-sub" id="s-wincount">—</div>
+    </div>
+    <div class="kpi-card k-avg">
+      <div class="kpi-label">平均報酬率</div>
+      <div class="kpi-val" id="s-avg">—</div>
+      <div class="kpi-sub">已結算</div>
+    </div>
+    <div class="kpi-card k-hold">
+      <div class="kpi-label">最大單筆獲利</div>
+      <div class="kpi-val" id="s-best" style="color:var(--orange)">—</div>
+      <div class="kpi-sub" id="s-worst">最大虧損：—</div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- Form -->
+    <div>
+      <div class="panel">
+        <div class="panel-title" id="form-title">➕ 新增交易</div>
+        <input type="hidden" id="edit-id">
+
+        <div class="form-row">
+          <div class="fg">
+            <label>日期</label>
+            <input type="date" id="f-date">
+          </div>
+          <div class="fg">
+            <label>方向</label>
+            <select id="f-dir">
+              <option value="多">多（做多）</option>
+              <option value="空">空（做空）</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="fg">
+            <label>股票代號</label>
+            <input type="text" id="f-code" placeholder="例：2330">
+          </div>
+          <div class="fg">
+            <label>名稱</label>
+            <input type="text" id="f-name" placeholder="例：台積電">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="fg">
+            <label>進場價 (元)</label>
+            <input type="number" id="f-entry" placeholder="0" step="0.01" oninput="updatePreview()">
+          </div>
+          <div class="fg">
+            <label>出場價（未出場留空）</label>
+            <input type="number" id="f-exit" placeholder="—" step="0.01" oninput="updatePreview()">
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>股數（1張 = 1000股）</label>
+          <input type="number" id="f-shares" placeholder="例：1000" step="1" oninput="updatePreview()">
+        </div>
+
+        <div class="preview-pair">
+          <div class="preview-box">
+            <div class="pl">預估損益</div>
+            <div class="pv" id="prev-pnl">—</div>
+          </div>
+          <div class="preview-box">
+            <div class="pl">預估報酬率</div>
+            <div class="pv" id="prev-roe">—</div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>備註 / 心得</label>
+          <textarea id="f-notes" placeholder="交易原因、籌碼觀察、檢討..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveTrade()">
+          <span id="btn-lbl">新增記錄</span>
+        </button>
+        <div id="edit-cancel-wrap" style="display:none">
+          <button class="btn btn-ghost" onclick="cancelEdit()">取消編輯</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: table + chart -->
+    <div>
+      <!-- Chart -->
+      <div class="chart-wrap">
+        <div class="sec" style="margin-bottom:12px">累積損益走勢</div>
+        <div class="chart-container">
+          <canvas id="chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <div class="tbar">
+          <input type="text" id="search" placeholder="搜尋代號或名稱…" oninput="renderTable()">
+          <button class="btn btn-sm btn-export" onclick="exportCSV()">匯出 CSV</button>
+        </div>
+        <div class="tbl-inner">
+          <table>
+            <thead>
+              <tr>
+                <th onclick="sortBy('date')">日期</th>
+                <th>代號</th>
+                <th>名稱</th>
+                <th>方向</th>
+                <th onclick="sortBy('entry')">進場價</th>
+                <th onclick="sortBy('exit')">出場價</th>
+                <th>股數</th>
+                <th onclick="sortBy('pnl')">損益 (元)</th>
+                <th onclick="sortBy('roe')">報酬率</th>
+                <th>備註</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+          <div class="empty-state" id="empty">尚無交易記錄，請從左側新增</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">量化選股系統 v2 — 實戰記錄模組 · 資料儲存於本機 localStorage</div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="del-modal">
+  <div class="modal">
+    <h3>確認刪除</h3>
+    <p>刪除後無法復原，確定要刪除這筆交易記錄嗎？</p>
+    <div class="modal-footer">
+      <button class="btn btn-sm btn-ghost" style="width:auto" onclick="closeDelModal()">取消</button>
+      <button class="btn btn-sm btn-del" style="width:auto" onclick="confirmDelete()">確定刪除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────
+let trades = JSON.parse(localStorage.getItem('trades_v2') || '[]');
+let sortKey = 'date', sortDir = -1;
+let deleteTarget = null;
+let chartInst = null;
+
+(function init() {
+  document.getElementById('f-date').value = new Date().toISOString().slice(0, 10);
+  render();
+})();
+
+// ── Calc ─────────────────────────────────────────────────────────────────
+function calcPnl(t) {
+  if (!t.exit || !t.entry || !t.shares) return null;
+  return (t.direction === '多' ? t.exit - t.entry : t.entry - t.exit) * t.shares;
+}
+function calcRoe(t) {
+  if (!t.exit || !t.entry) return null;
+  const diff = t.direction === '多' ? t.exit - t.entry : t.entry - t.exit;
+  return diff / t.entry * 100;
+}
+function fmt(n, dp = 0) {
+  if (n == null) return '—';
+  return n.toLocaleString('zh-TW', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+}
+function fmtSigned(n, dp = 0, suffix = '') {
+  if (n == null) return null;
+  const sign = n >= 0 ? '+' : '';
+  return sign + fmt(n, dp) + suffix;
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+// ── Preview ───────────────────────────────────────────────────────────────
+function updatePreview() {
+  const entry = parseFloat(document.getElementById('f-entry').value);
+  const exit  = parseFloat(document.getElementById('f-exit').value);
+  const shares = parseFloat(document.getElementById('f-shares').value);
+  const dir = document.getElementById('f-dir').value;
+
+  if (exit && entry && shares) {
+    const diff = dir === '多' ? exit - entry : entry - exit;
+    const pnl = diff * shares;
+    const roe = diff / entry * 100;
+    const c = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('prev-pnl').innerHTML = `<span style="color:${c}">${fmtSigned(pnl)} 元</span>`;
+    document.getElementById('prev-roe').innerHTML = `<span style="color:${c}">${fmtSigned(roe, 2)}%</span>`;
+  } else {
+    document.getElementById('prev-pnl').textContent = '—';
+    document.getElementById('prev-roe').textContent = '—';
+  }
+}
+
+// ── Save ──────────────────────────────────────────────────────────────────
+function saveTrade() {
+  const date   = document.getElementById('f-date').value;
+  const entry  = parseFloat(document.getElementById('f-entry').value);
+  if (!date || !entry) { alert('請填寫日期與進場價'); return; }
+
+  const trade = {
+    id: document.getElementById('edit-id').value || uid(),
+    date,
+    code:   document.getElementById('f-code').value.trim(),
+    name:   document.getElementById('f-name').value.trim(),
+    direction: document.getElementById('f-dir').value,
+    entry,
+    exit:   parseFloat(document.getElementById('f-exit').value) || null,
+    shares: parseFloat(document.getElementById('f-shares').value) || null,
+    notes:  document.getElementById('f-notes').value.trim(),
+  };
+
+  const editId = document.getElementById('edit-id').value;
+  if (editId) {
+    const i = trades.findIndex(t => t.id === editId);
+    if (i !== -1) trades[i] = trade;
+  } else {
+    trades.push(trade);
+  }
+
+  save(); resetForm(); render();
+}
+
+function editTrade(id) {
+  const t = trades.find(t => t.id === id);
+  if (!t) return;
+  document.getElementById('edit-id').value  = t.id;
+  document.getElementById('f-date').value   = t.date;
+  document.getElementById('f-code').value   = t.code;
+  document.getElementById('f-name').value   = t.name;
+  document.getElementById('f-dir').value    = t.direction;
+  document.getElementById('f-entry').value  = t.entry;
+  document.getElementById('f-exit').value   = t.exit || '';
+  document.getElementById('f-shares').value = t.shares || '';
+  document.getElementById('f-notes').value  = t.notes;
+  document.getElementById('form-title').textContent = '✏️ 編輯交易';
+  document.getElementById('btn-lbl').textContent = '儲存修改';
+  document.getElementById('edit-cancel-wrap').style.display = 'block';
+  updatePreview();
+  document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelEdit() { resetForm(); }
+
+function resetForm() {
+  ['edit-id','f-code','f-name','f-entry','f-exit','f-shares','f-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-dir').value = '多';
+  document.getElementById('form-title').textContent = '➕ 新增交易';
+  document.getElementById('btn-lbl').textContent = '新增記錄';
+  document.getElementById('edit-cancel-wrap').style.display = 'none';
+  document.getElementById('prev-pnl').textContent = '—';
+  document.getElementById('prev-roe').textContent = '—';
+}
+
+// ── Delete ────────────────────────────────────────────────────────────────
+function deleteTrade(id) { deleteTarget = id; document.getElementById('del-modal').classList.add('open'); }
+function closeDelModal() { deleteTarget = null; document.getElementById('del-modal').classList.remove('open'); }
+function confirmDelete() {
+  if (deleteTarget) { trades = trades.filter(t => t.id !== deleteTarget); save(); render(); }
+  closeDelModal();
+}
+
+// ── Sort ──────────────────────────────────────────────────────────────────
+function sortBy(key) {
+  if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = -1; }
+  renderTable();
+}
+
+// ── Persist ───────────────────────────────────────────────────────────────
+function save() { localStorage.setItem('trades_v2', JSON.stringify(trades)); }
+
+// ── Render ────────────────────────────────────────────────────────────────
+function render() { renderStats(); renderTable(); renderChart(); }
+
+function renderStats() {
+  const closed = trades.filter(t => t.exit && t.shares);
+  const pnls = closed.map(t => calcPnl(t));
+  const totalPnl = pnls.reduce((a, b) => a + b, 0);
+  const wins = pnls.filter(p => p > 0).length;
+  const roes = closed.map(t => calcRoe(t));
+  const avgRoe = roes.length ? roes.reduce((a, b) => a + b, 0) / roes.length : null;
+  const winrate = closed.length ? wins / closed.length * 100 : null;
+  const holding = trades.filter(t => !t.exit).length;
+  const best = pnls.length ? Math.max(...pnls) : null;
+  const worst = pnls.length ? Math.min(...pnls) : null;
+
+  const pnlEl = document.getElementById('s-pnl');
+  pnlEl.textContent = totalPnl !== 0 ? fmtSigned(totalPnl) + ' 元' : '0 元';
+  pnlEl.style.color = totalPnl >= 0 ? 'var(--accent)' : 'var(--red)';
+
+  document.getElementById('s-cnt').textContent = trades.length;
+  document.getElementById('s-open').textContent = `持倉中 ${holding} 筆`;
+
+  const wrEl = document.getElementById('s-wr');
+  wrEl.textContent = winrate != null ? winrate.toFixed(0) + '%' : '—';
+  wrEl.style.color = winrate == null ? 'var(--text2)' : winrate >= 50 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('s-wincount').textContent = closed.length ? `${wins} 勝 / ${closed.length - wins} 負` : '—';
+
+  const avgEl = document.getElementById('s-avg');
+  avgEl.textContent = avgRoe != null ? fmtSigned(avgRoe, 2) + '%' : '—';
+  avgEl.style.color = avgRoe == null ? 'var(--text2)' : avgRoe >= 0 ? 'var(--green)' : 'var(--red)';
+
+  document.getElementById('s-best').textContent = best != null ? fmtSigned(best) + ' 元' : '—';
+  document.getElementById('s-worst').textContent = worst != null ? `最大虧損：${fmtSigned(worst)} 元` : '最大虧損：—';
+}
+
+function renderTable() {
+  const q = document.getElementById('search').value.toLowerCase();
+  let list = trades.filter(t => !q || t.code.toLowerCase().includes(q) || t.name.toLowerCase().includes(q));
+
+  list.sort((a, b) => {
+    const map = { date: [a.date, b.date], entry: [a.entry, b.entry], exit: [a.exit||0, b.exit||0], pnl: [calcPnl(a)||0, calcPnl(b)||0], roe: [calcRoe(a)||0, calcRoe(b)||0] };
+    const [va, vb] = map[sortKey] || [a.date, b.date];
+    return va > vb ? sortDir : va < vb ? -sortDir : 0;
+  });
+
+  // update sort indicators
+  document.querySelectorAll('th').forEach(th => { th.classList.remove('sa','sd'); });
+
+  const tbody = document.getElementById('tbody');
+  document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+
+  tbody.innerHTML = list.map(t => {
+    const pnl = calcPnl(t), roe = calcRoe(t);
+    const pnlHtml = pnl != null
+      ? `<span class="${pnl>=0?'pos':'neg'}">${fmtSigned(pnl)}</span>`
+      : '<span class="dim">持倉中</span>';
+    const roeHtml = roe != null
+      ? `<span class="${roe>=0?'pos':'neg'}">${fmtSigned(roe,2)}%</span>`
+      : '<span class="dim">—</span>';
+    const noteHtml = t.notes
+      ? `<span title="${esc(t.notes)}" style="cursor:help;color:var(--text2);text-decoration:underline dotted">📝</span>`
+      : '';
+    return `<tr>
+      <td>${t.date}</td>
+      <td style="font-weight:700;color:var(--accent)">${esc(t.code)}</td>
+      <td>${esc(t.name)}</td>
+      <td><span class="sp sp-${t.direction==='多'?'long':'short'}">${t.direction}</span></td>
+      <td>${fmt(t.entry, 2)}</td>
+      <td>${t.exit ? fmt(t.exit, 2) : '<span class="dim">—</span>'}</td>
+      <td>${t.shares ? fmt(t.shares) : '<span class="dim">—</span>'}</td>
+      <td>${pnlHtml}</td>
+      <td>${roeHtml}</td>
+      <td>${noteHtml}</td>
+      <td style="display:flex;gap:4px">
+        <button class="btn btn-sm btn-edit" onclick="editTrade('${t.id}')">編輯</button>
+        <button class="btn btn-sm btn-del"  onclick="deleteTrade('${t.id}')">刪除</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderChart() {
+  const closed = [...trades].filter(t => t.exit && t.shares && t.date).sort((a,b) => a.date > b.date ? 1 : -1);
+  let cum = 0;
+  const labels = [], data = [], colors = [];
+  closed.forEach(t => {
+    cum += calcPnl(t);
+    labels.push(t.date + (t.code ? ` ${t.code}` : ''));
+    data.push(parseFloat(cum.toFixed(0)));
+    colors.push(cum >= 0 ? 'rgba(63,185,80,0.75)' : 'rgba(248,81,73,0.75)');
+  });
+
+  const ctx = document.getElementById('chart').getContext('2d');
+  if (chartInst) chartInst.destroy();
+
+  if (!data.length) {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = 'rgba(139,148,158,0.5)';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('尚無已結算交易', ctx.canvas.width / 2, ctx.canvas.height / 2);
+    return;
+  }
+
+  chartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: '累積損益', data, backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => ` ${c.raw >= 0 ? '+' : ''}${c.raw.toLocaleString()} 元` } }
+      },
+      scales: {
+        x: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { color: 'rgba(48,54,61,0.8)' } },
+        y: { ticks: { color: '#8b949e', callback: v => v.toLocaleString() }, grid: { color: 'rgba(48,54,61,0.8)' } }
+      }
+    }
+  });
+}
+
+// ── Export CSV ────────────────────────────────────────────────────────────
+function exportCSV() {
+  const hdr = ['日期','代號','名稱','方向','進場價','出場價','股數','損益(元)','報酬率(%)','備註'];
+  const rows = trades.map(t => {
+    const pnl = calcPnl(t), roe = calcRoe(t);
+    return [t.date, t.code, t.name, t.direction, t.entry, t.exit??'', t.shares??'',
+      pnl!=null?pnl.toFixed(0):'', roe!=null?roe.toFixed(2):'',
+      t.notes.replace(/,/g,'，')].join(',');
+  });
+  const csv = '\uFEFF' + [hdr.join(','), ...rows].join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'})),
+    download: `實戰記錄_${new Date().toISOString().slice(0,10)}.csv`
+  });
+  a.click();
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('del-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDelModal();
+});
+</script>
+</body>
+</html>
