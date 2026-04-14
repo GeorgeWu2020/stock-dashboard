@@ -176,9 +176,21 @@
 
         <div class="form-row">
           <div class="fg">
-            <label>日期</label>
-            <input type="date" id="f-date">
+            <label>種類</label>
+            <select id="f-type" onchange="onTypeChange()">
+              <option value="股票">股票</option>
+              <option value="認購權證">認購權證（看多）</option>
+              <option value="認售權證">認售權證（看空）</option>
+            </select>
           </div>
+          <div class="fg">
+            <label>代號</label>
+            <input type="text" id="f-code" placeholder="例：2330 / 07xxxx">
+          </div>
+        </div>
+
+        <!-- 股票專用：方向 + 名稱 -->
+        <div class="form-row" id="stock-row">
           <div class="fg">
             <label>方向</label>
             <select id="f-dir">
@@ -186,33 +198,63 @@
               <option value="空">空（做空）</option>
             </select>
           </div>
-        </div>
-
-        <div class="form-row">
-          <div class="fg">
-            <label>股票代號</label>
-            <input type="text" id="f-code" placeholder="例：2330">
-          </div>
           <div class="fg">
             <label>名稱</label>
             <input type="text" id="f-name" placeholder="例：台積電">
           </div>
         </div>
 
+        <!-- 原標的區塊（權證時顯示） -->
+        <div id="underlying-section" style="display:none">
+          <div style="border-top:1px solid var(--border);margin:4px 0 12px;padding-top:12px;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px">原標的</div>
+          <div class="form-row">
+            <div class="fg">
+              <label>標的代號</label>
+              <input type="text" id="f-ul-code" placeholder="例：2330">
+            </div>
+            <div class="fg">
+              <label>標的名稱</label>
+              <input type="text" id="f-ul-name" placeholder="例：台積電">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="fg">
+              <label>標的進場點</label>
+              <input type="number" id="f-ul-entry" placeholder="0" step="0.01">
+            </div>
+            <div class="fg">
+              <label>標的出場點（留空＝持倉中）</label>
+              <input type="number" id="f-ul-exit" placeholder="—" step="0.01">
+            </div>
+          </div>
+        </div>
+
         <div class="form-row">
+          <div class="fg">
+            <label>進場日期</label>
+            <input type="date" id="f-entry-date">
+          </div>
           <div class="fg">
             <label>進場價 (元)</label>
             <input type="number" id="f-entry" placeholder="0" step="0.01" oninput="updatePreview()">
           </div>
+        </div>
+
+        <div class="form-row">
           <div class="fg">
-            <label>出場價（未出場留空）</label>
+            <label>出場日期（留空＝持倉中）</label>
+            <input type="date" id="f-exit-date">
+          </div>
+          <div class="fg">
+            <label>出場價（留空＝持倉中）</label>
             <input type="number" id="f-exit" placeholder="—" step="0.01" oninput="updatePreview()">
           </div>
         </div>
 
         <div class="fg">
-          <label>股數（1張 = 1000股）</label>
-          <input type="number" id="f-shares" placeholder="例：1000" step="1" oninput="updatePreview()">
+          <label>張數</label>
+          <input type="number" id="f-shares" placeholder="例：1" step="1" oninput="updatePreview()">
+          <div style="font-size:11px;color:var(--text2);margin-top:4px">損益 ＝ (出場 − 進場) × 張數 × 1000</div>
         </div>
 
         <div class="preview-pair">
@@ -260,7 +302,9 @@
           <table>
             <thead>
               <tr>
-                <th onclick="sortBy('date')">日期</th>
+                <th onclick="sortBy('entry_date')">進場日期</th>
+                <th onclick="sortBy('exit_date')">出場日期</th>
+                <th>種類</th>
                 <th>代號</th>
                 <th>名稱</th>
                 <th>方向</th>
@@ -269,6 +313,7 @@
                 <th>股數</th>
                 <th onclick="sortBy('pnl')">損益 (元)</th>
                 <th onclick="sortBy('roe')">報酬率</th>
+                <th>原標的</th>
                 <th>備註</th>
                 <th></th>
               </tr>
@@ -299,19 +344,32 @@
 <script>
 // ── State ────────────────────────────────────────────────────────────────
 let trades = JSON.parse(localStorage.getItem('trades_v2') || '[]');
-let sortKey = 'date', sortDir = -1;
+let sortKey = 'entry_date', sortDir = -1;
 let deleteTarget = null;
 let chartInst = null;
 
 (function init() {
-  document.getElementById('f-date').value = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('f-entry-date').value = today;
   render();
 })();
+
+// ── 種類切換 ──────────────────────────────────────────────────────────────
+function onTypeChange() {
+  const type = document.getElementById('f-type').value;
+  const isWarrant = type === '認購權證' || type === '認售權證';
+  document.getElementById('underlying-section').style.display = isWarrant ? 'block' : 'none';
+  document.getElementById('stock-row').style.display = isWarrant ? 'none' : '';
+}
 
 // ── Calc ─────────────────────────────────────────────────────────────────
 function calcPnl(t) {
   if (!t.exit || !t.entry || !t.shares) return null;
-  return (t.direction === '多' ? t.exit - t.entry : t.entry - t.exit) * t.shares;
+  const isWarrant = t.type === '認購權證' || t.type === '認售權證';
+  const diff = isWarrant
+    ? t.exit - t.entry
+    : (t.direction === '多' ? t.exit - t.entry : t.entry - t.exit);
+  return diff * t.shares * 1000;
 }
 function calcRoe(t) {
   if (!t.exit || !t.entry) return null;
@@ -351,20 +409,29 @@ function updatePreview() {
 
 // ── Save ──────────────────────────────────────────────────────────────────
 function saveTrade() {
-  const date   = document.getElementById('f-date').value;
-  const entry  = parseFloat(document.getElementById('f-entry').value);
-  if (!date || !entry) { alert('請填寫日期與進場價'); return; }
+  const entry_date = document.getElementById('f-entry-date').value;
+  const entry      = parseFloat(document.getElementById('f-entry').value);
+  if (!entry_date || !entry) { alert('請填寫進場日期與進場價'); return; }
+
+  const type = document.getElementById('f-type').value;
+  const isWarrant = type === '認購權證' || type === '認售權證';
 
   const trade = {
     id: document.getElementById('edit-id').value || uid(),
-    date,
-    code:   document.getElementById('f-code').value.trim(),
-    name:   document.getElementById('f-name').value.trim(),
-    direction: document.getElementById('f-dir').value,
+    type,
+    entry_date,
+    exit_date:  document.getElementById('f-exit-date').value || null,
+    code:       document.getElementById('f-code').value.trim(),
+    name:       document.getElementById('f-name').value.trim(),
+    direction:  isWarrant ? (type === '認購權證' ? '多' : '空') : document.getElementById('f-dir').value,
     entry,
-    exit:   parseFloat(document.getElementById('f-exit').value) || null,
-    shares: parseFloat(document.getElementById('f-shares').value) || null,
-    notes:  document.getElementById('f-notes').value.trim(),
+    exit:       parseFloat(document.getElementById('f-exit').value) || null,
+    shares:     parseFloat(document.getElementById('f-shares').value) || null,
+    notes:      document.getElementById('f-notes').value.trim(),
+    ul_code:    isWarrant ? document.getElementById('f-ul-code').value.trim() : '',
+    ul_name:    isWarrant ? document.getElementById('f-ul-name').value.trim() : '',
+    ul_entry:   isWarrant ? (parseFloat(document.getElementById('f-ul-entry').value) || null) : null,
+    ul_exit:    isWarrant ? (parseFloat(document.getElementById('f-ul-exit').value) || null) : null,
   };
 
   const editId = document.getElementById('edit-id').value;
@@ -381,15 +448,22 @@ function saveTrade() {
 function editTrade(id) {
   const t = trades.find(t => t.id === id);
   if (!t) return;
-  document.getElementById('edit-id').value  = t.id;
-  document.getElementById('f-date').value   = t.date;
-  document.getElementById('f-code').value   = t.code;
-  document.getElementById('f-name').value   = t.name;
-  document.getElementById('f-dir').value    = t.direction;
-  document.getElementById('f-entry').value  = t.entry;
-  document.getElementById('f-exit').value   = t.exit || '';
-  document.getElementById('f-shares').value = t.shares || '';
-  document.getElementById('f-notes').value  = t.notes;
+  document.getElementById('edit-id').value       = t.id;
+  document.getElementById('f-type').value        = t.type || '股票';
+  document.getElementById('f-entry-date').value  = t.entry_date || t.date || '';
+  document.getElementById('f-exit-date').value   = t.exit_date || '';
+  document.getElementById('f-code').value        = t.code;
+  document.getElementById('f-name').value        = t.name;
+  document.getElementById('f-dir').value         = t.direction;
+  document.getElementById('f-entry').value       = t.entry;
+  document.getElementById('f-exit').value        = t.exit || '';
+  document.getElementById('f-shares').value      = t.shares || '';
+  document.getElementById('f-notes').value       = t.notes;
+  document.getElementById('f-ul-code').value     = t.ul_code || '';
+  document.getElementById('f-ul-name').value     = t.ul_name || '';
+  document.getElementById('f-ul-entry').value    = t.ul_entry || '';
+  document.getElementById('f-ul-exit').value     = t.ul_exit || '';
+  onTypeChange();
   document.getElementById('form-title').textContent = '✏️ 編輯交易';
   document.getElementById('btn-lbl').textContent = '儲存修改';
   document.getElementById('edit-cancel-wrap').style.display = 'block';
@@ -400,10 +474,14 @@ function editTrade(id) {
 function cancelEdit() { resetForm(); }
 
 function resetForm() {
-  ['edit-id','f-code','f-name','f-entry','f-exit','f-shares','f-notes'].forEach(id => {
+  ['edit-id','f-exit-date','f-code','f-name','f-entry','f-exit','f-shares','f-notes',
+   'f-ul-code','f-ul-name','f-ul-entry','f-ul-exit'].forEach(id => {
     document.getElementById(id).value = '';
   });
+  document.getElementById('f-entry-date').value = new Date().toISOString().slice(0, 10);
   document.getElementById('f-dir').value = '多';
+  document.getElementById('f-type').value = '股票';
+  onTypeChange();
   document.getElementById('form-title').textContent = '➕ 新增交易';
   document.getElementById('btn-lbl').textContent = '新增記錄';
   document.getElementById('edit-cancel-wrap').style.display = 'none';
@@ -468,8 +546,13 @@ function renderTable() {
   let list = trades.filter(t => !q || t.code.toLowerCase().includes(q) || t.name.toLowerCase().includes(q));
 
   list.sort((a, b) => {
-    const map = { date: [a.date, b.date], entry: [a.entry, b.entry], exit: [a.exit||0, b.exit||0], pnl: [calcPnl(a)||0, calcPnl(b)||0], roe: [calcRoe(a)||0, calcRoe(b)||0] };
-    const [va, vb] = map[sortKey] || [a.date, b.date];
+    const map = {
+      entry_date: [a.entry_date||'', b.entry_date||''],
+      exit_date:  [a.exit_date||'', b.exit_date||''],
+      entry: [a.entry, b.entry], exit: [a.exit||0, b.exit||0],
+      pnl: [calcPnl(a)||0, calcPnl(b)||0], roe: [calcRoe(a)||0, calcRoe(b)||0]
+    };
+    const [va, vb] = map[sortKey] || [a.entry_date||'', b.entry_date||''];
     return va > vb ? sortDir : va < vb ? -sortDir : 0;
   });
 
@@ -490,16 +573,32 @@ function renderTable() {
     const noteHtml = t.notes
       ? `<span title="${esc(t.notes)}" style="cursor:help;color:var(--text2);text-decoration:underline dotted">📝</span>`
       : '';
+    const type = t.type || '股票';
+    const isWarrant = type === '認購權證' || type === '認售權證';
+    const typeBadge = isWarrant
+      ? `<span class="sp" style="background:rgba(163,113,247,.15);color:var(--purple)">${type === '認購權證' ? '認購' : '認售'}</span>`
+      : `<span class="sp" style="background:rgba(56,139,253,.1);color:var(--blue)">股票</span>`;
+    const dirHtml = isWarrant
+      ? '<span class="dim">—</span>'
+      : `<span class="sp sp-${t.direction==='多'?'long':'short'}">${t.direction}</span>`;
+    const displayName = isWarrant ? esc(t.ul_name || '') : esc(t.name || '');
+    const ulHtml = isWarrant && t.ul_code
+      ? `<span style="color:var(--accent);font-weight:600">${esc(t.ul_code)}</span>`
+        + `<span class="dim" style="font-size:11px"> ${fmt(t.ul_entry,2)}→${t.ul_exit ? fmt(t.ul_exit,2) : '?'}</span>`
+      : '<span class="dim">—</span>';
     return `<tr>
-      <td>${t.date}</td>
+      <td>${t.entry_date || t.date || ''}</td>
+      <td>${t.exit_date ? t.exit_date : '<span class="dim">持倉中</span>'}</td>
+      <td>${typeBadge}</td>
       <td style="font-weight:700;color:var(--accent)">${esc(t.code)}</td>
-      <td>${esc(t.name)}</td>
-      <td><span class="sp sp-${t.direction==='多'?'long':'short'}">${t.direction}</span></td>
+      <td>${displayName}</td>
+      <td>${dirHtml}</td>
       <td>${fmt(t.entry, 2)}</td>
       <td>${t.exit ? fmt(t.exit, 2) : '<span class="dim">—</span>'}</td>
-      <td>${t.shares ? fmt(t.shares) : '<span class="dim">—</span>'}</td>
+      <td>${t.shares != null ? t.shares + ' 張' : '<span class="dim">—</span>'}</td>
       <td>${pnlHtml}</td>
       <td>${roeHtml}</td>
+      <td>${ulHtml}</td>
       <td>${noteHtml}</td>
       <td style="display:flex;gap:4px">
         <button class="btn btn-sm btn-edit" onclick="editTrade('${t.id}')">編輯</button>
@@ -510,12 +609,12 @@ function renderTable() {
 }
 
 function renderChart() {
-  const closed = [...trades].filter(t => t.exit && t.shares && t.date).sort((a,b) => a.date > b.date ? 1 : -1);
+  const closed = [...trades].filter(t => t.exit && t.shares && (t.entry_date || t.date)).sort((a,b) => (a.entry_date||a.date) > (b.entry_date||b.date) ? 1 : -1);
   let cum = 0;
   const labels = [], data = [], colors = [];
   closed.forEach(t => {
     cum += calcPnl(t);
-    labels.push(t.date + (t.code ? ` ${t.code}` : ''));
+    labels.push((t.entry_date||t.date) + (t.code ? ` ${t.code}` : ''));
     data.push(parseFloat(cum.toFixed(0)));
     colors.push(cum >= 0 ? 'rgba(63,185,80,0.75)' : 'rgba(248,81,73,0.75)');
   });
@@ -554,12 +653,16 @@ function renderChart() {
 
 // ── Export CSV ────────────────────────────────────────────────────────────
 function exportCSV() {
-  const hdr = ['日期','代號','名稱','方向','進場價','出場價','股數','損益(元)','報酬率(%)','備註'];
+  const hdr = ['進場日期','出場日期','種類','代號','名稱','方向','進場價','出場價','張數','損益(元)','報酬率(%)','原標的代號','原標的名稱','原標的進場點','原標的出場點','備註'];
   const rows = trades.map(t => {
     const pnl = calcPnl(t), roe = calcRoe(t);
-    return [t.date, t.code, t.name, t.direction, t.entry, t.exit??'', t.shares??'',
+    return [
+      t.entry_date||t.date||'', t.exit_date||'', t.type||'股票',
+      t.code, t.name, t.direction, t.entry, t.exit??'', t.shares??'',
       pnl!=null?pnl.toFixed(0):'', roe!=null?roe.toFixed(2):'',
-      t.notes.replace(/,/g,'，')].join(',');
+      t.ul_code||'', t.ul_name||'', t.ul_entry||'', t.ul_exit||'',
+      (t.notes||'').replace(/,/g,'，')
+    ].join(',');
   });
   const csv = '\uFEFF' + [hdr.join(','), ...rows].join('\n');
   const a = Object.assign(document.createElement('a'), {
