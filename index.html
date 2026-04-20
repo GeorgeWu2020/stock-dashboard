@@ -211,7 +211,7 @@ tr.detail-row td {
         padding:2px 10px;border-radius:12px;letter-spacing:.5px">v3</span>
     </div>
     <div class="meta">
-      信號日期：2026-04-19 &nbsp;·&nbsp; 產生時間：2026-04-20 01:00
+      信號日期：2026-04-19 &nbsp;·&nbsp; 產生時間：2026-04-20 19:53
       &nbsp;·&nbsp; 量化選股系統 v3 · 法人成交占比分析
     </div>
   </div>
@@ -293,6 +293,23 @@ tr.detail-row td {
           &nbsp;｜&nbsp; 占比：<b style="color:#18a058">◆</b>=高滲透&gt;3% <b style="color:#2471a3">●</b>=中滲透 0.5-3% <b style="color:#aaa">○</b>=低滲透&lt;0.5%
         </div>
       </div>
+      <!-- ★ 關鍵字篩選列 (多頭) -->
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px">
+        <input id="filterLongInput" type="text" placeholder="🔍 代號 / 名稱關鍵字..."
+               oninput="filterRows('long')"
+               style="flex:1;max-width:280px;padding:6px 12px;border:1px solid #d0d5dd;
+                      border-radius:20px;font-size:13px;outline:none;
+                      font-family:inherit;transition:border .2s"
+               onfocus="this.style.borderColor='#2471a3'"
+               onblur="this.style.borderColor='#d0d5dd'">
+        <button onclick="clearFilter('long')"
+                style="padding:5px 12px;border:1px solid #d0d5dd;border-radius:20px;
+                       background:#fff;cursor:pointer;font-size:12px;color:#666;
+                       transition:all .2s"
+                onmouseover="this.style.background='#f0f4ff';this.style.borderColor='#2471a3'"
+                onmouseout="this.style.background='#fff';this.style.borderColor='#d0d5dd'">✕ 清除</button>
+        <span id="filterLongCount" style="font-size:12px;color:#888"></span>
+      </div>
       <div class="tbl-wrap">
         <table>
           <tr>
@@ -314,6 +331,7 @@ tr.detail-row td {
           
 <tr class="stock-row" data-idx="0"
     data-ticker="2820"
+    data-name="華票"
     data-grade="0"
     data-streak="6"
     data-nmatch="6.00"
@@ -340,6 +358,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="1"
     data-ticker="2441"
+    data-name="超豐"
     data-grade="0"
     data-streak="1"
     data-nmatch="6.00"
@@ -366,6 +385,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="2"
     data-ticker="3532"
+    data-name="台勝科"
     data-grade="1"
     data-streak="3"
     data-nmatch="5.00"
@@ -392,6 +412,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="3"
     data-ticker="3450"
+    data-name="聯鈞"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -418,6 +439,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="4"
     data-ticker="2481"
+    data-name="強茂"
     data-grade="1"
     data-streak="2"
     data-nmatch="5.00"
@@ -444,6 +466,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="5"
     data-ticker="7769"
+    data-name="鴻勁"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -470,6 +493,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="6"
     data-ticker="2376"
+    data-name="技嘉"
     data-grade="1"
     data-streak="13"
     data-nmatch="4.00"
@@ -496,6 +520,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="7"
     data-ticker="2867"
+    data-name="三商壽"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -522,6 +547,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="8"
     data-ticker="2492"
+    data-name="華新科"
     data-grade="1"
     data-streak="3"
     data-nmatch="4.00"
@@ -548,6 +574,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="9"
     data-ticker="1227"
+    data-name="佳格"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -574,6 +601,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="10"
     data-ticker="2377"
+    data-name="微星"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -600,6 +628,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="11"
     data-ticker="1231"
+    data-name="聯華食"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -626,6 +655,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="12"
     data-ticker="3042"
+    data-name="晶技"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -652,6 +682,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="13"
     data-ticker="1590"
+    data-name="亞德客"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -678,6 +709,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="14"
     data-ticker="2374"
+    data-name="佳能"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -704,6 +736,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="15"
     data-ticker="2014"
+    data-name="中鴻"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -730,6 +763,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="16"
     data-ticker="2454"
+    data-name="聯發科"
     data-grade="2"
     data-streak="4"
     data-nmatch="3.00"
@@ -756,6 +790,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="17"
     data-ticker="2501"
+    data-name="國建"
     data-grade="2"
     data-streak="6"
     data-nmatch="3.00"
@@ -782,6 +817,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="18"
     data-ticker="2345"
+    data-name="智邦"
     data-grade="2"
     data-streak="3"
     data-nmatch="2.00"
@@ -808,6 +844,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="19"
     data-ticker="3661"
+    data-name="世芯-KY"
     data-grade="2"
     data-streak="5"
     data-nmatch="2.00"
@@ -834,6 +871,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="20"
     data-ticker="1434"
+    data-name="福懋"
     data-grade="2"
     data-streak="2"
     data-nmatch="2.00"
@@ -860,6 +898,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="21"
     data-ticker="3596"
+    data-name="智易"
     data-grade="2"
     data-streak="1"
     data-nmatch="2.00"
@@ -886,6 +925,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="22"
     data-ticker="2303"
+    data-name="聯電"
     data-grade="2"
     data-streak="3"
     data-nmatch="2.00"
@@ -912,6 +952,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="23"
     data-ticker="2455"
+    data-name="全新"
     data-grade="2"
     data-streak="2"
     data-nmatch="1.00"
@@ -938,6 +979,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="24"
     data-ticker="6830"
+    data-name="汎銓"
     data-grade="2"
     data-streak="6"
     data-nmatch="0.00"
@@ -964,6 +1006,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="25"
     data-ticker="1232"
+    data-name="大統益"
     data-grade="2"
     data-streak="6"
     data-nmatch="0.00"
@@ -990,6 +1033,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="26"
     data-ticker="3037"
+    data-name="欣興"
     data-grade="4"
     data-streak="2"
     data-nmatch="3.00"
@@ -1016,6 +1060,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="27"
     data-ticker="6531"
+    data-name="愛普*"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -1042,6 +1087,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="28"
     data-ticker="9939"
+    data-name="宏全"
     data-grade="4"
     data-streak="6"
     data-nmatch="3.00"
@@ -1068,6 +1114,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="29"
     data-ticker="6890"
+    data-name="來億-KY"
     data-grade="4"
     data-streak="3"
     data-nmatch="3.00"
@@ -1094,6 +1141,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="30"
     data-ticker="1736"
+    data-name="喬山"
     data-grade="4"
     data-streak="2"
     data-nmatch="3.00"
@@ -1120,6 +1168,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="31"
     data-ticker="2388"
+    data-name="威盛"
     data-grade="4"
     data-streak="2"
     data-nmatch="3.00"
@@ -1146,6 +1195,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="32"
     data-ticker="3563"
+    data-name="牧德"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -1172,6 +1222,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="33"
     data-ticker="2634"
+    data-name="漢翔"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -1198,6 +1249,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="34"
     data-ticker="6196"
+    data-name="帆宣"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -1224,6 +1276,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="35"
     data-ticker="1514"
+    data-name="亞力"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -1250,6 +1303,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="36"
     data-ticker="2845"
+    data-name="遠東銀"
     data-grade="4"
     data-streak="2"
     data-nmatch="2.00"
@@ -1276,6 +1330,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="37"
     data-ticker="2308"
+    data-name="台達電"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -1302,6 +1357,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="38"
     data-ticker="3090"
+    data-name="日電貿"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -1328,6 +1384,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="39"
     data-ticker="3443"
+    data-name="創意"
     data-grade="4"
     data-streak="2"
     data-nmatch="2.00"
@@ -1354,6 +1411,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="40"
     data-ticker="7610"
+    data-name="聯友金屬-創"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -1380,6 +1438,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="41"
     data-ticker="2393"
+    data-name="億光"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -1406,6 +1465,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="42"
     data-ticker="2801"
+    data-name="彰銀"
     data-grade="4"
     data-streak="2"
     data-nmatch="2.00"
@@ -1432,6 +1492,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="43"
     data-ticker="2923"
+    data-name="鼎固-KY"
     data-grade="4"
     data-streak="4"
     data-nmatch="2.00"
@@ -1458,6 +1519,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="44"
     data-ticker="6669"
+    data-name="緯穎"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -1484,6 +1546,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="45"
     data-ticker="6491"
+    data-name="晶碩"
     data-grade="4"
     data-streak="2"
     data-nmatch="1.00"
@@ -1510,6 +1573,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="46"
     data-ticker="2645"
+    data-name="長榮航太"
     data-grade="4"
     data-streak="2"
     data-nmatch="1.00"
@@ -1536,6 +1600,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="47"
     data-ticker="4585"
+    data-name="達明"
     data-grade="4"
     data-streak="2"
     data-nmatch="1.00"
@@ -1562,6 +1627,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="48"
     data-ticker="2489"
+    data-name="瑞軒"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -1588,6 +1654,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="49"
     data-ticker="2329"
+    data-name="華泰"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -1614,6 +1681,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="50"
     data-ticker="6451"
+    data-name="訊芯-KY"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -1640,6 +1708,7 @@ tr.detail-row td {
 </tr>
 <tr class="stock-row" data-idx="51"
     data-ticker="3413"
+    data-name="京鼎"
     data-grade="4"
     data-streak="2"
     data-nmatch="0.00"
@@ -1724,6 +1793,23 @@ tr.detail-row td {
           放空方向：負向維度 <b style="color:#c0392b">✗✗</b><b style="color:#c0392b">✗</b> 為有利放空條件
         </div>
       </div>
+      <!-- ★ 關鍵字篩選列 (空頭) -->
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px">
+        <input id="filterShortInput" type="text" placeholder="🔍 代號 / 名稱關鍵字..."
+               oninput="filterRows('short')"
+               style="flex:1;max-width:280px;padding:6px 12px;border:1px solid #d0d5dd;
+                      border-radius:20px;font-size:13px;outline:none;
+                      font-family:inherit;transition:border .2s"
+               onfocus="this.style.borderColor='#c0392b'"
+               onblur="this.style.borderColor='#d0d5dd'">
+        <button onclick="clearFilter('short')"
+                style="padding:5px 12px;border:1px solid #d0d5dd;border-radius:20px;
+                       background:#fff;cursor:pointer;font-size:12px;color:#666;
+                       transition:all .2s"
+                onmouseover="this.style.background='#fff5f5';this.style.borderColor='#c0392b'"
+                onmouseout="this.style.background='#fff';this.style.borderColor='#d0d5dd'">✕ 清除</button>
+        <span id="filterShortCount" style="font-size:12px;color:#888"></span>
+      </div>
       <div class="tbl-wrap">
         <table>
           <tr style="background:#4a1414">
@@ -1743,6 +1829,7 @@ tr.detail-row td {
           
 <tr class="short-row" data-idx="0"
     data-ticker="2504"
+    data-name="國產"
     data-grade="0"
     data-streak="5"
     data-nmatch="7.00"
@@ -1766,6 +1853,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="1"
     data-ticker="2603"
+    data-name="長榮"
     data-grade="0"
     data-streak="2"
     data-nmatch="7.00"
@@ -1789,6 +1877,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="2"
     data-ticker="6239"
+    data-name="力成"
     data-grade="0"
     data-streak="4"
     data-nmatch="6.00"
@@ -1812,6 +1901,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="3"
     data-ticker="2609"
+    data-name="陽明"
     data-grade="0"
     data-streak="5"
     data-nmatch="6.00"
@@ -1835,6 +1925,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="4"
     data-ticker="2915"
+    data-name="潤泰全"
     data-grade="0"
     data-streak="2"
     data-nmatch="6.00"
@@ -1858,6 +1949,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="5"
     data-ticker="6412"
+    data-name="群電"
     data-grade="0"
     data-streak="4"
     data-nmatch="6.00"
@@ -1881,6 +1973,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="6"
     data-ticker="6005"
+    data-name="群益證"
     data-grade="0"
     data-streak="4"
     data-nmatch="6.00"
@@ -1904,6 +1997,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="7"
     data-ticker="6177"
+    data-name="達麗"
     data-grade="0"
     data-streak="5"
     data-nmatch="6.00"
@@ -1927,6 +2021,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="8"
     data-ticker="3005"
+    data-name="神基"
     data-grade="0"
     data-streak="1"
     data-nmatch="6.00"
@@ -1950,6 +2045,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="9"
     data-ticker="1215"
+    data-name="卜蜂"
     data-grade="0"
     data-streak="4"
     data-nmatch="6.00"
@@ -1973,6 +2069,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="10"
     data-ticker="2812"
+    data-name="台中銀"
     data-grade="0"
     data-streak="4"
     data-nmatch="6.00"
@@ -1996,6 +2093,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="11"
     data-ticker="2615"
+    data-name="萬海"
     data-grade="0"
     data-streak="1"
     data-nmatch="6.00"
@@ -2019,6 +2117,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="12"
     data-ticker="1402"
+    data-name="遠東新"
     data-grade="0"
     data-streak="2"
     data-nmatch="6.00"
@@ -2042,6 +2141,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="13"
     data-ticker="1477"
+    data-name="聚陽"
     data-grade="0"
     data-streak="1"
     data-nmatch="6.00"
@@ -2065,6 +2165,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="14"
     data-ticker="1102"
+    data-name="亞泥"
     data-grade="1"
     data-streak="9"
     data-nmatch="5.00"
@@ -2088,6 +2189,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="15"
     data-ticker="9904"
+    data-name="寶成"
     data-grade="1"
     data-streak="5"
     data-nmatch="5.00"
@@ -2111,6 +2213,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="16"
     data-ticker="2539"
+    data-name="櫻花建"
     data-grade="1"
     data-streak="4"
     data-nmatch="5.00"
@@ -2134,6 +2237,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="17"
     data-ticker="5534"
+    data-name="長虹"
     data-grade="1"
     data-streak="5"
     data-nmatch="5.00"
@@ -2157,6 +2261,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="18"
     data-ticker="9907"
+    data-name="統一實"
     data-grade="1"
     data-streak="3"
     data-nmatch="5.00"
@@ -2180,6 +2285,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="19"
     data-ticker="2597"
+    data-name="潤弘"
     data-grade="1"
     data-streak="5"
     data-nmatch="5.00"
@@ -2203,6 +2309,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="20"
     data-ticker="2607"
+    data-name="榮運"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2226,6 +2333,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="21"
     data-ticker="6605"
+    data-name="帝寶"
     data-grade="1"
     data-streak="4"
     data-nmatch="5.00"
@@ -2249,6 +2357,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="22"
     data-ticker="6213"
+    data-name="聯茂"
     data-grade="1"
     data-streak="2"
     data-nmatch="5.00"
@@ -2272,6 +2381,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="23"
     data-ticker="2204"
+    data-name="中華車"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2295,6 +2405,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="24"
     data-ticker="1519"
+    data-name="華城"
     data-grade="1"
     data-streak="2"
     data-nmatch="5.00"
@@ -2318,6 +2429,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="25"
     data-ticker="1907"
+    data-name="永豐餘"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2341,6 +2453,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="26"
     data-ticker="2313"
+    data-name="華通"
     data-grade="1"
     data-streak="2"
     data-nmatch="5.00"
@@ -2364,6 +2477,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="27"
     data-ticker="6770"
+    data-name="力積電"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2387,6 +2501,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="28"
     data-ticker="1319"
+    data-name="東陽"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2410,6 +2525,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="29"
     data-ticker="2886"
+    data-name="兆豐金"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2433,6 +2549,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="30"
     data-ticker="2449"
+    data-name="京元電子"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2456,6 +2573,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="31"
     data-ticker="2317"
+    data-name="鴻海"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2479,6 +2597,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="32"
     data-ticker="1795"
+    data-name="美時"
     data-grade="1"
     data-streak="2"
     data-nmatch="5.00"
@@ -2502,6 +2621,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="33"
     data-ticker="6409"
+    data-name="旭隼"
     data-grade="1"
     data-streak="2"
     data-nmatch="5.00"
@@ -2525,6 +2645,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="34"
     data-ticker="6670"
+    data-name="復盛應用"
     data-grade="1"
     data-streak="1"
     data-nmatch="5.00"
@@ -2548,6 +2669,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="35"
     data-ticker="2485"
+    data-name="兆赫"
     data-grade="1"
     data-streak="2"
     data-nmatch="5.00"
@@ -2571,6 +2693,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="36"
     data-ticker="2610"
+    data-name="華航"
     data-grade="1"
     data-streak="5"
     data-nmatch="4.00"
@@ -2594,6 +2717,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="37"
     data-ticker="1504"
+    data-name="東元"
     data-grade="1"
     data-streak="4"
     data-nmatch="4.00"
@@ -2617,6 +2741,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="38"
     data-ticker="2312"
+    data-name="金寶"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -2640,6 +2765,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="39"
     data-ticker="2887"
+    data-name="台新金"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2663,6 +2789,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="40"
     data-ticker="2409"
+    data-name="友達"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -2686,6 +2813,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="41"
     data-ticker="2367"
+    data-name="燿華"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2709,6 +2837,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="42"
     data-ticker="3481"
+    data-name="群創"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -2732,6 +2861,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="43"
     data-ticker="5876"
+    data-name="上海商銀"
     data-grade="1"
     data-streak="4"
     data-nmatch="4.00"
@@ -2755,6 +2885,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="44"
     data-ticker="2881"
+    data-name="富邦金"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2778,6 +2909,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="45"
     data-ticker="2892"
+    data-name="第一金"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2801,6 +2933,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="46"
     data-ticker="1513"
+    data-name="中興電"
     data-grade="1"
     data-streak="3"
     data-nmatch="4.00"
@@ -2824,6 +2957,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="47"
     data-ticker="2201"
+    data-name="裕隆"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2847,6 +2981,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="48"
     data-ticker="6176"
+    data-name="瑞儀"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2870,6 +3005,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="49"
     data-ticker="2543"
+    data-name="皇昌"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2893,6 +3029,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="50"
     data-ticker="1722"
+    data-name="台肥"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2916,6 +3053,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="51"
     data-ticker="3036"
+    data-name="文曄"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2939,6 +3077,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="52"
     data-ticker="4915"
+    data-name="致伸"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -2962,6 +3101,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="53"
     data-ticker="2027"
+    data-name="大成鋼"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -2985,6 +3125,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="54"
     data-ticker="2472"
+    data-name="立隆電"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -3008,6 +3149,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="55"
     data-ticker="8454"
+    data-name="富邦媒"
     data-grade="1"
     data-streak="3"
     data-nmatch="4.00"
@@ -3031,6 +3173,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="56"
     data-ticker="4919"
+    data-name="新唐"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -3054,6 +3197,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="57"
     data-ticker="3714"
+    data-name="富采"
     data-grade="1"
     data-streak="2"
     data-nmatch="4.00"
@@ -3077,6 +3221,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="58"
     data-ticker="3006"
+    data-name="晶豪科"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -3100,6 +3245,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="59"
     data-ticker="2498"
+    data-name="宏達電"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -3123,6 +3269,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="60"
     data-ticker="8422"
+    data-name="可寧衛*"
     data-grade="1"
     data-streak="1"
     data-nmatch="4.00"
@@ -3146,6 +3293,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="61"
     data-ticker="3044"
+    data-name="健鼎"
     data-grade="2"
     data-streak="3"
     data-nmatch="3.00"
@@ -3169,6 +3317,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="62"
     data-ticker="6472"
+    data-name="保瑞"
     data-grade="2"
     data-streak="2"
     data-nmatch="3.00"
@@ -3192,6 +3341,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="63"
     data-ticker="2351"
+    data-name="順德"
     data-grade="2"
     data-streak="5"
     data-nmatch="3.00"
@@ -3215,6 +3365,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="64"
     data-ticker="6257"
+    data-name="矽格"
     data-grade="2"
     data-streak="2"
     data-nmatch="3.00"
@@ -3238,6 +3389,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="65"
     data-ticker="2363"
+    data-name="矽統"
     data-grade="2"
     data-streak="2"
     data-nmatch="3.00"
@@ -3261,6 +3413,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="66"
     data-ticker="2354"
+    data-name="鴻準"
     data-grade="2"
     data-streak="2"
     data-nmatch="3.00"
@@ -3284,6 +3437,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="67"
     data-ticker="9945"
+    data-name="潤泰新"
     data-grade="2"
     data-streak="2"
     data-nmatch="3.00"
@@ -3307,6 +3461,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="68"
     data-ticker="8112"
+    data-name="至上"
     data-grade="2"
     data-streak="1"
     data-nmatch="3.00"
@@ -3330,6 +3485,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="69"
     data-ticker="2383"
+    data-name="台光電"
     data-grade="2"
     data-streak="1"
     data-nmatch="2.00"
@@ -3353,6 +3509,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="70"
     data-ticker="1210"
+    data-name="大成"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3376,6 +3533,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="71"
     data-ticker="2207"
+    data-name="和泰車"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3399,6 +3557,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="72"
     data-ticker="3026"
+    data-name="禾伸堂"
     data-grade="4"
     data-streak="5"
     data-nmatch="3.00"
@@ -3422,6 +3581,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="73"
     data-ticker="2633"
+    data-name="台灣高鐵"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3445,6 +3605,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="74"
     data-ticker="1304"
+    data-name="台聚"
     data-grade="4"
     data-streak="3"
     data-nmatch="3.00"
@@ -3468,6 +3629,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="75"
     data-ticker="2371"
+    data-name="大同"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3491,6 +3653,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="76"
     data-ticker="3711"
+    data-name="日月光投控"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3514,6 +3677,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="77"
     data-ticker="2882"
+    data-name="國泰金"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3537,6 +3701,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="78"
     data-ticker="6285"
+    data-name="啟碁"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3560,6 +3725,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="79"
     data-ticker="2105"
+    data-name="正新"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3583,6 +3749,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="80"
     data-ticker="2891"
+    data-name="中信金"
     data-grade="4"
     data-streak="3"
     data-nmatch="3.00"
@@ -3606,6 +3773,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="81"
     data-ticker="2337"
+    data-name="旺宏"
     data-grade="4"
     data-streak="3"
     data-nmatch="3.00"
@@ -3629,6 +3797,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="82"
     data-ticker="2474"
+    data-name="可成"
     data-grade="4"
     data-streak="3"
     data-nmatch="3.00"
@@ -3652,6 +3821,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="83"
     data-ticker="2408"
+    data-name="南亞科"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3675,6 +3845,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="84"
     data-ticker="2542"
+    data-name="興富發"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3698,6 +3869,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="85"
     data-ticker="6919"
+    data-name="康霈*"
     data-grade="4"
     data-streak="1"
     data-nmatch="3.00"
@@ -3721,6 +3893,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="86"
     data-ticker="4766"
+    data-name="南寶"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -3744,6 +3917,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="87"
     data-ticker="2362"
+    data-name="藍天"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -3767,6 +3941,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="88"
     data-ticker="2101"
+    data-name="南港"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -3790,6 +3965,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="89"
     data-ticker="7822"
+    data-name="倍利科"
     data-grade="4"
     data-streak="2"
     data-nmatch="2.00"
@@ -3813,6 +3989,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="90"
     data-ticker="5269"
+    data-name="祥碩"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -3836,6 +4013,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="91"
     data-ticker="3653"
+    data-name="健策"
     data-grade="4"
     data-streak="3"
     data-nmatch="2.00"
@@ -3859,6 +4037,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="92"
     data-ticker="2605"
+    data-name="新興"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -3882,6 +4061,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="93"
     data-ticker="6949"
+    data-name="沛爾生醫-創"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -3905,6 +4085,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="94"
     data-ticker="2883"
+    data-name="開發金"
     data-grade="4"
     data-streak="4"
     data-nmatch="2.00"
@@ -3928,6 +4109,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="95"
     data-ticker="4583"
+    data-name="台灣精銳"
     data-grade="4"
     data-streak="5"
     data-nmatch="2.00"
@@ -3951,6 +4133,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="96"
     data-ticker="5871"
+    data-name="中租-KY"
     data-grade="4"
     data-streak="5"
     data-nmatch="2.00"
@@ -3974,6 +4157,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="97"
     data-ticker="8028"
+    data-name="昇陽半導體"
     data-grade="4"
     data-streak="2"
     data-nmatch="2.00"
@@ -3997,6 +4181,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="98"
     data-ticker="1303"
+    data-name="南亞"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -4020,6 +4205,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="99"
     data-ticker="2368"
+    data-name="金像電"
     data-grade="4"
     data-streak="1"
     data-nmatch="2.00"
@@ -4043,6 +4229,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="100"
     data-ticker="2421"
+    data-name="建準"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -4066,6 +4253,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="101"
     data-ticker="3406"
+    data-name="玉晶光"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -4089,6 +4277,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="102"
     data-ticker="6691"
+    data-name="洋基工程"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -4112,6 +4301,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="103"
     data-ticker="2855"
+    data-name="統一證"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -4135,6 +4325,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="104"
     data-ticker="2838"
+    data-name="聯邦銀"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -4158,6 +4349,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="105"
     data-ticker="2606"
+    data-name="裕民"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -4181,6 +4373,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="106"
     data-ticker="3576"
+    data-name="聯合再生"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -4204,6 +4397,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="107"
     data-ticker="2327"
+    data-name="國巨"
     data-grade="4"
     data-streak="1"
     data-nmatch="1.00"
@@ -4227,6 +4421,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="108"
     data-ticker="3231"
+    data-name="緯創"
     data-grade="4"
     data-streak="2"
     data-nmatch="1.00"
@@ -4250,6 +4445,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="109"
     data-ticker="8039"
+    data-name="台虹"
     data-grade="4"
     data-streak="1"
     data-nmatch="0.00"
@@ -4273,6 +4469,7 @@ tr.detail-row td {
 </tr>
 <tr class="short-row" data-idx="110"
     data-ticker="6116"
+    data-name="彩晶"
     data-grade="4"
     data-streak="1"
     data-nmatch="0.00"
@@ -4752,6 +4949,52 @@ function _doSort(tabId, rowSel, stateKey, key) {
 
 function sortLong(key)  { _doSort('tab-long',  'tr.stock-row',  'long',  key); }
 function sortShort(key) { _doSort('tab-short', 'tr.short-row', 'short', key); }
+
+// ── 關鍵字篩選 ────────────────────────────────────────────────────────
+function filterRows(tab) {
+  const isLong   = tab === 'long';
+  const inputEl  = document.getElementById(isLong ? 'filterLongInput'  : 'filterShortInput');
+  const countEl  = document.getElementById(isLong ? 'filterLongCount'  : 'filterShortCount');
+  const rowSel   = isLong ? 'tr.stock-row' : 'tr.short-row';
+  const q = inputEl.value.trim().toLowerCase();
+
+  // 收起所有已展開細項（避免錯位）
+  document.querySelectorAll('tr.detail-row').forEach(r => r.remove());
+  document.querySelectorAll('tr.stock-row.expanded, tr.short-row.expanded')
+    .forEach(r => r.classList.remove('expanded'));
+
+  const rows = document.querySelectorAll(rowSel);
+  let visible = 0;
+  rows.forEach(tr => {
+    if (!q) {
+      tr.style.display = '';
+      visible++;
+    } else {
+      const ticker = (tr.dataset.ticker || '').toLowerCase();
+      const name   = (tr.dataset.name   || '').toLowerCase();
+      const match  = ticker.includes(q) || name.includes(q);
+      tr.style.display = match ? '' : 'none';
+      if (match) visible++;
+    }
+  });
+
+  // 更新計數
+  if (!q) {
+    countEl.textContent = '';
+  } else {
+    const total = rows.length;
+    countEl.textContent = `${visible} / ${total} 檔`;
+    countEl.style.color = visible === 0 ? '#c0392b' : '#2471a3';
+  }
+}
+
+function clearFilter(tab) {
+  const isLong  = tab === 'long';
+  const inputEl = document.getElementById(isLong ? 'filterLongInput' : 'filterShortInput');
+  inputEl.value = '';
+  filterRows(tab);
+  inputEl.focus();
+}
 </script>
 </body>
 </html>
