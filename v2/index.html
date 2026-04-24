@@ -51,8 +51,19 @@ body {
   flex: 1; min-width: 280px; background: #fff;
   border-radius: 12px; padding: 18px 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,.07);
+  transition: box-shadow .2s, border .2s;
+  border: 2px solid transparent;
+}
+.chart-box.clickable { cursor: pointer; }
+.chart-box.clickable:hover { box-shadow: 0 4px 18px rgba(0,0,0,.13); }
+.chart-box.chart-active {
+  border-color: #2471a3;
+  box-shadow: 0 4px 18px rgba(36,113,163,.25);
 }
 .chart-title { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 12px; }
+.chart-title .click-hint {
+  font-size: 10px; font-weight: 400; color: #aaa; margin-left: 6px;
+}
 /* ─ Table ─ */
 .tbl-wrap { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 12px; min-width: 900px; }
@@ -211,7 +222,7 @@ tr.detail-row td {
         padding:2px 10px;border-radius:12px;letter-spacing:.5px">v2</span>
     </div>
     <div class="meta">
-      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-24 20:27
+      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-24 21:04
       &nbsp;·&nbsp; 量化選股系統 v2 · 傳統籌碼策略
     </div>
   </div>
@@ -233,8 +244,8 @@ tr.detail-row td {
       <div class="chart-title">🎯 今日分數分佈</div>
       <canvas id="scoreChart" height="150"></canvas>
     </div>
-    <div class="chart-box" style="flex:1;min-width:220px">
-      <div class="chart-title">🥧 今日等級比例</div>
+    <div class="chart-box clickable" id="pieChartBox" style="flex:1;min-width:220px" title="點擊切片篩選清單">
+      <div class="chart-title">🥧 今日等級比例<span class="click-hint">▸ 點擊篩選</span></div>
       <canvas id="pieChart" height="150"></canvas>
     </div>
     
@@ -294,7 +305,7 @@ tr.detail-row td {
         </div>
       </div>
       <!-- ★ 關鍵字篩選列 (多頭) -->
-      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px">
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px;flex-wrap:wrap">
         <input id="filterLongInput" type="text" placeholder="🔍 代號 / 名稱關鍵字..."
                oninput="filterRows('long')"
                style="flex:1;max-width:280px;padding:6px 12px;border:1px solid #d0d5dd;
@@ -309,6 +320,10 @@ tr.detail-row td {
                 onmouseover="this.style.background='#f0f4ff';this.style.borderColor='#2471a3'"
                 onmouseout="this.style.background='#fff';this.style.borderColor='#d0d5dd'">✕ 清除</button>
         <span id="filterLongCount" style="font-size:12px;color:#888"></span>
+        <span id="chartFilterBadge" onclick="clearChartFilter()"
+              style="display:none;font-size:11px;color:#fff;background:#2471a3;
+                     border-radius:14px;padding:3px 10px;cursor:pointer;white-space:nowrap"
+              title="點擊清除圖表篩選">篩選中 ✕</span>
       </div>
       <div class="tbl-wrap">
         <table>
@@ -333,6 +348,8 @@ tr.detail-row td {
     data-ticker="2454"
     data-name="聯發科"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="5.00"
     data-score="104.0"
@@ -360,6 +377,8 @@ tr.detail-row td {
     data-ticker="2330"
     data-name="台積電"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="5.00"
     data-score="72.0"
@@ -387,6 +406,8 @@ tr.detail-row td {
     data-ticker="7786"
     data-name="東方風能"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="5.00"
     data-score="66.0"
@@ -414,6 +435,8 @@ tr.detail-row td {
     data-ticker="1314"
     data-name="中石化"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="5.00"
     data-score="30.0"
@@ -441,6 +464,8 @@ tr.detail-row td {
     data-ticker="3026"
     data-name="禾伸堂"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="4.00"
     data-score="96.0"
@@ -468,6 +493,8 @@ tr.detail-row td {
     data-ticker="2023"
     data-name="燁輝"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="4.00"
     data-score="94.0"
@@ -495,6 +522,8 @@ tr.detail-row td {
     data-ticker="8210"
     data-name="勤誠"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="1"
     data-streak="3"
     data-nmatch="4.00"
     data-score="76.0"
@@ -522,6 +551,8 @@ tr.detail-row td {
     data-ticker="6830"
     data-name="汎銓"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="2"
     data-streak="3"
     data-nmatch="4.00"
     data-score="44.0"
@@ -549,6 +580,8 @@ tr.detail-row td {
     data-ticker="2633"
     data-name="台灣高鐵"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="4.00"
     data-score="40.0"
@@ -576,6 +609,8 @@ tr.detail-row td {
     data-ticker="2379"
     data-name="瑞昱"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="0"
     data-streak="2"
     data-nmatch="4.00"
     data-score="30.0"
@@ -603,6 +638,8 @@ tr.detail-row td {
     data-ticker="3035"
     data-name="智原"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="2"
     data-streak="2"
     data-nmatch="4.00"
     data-score="30.0"
@@ -630,6 +667,8 @@ tr.detail-row td {
     data-ticker="3711"
     data-name="日月光投控"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="3"
     data-streak="1"
     data-nmatch="4.00"
     data-score="30.0"
@@ -657,6 +696,8 @@ tr.detail-row td {
     data-ticker="2356"
     data-name="英業達"
     data-grade="1"
+    data-gradelabel="B"
+    data-flowlevel="0"
     data-streak="1"
     data-nmatch="4.00"
     data-score="30.0"
@@ -684,6 +725,8 @@ tr.detail-row td {
     data-ticker="3714"
     data-name="富采"
     data-grade="2"
+    data-gradelabel="C"
+    data-flowlevel="2"
     data-streak="2"
     data-nmatch="3.00"
     data-score="60.0"
@@ -711,6 +754,8 @@ tr.detail-row td {
     data-ticker="2485"
     data-name="兆赫"
     data-grade="2"
+    data-gradelabel="C"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="2.00"
     data-score="102.0"
@@ -738,6 +783,8 @@ tr.detail-row td {
     data-ticker="2455"
     data-name="全新"
     data-grade="2"
+    data-gradelabel="C"
+    data-flowlevel="1"
     data-streak="8"
     data-nmatch="2.00"
     data-score="90.0"
@@ -765,6 +812,8 @@ tr.detail-row td {
     data-ticker="4919"
     data-name="新唐"
     data-grade="2"
+    data-gradelabel="C"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="1.00"
     data-score="46.0"
@@ -792,6 +841,8 @@ tr.detail-row td {
     data-ticker="3661"
     data-name="世芯-KY"
     data-grade="2"
+    data-gradelabel="C"
+    data-flowlevel="1"
     data-streak="11"
     data-nmatch="0.00"
     data-score="90.0"
@@ -819,6 +870,8 @@ tr.detail-row td {
     data-ticker="2072"
     data-name="世紀風電"
     data-grade="3"
+    data-gradelabel="D"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="0.00"
     data-score="46.0"
@@ -846,6 +899,8 @@ tr.detail-row td {
     data-ticker="3034"
     data-name="聯詠"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="3.00"
     data-score="74.0"
@@ -873,6 +928,8 @@ tr.detail-row td {
     data-ticker="2368"
     data-name="金像電"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="3.00"
     data-score="72.0"
@@ -900,6 +957,8 @@ tr.detail-row td {
     data-ticker="3037"
     data-name="欣興"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="8"
     data-nmatch="3.00"
     data-score="70.0"
@@ -927,6 +986,8 @@ tr.detail-row td {
     data-ticker="3413"
     data-name="京鼎"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="3.00"
     data-score="60.0"
@@ -954,6 +1015,8 @@ tr.detail-row td {
     data-ticker="8046"
     data-name="南電"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="3.00"
     data-score="60.0"
@@ -981,6 +1044,8 @@ tr.detail-row td {
     data-ticker="2059"
     data-name="川湖"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="3.00"
     data-score="50.0"
@@ -1008,6 +1073,8 @@ tr.detail-row td {
     data-ticker="7795"
     data-name="長廣"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="3.00"
     data-score="36.0"
@@ -1035,6 +1102,8 @@ tr.detail-row td {
     data-ticker="6944"
     data-name="兆聯實業"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="3.00"
     data-score="34.0"
@@ -1062,6 +1131,8 @@ tr.detail-row td {
     data-ticker="2472"
     data-name="立隆電"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="2"
     data-streak="2"
     data-nmatch="3.00"
     data-score="34.0"
@@ -1089,6 +1160,8 @@ tr.detail-row td {
     data-ticker="3023"
     data-name="信邦"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="0"
     data-streak="2"
     data-nmatch="3.00"
     data-score="32.0"
@@ -1116,6 +1189,8 @@ tr.detail-row td {
     data-ticker="2923"
     data-name="鼎固-KY"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="0"
     data-streak="10"
     data-nmatch="3.00"
     data-score="30.0"
@@ -1143,6 +1218,8 @@ tr.detail-row td {
     data-ticker="3231"
     data-name="緯創"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="3.00"
     data-score="30.0"
@@ -1170,6 +1247,8 @@ tr.detail-row td {
     data-ticker="1590"
     data-name="亞德客"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="2"
     data-streak="2"
     data-nmatch="3.00"
     data-score="30.0"
@@ -1197,6 +1276,8 @@ tr.detail-row td {
     data-ticker="3189"
     data-name="景碩"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="2.00"
     data-score="92.0"
@@ -1224,6 +1305,8 @@ tr.detail-row td {
     data-ticker="6491"
     data-name="晶碩"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="2.00"
     data-score="74.0"
@@ -1251,6 +1334,8 @@ tr.detail-row td {
     data-ticker="1736"
     data-name="喬山"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="2.00"
     data-score="60.0"
@@ -1278,6 +1363,8 @@ tr.detail-row td {
     data-ticker="6285"
     data-name="啟碁"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="2.00"
     data-score="60.0"
@@ -1305,6 +1392,8 @@ tr.detail-row td {
     data-ticker="3563"
     data-name="牧德"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="3"
     data-streak="1"
     data-nmatch="2.00"
     data-score="54.0"
@@ -1332,6 +1421,8 @@ tr.detail-row td {
     data-ticker="2383"
     data-name="台光電"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="2.00"
     data-score="50.0"
@@ -1359,6 +1450,8 @@ tr.detail-row td {
     data-ticker="3036"
     data-name="文曄"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="2"
     data-nmatch="2.00"
     data-score="46.0"
@@ -1386,6 +1479,8 @@ tr.detail-row td {
     data-ticker="2890"
     data-name="永豐金"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="0"
     data-streak="2"
     data-nmatch="2.00"
     data-score="32.0"
@@ -1413,6 +1508,8 @@ tr.detail-row td {
     data-ticker="2395"
     data-name="研華"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="2"
     data-nmatch="2.00"
     data-score="30.0"
@@ -1440,6 +1537,8 @@ tr.detail-row td {
     data-ticker="3017"
     data-name="奇鋐"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="2"
     data-streak="1"
     data-nmatch="1.00"
     data-score="100.0"
@@ -1467,6 +1566,8 @@ tr.detail-row td {
     data-ticker="6213"
     data-name="聯茂"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="1.00"
     data-score="56.0"
@@ -1494,6 +1595,8 @@ tr.detail-row td {
     data-ticker="6669"
     data-name="緯穎"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="1"
     data-streak="1"
     data-nmatch="1.00"
     data-score="54.0"
@@ -1521,6 +1624,8 @@ tr.detail-row td {
     data-ticker="3042"
     data-name="晶技"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="2"
     data-streak="3"
     data-nmatch="1.00"
     data-score="34.0"
@@ -1548,6 +1653,8 @@ tr.detail-row td {
     data-ticker="2105"
     data-name="正新"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="0"
     data-streak="2"
     data-nmatch="1.00"
     data-score="32.0"
@@ -1575,6 +1682,8 @@ tr.detail-row td {
     data-ticker="3576"
     data-name="聯合再生"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="3"
     data-streak="2"
     data-nmatch="1.00"
     data-score="30.0"
@@ -1602,6 +1711,8 @@ tr.detail-row td {
     data-ticker="2867"
     data-name="三商壽"
     data-grade="4"
+    data-gradelabel="X"
+    data-flowlevel="0"
     data-streak="2"
     data-nmatch="0.00"
     data-score="80.0"
@@ -4094,9 +4205,9 @@ new Chart(scoreCtx, {
   }
 });
 
-// ── 等級比例餅圖 ──────────────────────────────────────────────────────
+// ── 等級比例餅圖（可點擊篩選）────────────────────────────────────────
 const pieCtx = document.getElementById('pieChart').getContext('2d');
-new Chart(pieCtx, {
+const _pieChart = new Chart(pieCtx, {
   type: 'doughnut',
   data: {
     labels: ["A\u7d1a 0", "B\u7d1a 13", "C\u7d1a 5", "D\u7d1a 1", "X\u7d1a 29"],
@@ -4104,13 +4215,20 @@ new Chart(pieCtx, {
       data: [0, 13, 5, 1, 29],
       backgroundColor: ['#1a7f3c','#1555a0','#d4850a','#555','#ccc'],
       borderWidth: 2, borderColor: '#fff',
+      hoverOffset: 10,
     }]
   },
   options: {
     responsive: true,
     plugins: {
       legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 8 } },
-    }
+    },
+    onClick: (e, elements) => {
+      if (elements.length > 0) {
+        const idx = elements[0].index;
+        _toggleChartFilter('grade', idx);
+      }
+    },
   }
 });
 
@@ -4410,47 +4528,132 @@ function _doSort(tabId, rowSel, stateKey, key) {
 function sortLong(key)  { _doSort('tab-long',  'tr.stock-row',  'long',  key); }
 function sortShort(key) { _doSort('tab-short', 'tr.short-row', 'short', key); }
 
-// ── 關鍵字篩選 ────────────────────────────────────────────────────────
-function filterRows(tab) {
-  const isLong   = tab === 'long';
-  const inputEl  = document.getElementById(isLong ? 'filterLongInput'  : 'filterShortInput');
-  const countEl  = document.getElementById(isLong ? 'filterLongCount'  : 'filterShortCount');
-  const rowSel   = isLong ? 'tr.stock-row' : 'tr.short-row';
-  const q = inputEl.value.trim().toLowerCase();
+// ── 圖表篩選狀態 ──────────────────────────────────────────────────────
+let _cfType  = null;   // 'grade' | 'flow' | null
+let _cfValue = null;   // 等級 index (0-4) | 滲透 index (0-3) | null
 
-  // 收起所有已展開細項（避免錯位）
+const _GRADE_LABELS = ['A級', 'B級', 'C級', 'D級', 'X級'];
+const _FLOW_LABELS  = ['超強◆◆', '高◆', '中●', '低○'];
+const _FLOW_COLORS  = ['#e67e22', '#18a058', '#2471a3', '#aaa'];
+const _GRADE_COLORS = ['#1a7f3c','#1555a0','#d4850a','#555','#999'];
+
+function _toggleChartFilter(type, idx) {
+  // 同切片再點一次 → 取消篩選
+  if (_cfType === type && _cfValue === idx) {
+    _cfType = null; _cfValue = null;
+  } else {
+    _cfType = type; _cfValue = idx;
+  }
+  _applyAllFilters();
+  _updateChartBadge();
+  _highlightActiveChart();
+}
+
+function clearChartFilter() {
+  _cfType = null; _cfValue = null;
+  _applyAllFilters();
+  _updateChartBadge();
+  _highlightActiveChart();
+}
+
+function _updateChartBadge() {
+  const badge = document.getElementById('chartFilterBadge');
+  if (!badge) return;
+  if (_cfType === null) {
+    badge.style.display = 'none';
+    return;
+  }
+  let label = '', color = '#2471a3';
+  if (_cfType === 'grade') {
+    label = _GRADE_LABELS[_cfValue] || '';
+    color = _GRADE_COLORS[_cfValue] || '#2471a3';
+  } else {
+    label = _FLOW_LABELS[_cfValue]  || '';
+    color = _FLOW_COLORS[_cfValue]  || '#2471a3';
+  }
+  badge.textContent  = `圖表篩選：${label} ✕`;
+  badge.style.background = color;
+  badge.style.display = 'inline-block';
+}
+
+function _highlightActiveChart() {
+  const pieBox  = document.getElementById('pieChartBox');
+  const flowBox = document.getElementById('flowChartBox');
+  if (pieBox)  pieBox.classList.toggle('chart-active',  _cfType === 'grade');
+  if (flowBox) flowBox.classList.toggle('chart-active', _cfType === 'flow');
+}
+
+// ── 統一過濾（圖表篩選 + 關鍵字篩選同時套用）────────────────────────
+function _applyAllFilters() {
   document.querySelectorAll('tr.detail-row').forEach(r => r.remove());
   document.querySelectorAll('tr.stock-row.expanded, tr.short-row.expanded')
     .forEach(r => r.classList.remove('expanded'));
 
-  const rows = document.querySelectorAll(rowSel);
+  const q = (document.getElementById('filterLongInput')?.value || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('tr.stock-row');
   let visible = 0;
+
   rows.forEach(tr => {
-    if (!q) {
-      tr.style.display = '';
-      visible++;
-    } else {
+    let show = true;
+    // 圖表篩選
+    if (_cfType === 'grade') {
+      show = show && (tr.dataset.grade === String(_cfValue));
+    } else if (_cfType === 'flow') {
+      show = show && (tr.dataset.flowlevel === String(_cfValue));
+    }
+    // 關鍵字篩選
+    if (q) {
       const ticker = (tr.dataset.ticker || '').toLowerCase();
       const name   = (tr.dataset.name   || '').toLowerCase();
-      const match  = ticker.includes(q) || name.includes(q);
-      tr.style.display = match ? '' : 'none';
-      if (match) visible++;
+      show = show && (ticker.includes(q) || name.includes(q));
     }
+    tr.style.display = show ? '' : 'none';
+    if (show) visible++;
   });
 
-  // 更新計數
-  if (!q) {
-    countEl.textContent = '';
-  } else {
-    const total = rows.length;
-    countEl.textContent = `${visible} / ${total} 檔`;
+  const countEl = document.getElementById('filterLongCount');
+  if (countEl) {
+    const total = document.querySelectorAll('tr.stock-row').length;
+    if (_cfType !== null || q) {
+      countEl.textContent = `${visible} / ${total} 檔`;
+      countEl.style.color = visible === 0 ? '#c0392b' : '#2471a3';
+    } else {
+      countEl.textContent = '';
+    }
+  }
+}
+
+// ── 關鍵字篩選 ────────────────────────────────────────────────────────
+function filterRows(tab) {
+  if (tab === 'long') {
+    _applyAllFilters();   // 多頭：圖表篩選 + 關鍵字篩選統一走 _applyAllFilters
+    return;
+  }
+  // 空頭保持獨立關鍵字篩選
+  const inputEl  = document.getElementById('filterShortInput');
+  const countEl  = document.getElementById('filterShortCount');
+  const q = inputEl.value.trim().toLowerCase();
+
+  document.querySelectorAll('tr.detail-row').forEach(r => r.remove());
+  document.querySelectorAll('tr.short-row.expanded').forEach(r => r.classList.remove('expanded'));
+
+  const rows = document.querySelectorAll('tr.short-row');
+  let visible = 0;
+  rows.forEach(tr => {
+    const match = !q || (tr.dataset.ticker||'').toLowerCase().includes(q)
+                      || (tr.dataset.name||'').toLowerCase().includes(q);
+    tr.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  if (!q) { countEl.textContent = ''; }
+  else {
+    countEl.textContent = `${visible} / ${rows.length} 檔`;
     countEl.style.color = visible === 0 ? '#c0392b' : '#2471a3';
   }
 }
 
 function clearFilter(tab) {
-  const isLong  = tab === 'long';
-  const inputEl = document.getElementById(isLong ? 'filterLongInput' : 'filterShortInput');
+  const inputEl = document.getElementById(tab === 'long' ? 'filterLongInput' : 'filterShortInput');
   inputEl.value = '';
   filterRows(tab);
   inputEl.focus();
