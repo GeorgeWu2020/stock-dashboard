@@ -199,7 +199,7 @@ tr.detail-row td {
 <div style="background:linear-gradient(90deg,#1a5276,#1a7f3c);color:#fff;
   text-align:center;padding:8px 20px;font-size:12px;
   display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap">
-  <span style='font-weight:700;letter-spacing:.5px'>🆕 v3 新功能</span><span style='opacity:.6'>|</span><span>法人成交占比分析（高滲透◆ 中滲透● 低滲透○）</span><span style='opacity:.6'>|</span><span>低滲透信號自動剔除，提升歷史勝率精準度</span><a href='v2/index.html' style='color:#ffe082;font-size:11px;text-decoration:none;background:rgba(0,0,0,.25);border-radius:16px;padding:3px 12px;border:1px solid rgba(255,255,255,.3);white-space:nowrap'>查看 v2 版 →</a>
+  <span style='font-weight:700;letter-spacing:.5px'>🆕 v3 新功能</span><span style='opacity:.6'>|</span><span>法人成交占比等比例加權（得分 = sign × 占比 × 800）</span><span style='opacity:.6'>|</span><span>占比越高影響力越大，精準反映法人主導力度</span><a href='v2/index.html' style='color:#ffe082;font-size:11px;text-decoration:none;background:rgba(0,0,0,.25);border-radius:16px;padding:3px 12px;border:1px solid rgba(255,255,255,.3);white-space:nowrap'>查看 v2 版 →</a>
 </div>
 
 <!-- Header -->
@@ -211,8 +211,8 @@ tr.detail-row td {
         padding:2px 10px;border-radius:12px;letter-spacing:.5px">v3</span>
     </div>
     <div class="meta">
-      信號日期：2026-04-22 &nbsp;·&nbsp; 產生時間：2026-04-24 18:31
-      &nbsp;·&nbsp; 量化選股系統 v3 · 法人成交占比分析
+      信號日期：2026-04-22 &nbsp;·&nbsp; 產生時間：2026-04-24 19:38
+      &nbsp;·&nbsp; 量化選股系統 v3 · 法人占比等比例加權
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
@@ -290,7 +290,7 @@ tr.detail-row td {
           <b style="color:#18a058">✓✓</b>=正向
           <b style="color:#c0392b">✗✗</b>=強負向
           <b style="color:#c0392b">✗</b>=負向 &nbsp;—=中性
-          &nbsp;｜&nbsp; 占比：<b style="color:#18a058">◆</b>=高滲透&gt;3% <b style="color:#2471a3">●</b>=中滲透 0.5-3% <b style="color:#aaa">○</b>=低滲透&lt;0.5%
+          &nbsp;｜&nbsp; 占比顯示：<b style="color:#18a058">◆</b>&gt;3% <b style="color:#2471a3">●</b>0.5~3% <b style="color:#aaa">○</b>&lt;0.5% &nbsp;得分=sign×占比×800
         </div>
       </div>
       <!-- ★ 關鍵字篩選列 (多頭) -->
@@ -3980,7 +3980,7 @@ tr.detail-row td {
   </div>
 
   <div class="footer">
-    量化選股系統 v3 · 法人成交占比分析 · 本頁面每 5 分鐘自動刷新 · 資料僅供參考，投資須自負風險
+    量化選股系統 v3 · 法人占比等比例加權（score = sign × ratio × 800） · 本頁面每 5 分鐘自動刷新 · 資料僅供參考，投資須自負風險
   </div>
 
 </div><!-- /container -->
@@ -4034,13 +4034,13 @@ const scoreCtx = document.getElementById('scoreChart').getContext('2d');
 new Chart(scoreCtx, {
   type: 'bar',
   data: {
-    labels: ["0~9", "10~19", "20~29", "30~39", "40~49", "50~59", "60~69", "70~79", "80~89", "90~99"],
+    labels: ["<50", "50~99", "100~149", "150~199", "200~249", "250~299", "300~399", "400~499", "500+"],
     datasets: [{
       label: '股票數',
-      data: [0, 0, 0, 0, 0, 9, 4, 8, 7, 15],
+      data: [0, 35, 8, 0, 0, 0, 0, 0, 0],
       backgroundColor: [
-        '#e8e8e8','#c8d8f0','#a8c4e8','#7aaad0','#4a8fba',
-        '#2471a3','#1a5f8a','#155075','#114060','#0c3050',
+        '#e8e8e8','#d0e6f8','#a8c4e8','#7aaad0','#4a8fba',
+        '#2471a3','#1a5f8a','#155075','#0c3050',
       ],
       borderRadius: 4,
     }]
