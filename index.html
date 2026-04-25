@@ -211,7 +211,7 @@ tr.detail-row td {
 <div style="background:linear-gradient(90deg,#1a5276,#1a7f3c);color:#fff;
   text-align:center;padding:8px 20px;font-size:12px;
   display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap">
-  <span style='font-weight:700;letter-spacing:.5px'>🆕 v3 新功能</span><span style='opacity:.6'>|</span><span>法人成交占比等比例加權（得分 = sign × 占比 × 800）</span><span style='opacity:.6'>|</span><span>占比越高影響力越大，精準反映法人主導力度</span><a href='v2/index.html' style='color:#ffe082;font-size:11px;text-decoration:none;background:rgba(0,0,0,.25);border-radius:16px;padding:3px 12px;border:1px solid rgba(255,255,255,.3);white-space:nowrap'>查看 v2 版 →</a>
+  <span style='font-weight:700;letter-spacing:.5px'>🆕 v3 新功能</span><span style='opacity:.6'>|</span><span>法人成交占比等比例加權，占比越高影響力越大，精準反映法人主導力度</span><a href='v2/index.html' style='color:#ffe082;font-size:11px;text-decoration:none;background:rgba(0,0,0,.25);border-radius:16px;padding:3px 12px;border:1px solid rgba(255,255,255,.3);white-space:nowrap'>查看 v2 版 →</a>
 </div>
 
 <!-- Header -->
@@ -223,7 +223,7 @@ tr.detail-row td {
         padding:2px 10px;border-radius:12px;letter-spacing:.5px">v3</span>
     </div>
     <div class="meta">
-      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-25 23:25
+      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-26 03:13
       &nbsp;·&nbsp; 量化選股系統 v3 · 法人占比等比例加權
     </div>
   </div>
@@ -303,7 +303,7 @@ tr.detail-row td {
           <b style="color:#18a058">✓✓</b>=正向
           <b style="color:#c0392b">✗✗</b>=強負向
           <b style="color:#c0392b">✗</b>=負向 &nbsp;—=中性
-          &nbsp;｜&nbsp;<b style="color:#e67e22">◆◆</b>超強≥30% <b style="color:#18a058">◆</b>高10~30% <b style="color:#2471a3">●</b>中3~10% <b style="color:#aaa">○</b>低&lt;3% &nbsp;得分=sign×占比×800
+          &nbsp;｜&nbsp;<b style="color:#e67e22">◆◆</b>超強≥30% <b style="color:#18a058">◆</b>高10~30% <b style="color:#2471a3">●</b>中3~10% <b style="color:#aaa">○</b>低&lt;3%
         </div>
       </div>
       <!-- ★ 關鍵字篩選列 (多頭) -->
@@ -5506,116 +5506,14 @@ tr.detail-row td {
             <th class="sortable" onclick="sortV35('ratio')" title="外資法人成交占比">外資滲透<span class="sort-arrow"></span></th>
             <th class="sortable" onclick="sortV35('fisk')" title="外資連續買超天數">籌碼連買<span class="sort-arrow"></span></th>
             <th class="sortable" onclick="sortV35('close')">收盤<span class="sort-arrow"></span></th>
-            <th class="sortable" onclick="sortV35('expwr')" title="基於歷史回測之預期5日勝率">預期勝率<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35('expwr')" title="XGBoost ML 模型預測個股5日上漲機率（AUC=0.58，以2021-2024歷史訓練）">ML勝率預測<span class="sort-arrow"></span></th>
           </tr>
           
 <tr class="v35-row" data-idx="0"
-    data-ticker="2367" data-name="燿華"
-    data-zone="0" data-score="249.2"
-    data-ratio="0.3201" data-fisk="1"
-    data-close="57.40" data-expwr="56.6"
-    style="border-left:4px solid #c0392b">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2367</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">燿華</td>
-  <td style="text-align:center">
-    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">249</td>
-  <td style="text-align:center;font-weight:bold;color:#e67e22">32.0%◆◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">57.40</td>
-  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.6%</td>
-</tr>
-<tr class="v35-row" data-idx="1"
-    data-ticker="2915" data-name="潤泰全"
-    data-zone="0" data-score="215.5"
-    data-ratio="0.2694" data-fisk="1"
-    data-close="44.25" data-expwr="56.6"
-    style="border-left:4px solid #c0392b">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2915</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">潤泰全</td>
-  <td style="text-align:center">
-    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">216</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">26.9%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">44.25</td>
-  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.6%</td>
-</tr>
-<tr class="v35-row" data-idx="2"
-    data-ticker="2615" data-name="萬海"
-    data-zone="0" data-score="116.6"
-    data-ratio="0.2093" data-fisk="3"
-    data-close="74.20" data-expwr="56.6"
-    style="border-left:4px solid #c0392b">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2615</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">萬海</td>
-  <td style="text-align:center">
-    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">117</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">20.9%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">3天</td>
-  <td style="text-align:center">74.20</td>
-  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.6%</td>
-</tr>
-<tr class="v35-row" data-idx="3"
-    data-ticker="8131" data-name="福懋科"
-    data-zone="0" data-score="111.0"
-    data-ratio="0.1450" data-fisk="1"
-    data-close="57.90" data-expwr="56.6"
-    style="border-left:4px solid #c0392b">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">8131</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">福懋科</td>
-  <td style="text-align:center">
-    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">111</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">14.5%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">57.90</td>
-  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.6%</td>
-</tr>
-<tr class="v35-row" data-idx="4"
-    data-ticker="1736" data-name="喬山"
-    data-zone="0" data-score="109.5"
-    data-ratio="0.1348" data-fisk="1"
-    data-close="111.00" data-expwr="56.6"
-    style="border-left:4px solid #c0392b">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">1736</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">喬山</td>
-  <td style="text-align:center">
-    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">110</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">13.5%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">111.00</td>
-  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.6%</td>
-</tr>
-<tr class="v35-row" data-idx="5"
-    data-ticker="6491" data-name="晶碩"
-    data-zone="0" data-score="82.5"
-    data-ratio="0.1031" data-fisk="3"
-    data-close="283.50" data-expwr="56.6"
-    style="border-left:4px solid #c0392b">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">6491</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">晶碩</td>
-  <td style="text-align:center">
-    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">82</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">10.3%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">3天</td>
-  <td style="text-align:center">283.50</td>
-  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.6%</td>
-</tr>
-<tr class="v35-row" data-idx="6"
     data-ticker="7786" data-name="東方風能"
     data-zone="0" data-score="51.6"
     data-ratio="0.0563" data-fisk="1"
-    data-close="130.50" data-expwr="56.6"
+    data-close="130.50" data-expwr="70.8"
     style="border-left:4px solid #c0392b">
   <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">7786</td>
   <td style="padding:7px 8px;white-space:nowrap;text-align:center">東方風能</td>
@@ -5626,115 +5524,13 @@ tr.detail-row td {
   <td style="text-align:center;font-weight:bold;color:#2471a3">5.6%●</td>
   <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
   <td style="text-align:center">130.50</td>
-  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.6%</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">70.8%</td>
 </tr>
-<tr class="v35-row" data-idx="7"
-    data-ticker="1503" data-name="士電"
-    data-zone="1" data-score="191.7"
-    data-ratio="0.2686" data-fisk="1"
-    data-close="191.00" data-expwr="54.2"
-    style="border-left:4px solid #d4850a">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">1503</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">士電</td>
-  <td style="text-align:center">
-    <span style="background:#d4850a;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">C ↑↓</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">192</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">26.9%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">191.00</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">54.2%</td>
-</tr>
-<tr class="v35-row" data-idx="8"
-    data-ticker="2891" data-name="中信金"
-    data-zone="2" data-score="84.7"
-    data-ratio="0.3093" data-fisk="1"
-    data-close="52.90" data-expwr="53.8"
-    style="border-left:4px solid #1555a0">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2891</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">中信金</td>
-  <td style="text-align:center">
-    <span style="background:#1555a0;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">B ↓↑</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">85</td>
-  <td style="text-align:center;font-weight:bold;color:#e67e22">30.9%◆◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">52.90</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.8%</td>
-</tr>
-<tr class="v35-row" data-idx="9"
-    data-ticker="2382" data-name="廣達"
-    data-zone="3" data-score="214.2"
-    data-ratio="0.3216" data-fisk="1"
-    data-close="323.00" data-expwr="53.7"
-    style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2382</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">廣達</td>
-  <td style="text-align:center">
-    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">214</td>
-  <td style="text-align:center;font-weight:bold;color:#e67e22">32.2%◆◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">323.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
-</tr>
-<tr class="v35-row" data-idx="10"
-    data-ticker="3231" data-name="緯創"
-    data-zone="3" data-score="163.7"
-    data-ratio="0.2074" data-fisk="1"
-    data-close="141.50" data-expwr="53.7"
-    style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">3231</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">緯創</td>
-  <td style="text-align:center">
-    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">164</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">20.7%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">141.50</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
-</tr>
-<tr class="v35-row" data-idx="11"
-    data-ticker="2330" data-name="台積電"
-    data-zone="3" data-score="142.1"
-    data-ratio="0.1533" data-fisk="2"
-    data-close="2185.00" data-expwr="53.7"
-    style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2330</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">台積電</td>
-  <td style="text-align:center">
-    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">142</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">15.3%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
-  <td style="text-align:center">2185.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
-</tr>
-<tr class="v35-row" data-idx="12"
-    data-ticker="1773" data-name="勝一"
-    data-zone="3" data-score="139.5"
-    data-ratio="0.1744" data-fisk="2"
-    data-close="175.50" data-expwr="53.7"
-    style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">1773</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">勝一</td>
-  <td style="text-align:center">
-    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">140</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">17.4%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
-  <td style="text-align:center">175.50</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
-</tr>
-<tr class="v35-row" data-idx="13"
+<tr class="v35-row" data-idx="1"
     data-ticker="3034" data-name="聯詠"
     data-zone="3" data-score="134.9"
     data-ratio="0.0775" data-fisk="1"
-    data-close="418.00" data-expwr="53.7"
+    data-close="418.00" data-expwr="64.5"
     style="border-left:4px solid #1a7f3c">
   <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">3034</td>
   <td style="padding:7px 8px;white-space:nowrap;text-align:center">聯詠</td>
@@ -5745,64 +5541,13 @@ tr.detail-row td {
   <td style="text-align:center;font-weight:bold;color:#2471a3">7.7%●</td>
   <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
   <td style="text-align:center">418.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">64.5%</td>
 </tr>
-<tr class="v35-row" data-idx="14"
-    data-ticker="2345" data-name="智邦"
-    data-zone="3" data-score="126.0"
-    data-ratio="0.1658" data-fisk="1"
-    data-close="2140.00" data-expwr="53.7"
-    style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2345</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">智邦</td>
-  <td style="text-align:center">
-    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">126</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">16.6%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
-  <td style="text-align:center">2140.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
-</tr>
-<tr class="v35-row" data-idx="15"
-    data-ticker="6257" data-name="矽格"
-    data-zone="3" data-score="121.4"
-    data-ratio="0.2155" data-fisk="2"
-    data-close="185.00" data-expwr="53.7"
-    style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">6257</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">矽格</td>
-  <td style="text-align:center">
-    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">121</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">21.6%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
-  <td style="text-align:center">185.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
-</tr>
-<tr class="v35-row" data-idx="16"
-    data-ticker="6415" data-name="矽力-KY"
-    data-zone="3" data-score="99.4"
-    data-ratio="0.1338" data-fisk="2"
-    data-close="436.00" data-expwr="53.7"
-    style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">6415</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">矽力-KY</td>
-  <td style="text-align:center">
-    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
-  </td>
-  <td style="text-align:center;font-weight:bold">99</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">13.4%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
-  <td style="text-align:center">436.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
-</tr>
-<tr class="v35-row" data-idx="17"
+<tr class="v35-row" data-idx="2"
     data-ticker="2368" data-name="金像電"
     data-zone="3" data-score="97.8"
     data-ratio="0.0345" data-fisk="1"
-    data-close="1390.00" data-expwr="53.7"
+    data-close="1390.00" data-expwr="62.7"
     style="border-left:4px solid #1a7f3c">
   <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2368</td>
   <td style="padding:7px 8px;white-space:nowrap;text-align:center">金像電</td>
@@ -5813,64 +5558,149 @@ tr.detail-row td {
   <td style="text-align:center;font-weight:bold;color:#2471a3">3.4%●</td>
   <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
   <td style="text-align:center">1390.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">62.7%</td>
 </tr>
-<tr class="v35-row" data-idx="18"
-    data-ticker="6196" data-name="帆宣"
-    data-zone="3" data-score="90.7"
-    data-ratio="0.1196" data-fisk="2"
-    data-close="386.00" data-expwr="53.7"
+<tr class="v35-row" data-idx="3"
+    data-ticker="1503" data-name="士電"
+    data-zone="1" data-score="191.7"
+    data-ratio="0.2686" data-fisk="1"
+    data-close="191.00" data-expwr="62.6"
+    style="border-left:4px solid #d4850a">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">1503</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">士電</td>
+  <td style="text-align:center">
+    <span style="background:#d4850a;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">C ↑↓</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">192</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">26.9%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">191.00</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">62.6%</td>
+</tr>
+<tr class="v35-row" data-idx="4"
+    data-ticker="8131" data-name="福懋科"
+    data-zone="0" data-score="111.0"
+    data-ratio="0.1450" data-fisk="1"
+    data-close="57.90" data-expwr="62.3"
+    style="border-left:4px solid #c0392b">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">8131</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">福懋科</td>
+  <td style="text-align:center">
+    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">111</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">14.5%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">57.90</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">62.3%</td>
+</tr>
+<tr class="v35-row" data-idx="5"
+    data-ticker="2915" data-name="潤泰全"
+    data-zone="0" data-score="215.5"
+    data-ratio="0.2694" data-fisk="1"
+    data-close="44.25" data-expwr="62.0"
+    style="border-left:4px solid #c0392b">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2915</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">潤泰全</td>
+  <td style="text-align:center">
+    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">216</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">26.9%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">44.25</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">62.0%</td>
+</tr>
+<tr class="v35-row" data-idx="6"
+    data-ticker="2345" data-name="智邦"
+    data-zone="3" data-score="126.0"
+    data-ratio="0.1658" data-fisk="1"
+    data-close="2140.00" data-expwr="61.9"
     style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">6196</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">帆宣</td>
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2345</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">智邦</td>
   <td style="text-align:center">
     <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
   </td>
-  <td style="text-align:center;font-weight:bold">91</td>
-  <td style="text-align:center;font-weight:bold;color:#18a058">12.0%◆</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
-  <td style="text-align:center">386.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
+  <td style="text-align:center;font-weight:bold">126</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">16.6%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">2140.00</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">61.9%</td>
 </tr>
-<tr class="v35-row" data-idx="19"
-    data-ticker="3189" data-name="景碩"
-    data-zone="3" data-score="90.5"
-    data-ratio="0.0671" data-fisk="4"
-    data-close="526.00" data-expwr="53.7"
+<tr class="v35-row" data-idx="7"
+    data-ticker="2382" data-name="廣達"
+    data-zone="3" data-score="214.2"
+    data-ratio="0.3216" data-fisk="1"
+    data-close="323.00" data-expwr="61.6"
     style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">3189</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">景碩</td>
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2382</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">廣達</td>
   <td style="text-align:center">
     <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
   </td>
-  <td style="text-align:center;font-weight:bold">90</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">6.7%●</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">4天</td>
-  <td style="text-align:center">526.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
+  <td style="text-align:center;font-weight:bold">214</td>
+  <td style="text-align:center;font-weight:bold;color:#e67e22">32.2%◆◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">323.00</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">61.6%</td>
 </tr>
-<tr class="v35-row" data-idx="20"
-    data-ticker="3026" data-name="禾伸堂"
-    data-zone="3" data-score="84.6"
-    data-ratio="0.0533" data-fisk="2"
-    data-close="216.00" data-expwr="53.7"
-    style="border-left:4px solid #1a7f3c">
-  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">3026</td>
-  <td style="padding:7px 8px;white-space:nowrap;text-align:center">禾伸堂</td>
+<tr class="v35-row" data-idx="8"
+    data-ticker="2891" data-name="中信金"
+    data-zone="2" data-score="84.7"
+    data-ratio="0.3093" data-fisk="1"
+    data-close="52.90" data-expwr="61.1"
+    style="border-left:4px solid #1555a0">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2891</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">中信金</td>
   <td style="text-align:center">
-    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+    <span style="background:#1555a0;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">B ↓↑</span>
   </td>
   <td style="text-align:center;font-weight:bold">85</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">5.3%●</td>
-  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
-  <td style="text-align:center">216.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
+  <td style="text-align:center;font-weight:bold;color:#e67e22">30.9%◆◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">52.90</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">61.1%</td>
 </tr>
-<tr class="v35-row" data-idx="21"
+<tr class="v35-row" data-idx="9"
+    data-ticker="1736" data-name="喬山"
+    data-zone="0" data-score="109.5"
+    data-ratio="0.1348" data-fisk="1"
+    data-close="111.00" data-expwr="61.0"
+    style="border-left:4px solid #c0392b">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">1736</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">喬山</td>
+  <td style="text-align:center">
+    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">110</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">13.5%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">111.00</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">61.0%</td>
+</tr>
+<tr class="v35-row" data-idx="10"
+    data-ticker="2330" data-name="台積電"
+    data-zone="3" data-score="142.1"
+    data-ratio="0.1533" data-fisk="2"
+    data-close="2185.00" data-expwr="60.8"
+    style="border-left:4px solid #1a7f3c">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2330</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">台積電</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">142</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">15.3%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
+  <td style="text-align:center">2185.00</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">60.8%</td>
+</tr>
+<tr class="v35-row" data-idx="11"
     data-ticker="2454" data-name="聯發科"
     data-zone="3" data-score="73.8"
     data-ratio="0.0307" data-fisk="2"
-    data-close="2435.00" data-expwr="53.7"
+    data-close="2435.00" data-expwr="60.2"
     style="border-left:4px solid #1a7f3c">
   <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2454</td>
   <td style="padding:7px 8px;white-space:nowrap;text-align:center">聯發科</td>
@@ -5881,13 +5711,166 @@ tr.detail-row td {
   <td style="text-align:center;font-weight:bold;color:#2471a3">3.1%●</td>
   <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
   <td style="text-align:center">2435.00</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">60.2%</td>
 </tr>
-<tr class="v35-row" data-idx="22"
+<tr class="v35-row" data-idx="12"
+    data-ticker="2367" data-name="燿華"
+    data-zone="0" data-score="249.2"
+    data-ratio="0.3201" data-fisk="1"
+    data-close="57.40" data-expwr="58.9"
+    style="border-left:4px solid #c0392b">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2367</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">燿華</td>
+  <td style="text-align:center">
+    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">249</td>
+  <td style="text-align:center;font-weight:bold;color:#e67e22">32.0%◆◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">57.40</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">58.9%</td>
+</tr>
+<tr class="v35-row" data-idx="13"
+    data-ticker="3189" data-name="景碩"
+    data-zone="3" data-score="90.5"
+    data-ratio="0.0671" data-fisk="4"
+    data-close="526.00" data-expwr="58.6"
+    style="border-left:4px solid #1a7f3c">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">3189</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">景碩</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">90</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">6.7%●</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">4天</td>
+  <td style="text-align:center">526.00</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">58.6%</td>
+</tr>
+<tr class="v35-row" data-idx="14"
+    data-ticker="6257" data-name="矽格"
+    data-zone="3" data-score="121.4"
+    data-ratio="0.2155" data-fisk="2"
+    data-close="185.00" data-expwr="58.3"
+    style="border-left:4px solid #1a7f3c">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">6257</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">矽格</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">121</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">21.6%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
+  <td style="text-align:center">185.00</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">58.3%</td>
+</tr>
+<tr class="v35-row" data-idx="15"
+    data-ticker="3231" data-name="緯創"
+    data-zone="3" data-score="163.7"
+    data-ratio="0.2074" data-fisk="1"
+    data-close="141.50" data-expwr="58.0"
+    style="border-left:4px solid #1a7f3c">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">3231</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">緯創</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">164</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">20.7%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#aaa">1天</td>
+  <td style="text-align:center">141.50</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">58.0%</td>
+</tr>
+<tr class="v35-row" data-idx="16"
+    data-ticker="6491" data-name="晶碩"
+    data-zone="0" data-score="82.5"
+    data-ratio="0.1031" data-fisk="3"
+    data-close="283.50" data-expwr="57.2"
+    style="border-left:4px solid #c0392b">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">6491</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">晶碩</td>
+  <td style="text-align:center">
+    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">82</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">10.3%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">3天</td>
+  <td style="text-align:center">283.50</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">57.2%</td>
+</tr>
+<tr class="v35-row" data-idx="17"
+    data-ticker="2615" data-name="萬海"
+    data-zone="0" data-score="116.6"
+    data-ratio="0.2093" data-fisk="3"
+    data-close="74.20" data-expwr="56.7"
+    style="border-left:4px solid #c0392b">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">2615</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">萬海</td>
+  <td style="text-align:center">
+    <span style="background:#c0392b;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">D ↓↓</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">117</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">20.9%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">3天</td>
+  <td style="text-align:center">74.20</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.7%</td>
+</tr>
+<tr class="v35-row" data-idx="18"
+    data-ticker="6196" data-name="帆宣"
+    data-zone="3" data-score="90.7"
+    data-ratio="0.1196" data-fisk="2"
+    data-close="386.00" data-expwr="56.4"
+    style="border-left:4px solid #1a7f3c">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">6196</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">帆宣</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">91</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">12.0%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
+  <td style="text-align:center">386.00</td>
+  <td style="text-align:center;font-weight:bold;color:#1a7f3c">56.4%</td>
+</tr>
+<tr class="v35-row" data-idx="19"
+    data-ticker="1773" data-name="勝一"
+    data-zone="3" data-score="139.5"
+    data-ratio="0.1744" data-fisk="2"
+    data-close="175.50" data-expwr="55.2"
+    style="border-left:4px solid #1a7f3c">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">1773</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">勝一</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">140</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">17.4%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
+  <td style="text-align:center">175.50</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">55.2%</td>
+</tr>
+<tr class="v35-row" data-idx="20"
+    data-ticker="6415" data-name="矽力-KY"
+    data-zone="3" data-score="99.4"
+    data-ratio="0.1338" data-fisk="2"
+    data-close="436.00" data-expwr="52.9"
+    style="border-left:4px solid #1a7f3c">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">6415</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">矽力-KY</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">99</td>
+  <td style="text-align:center;font-weight:bold;color:#18a058">13.4%◆</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
+  <td style="text-align:center">436.00</td>
+  <td style="text-align:center;font-weight:bold;color:#888">52.9%</td>
+</tr>
+<tr class="v35-row" data-idx="21"
     data-ticker="1326" data-name="台化"
     data-zone="3" data-score="62.6"
     data-ratio="0.0993" data-fisk="2"
-    data-close="49.35" data-expwr="53.7"
+    data-close="49.35" data-expwr="51.5"
     style="border-left:4px solid #1a7f3c">
   <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">1326</td>
   <td style="padding:7px 8px;white-space:nowrap;text-align:center">台化</td>
@@ -5898,7 +5881,24 @@ tr.detail-row td {
   <td style="text-align:center;font-weight:bold;color:#2471a3">9.9%●</td>
   <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
   <td style="text-align:center">49.35</td>
-  <td style="text-align:center;font-weight:bold;color:#888">53.7%</td>
+  <td style="text-align:center;font-weight:bold;color:#888">51.5%</td>
+</tr>
+<tr class="v35-row" data-idx="22"
+    data-ticker="3026" data-name="禾伸堂"
+    data-zone="3" data-score="84.6"
+    data-ratio="0.0533" data-fisk="2"
+    data-close="216.00" data-expwr="48.3"
+    style="border-left:4px solid #1a7f3c">
+  <td style="padding:7px 10px;font-weight:bold;font-size:13px;text-align:center">3026</td>
+  <td style="padding:7px 8px;white-space:nowrap;text-align:center">禾伸堂</td>
+  <td style="text-align:center">
+    <span style="background:#1a7f3c;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:bold">A ↑↑</span>
+  </td>
+  <td style="text-align:center;font-weight:bold">85</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">5.3%●</td>
+  <td style="text-align:center;font-weight:bold;color:#2471a3">2天</td>
+  <td style="text-align:center">216.00</td>
+  <td style="text-align:center;font-weight:bold;color:#888">48.3%</td>
 </tr>
         </table>
       </div>
@@ -5911,7 +5911,7 @@ tr.detail-row td {
   </div>
 
   <div class="footer">
-    量化選股系統 v3 · 法人占比等比例加權（score = sign × ratio × 800） · 本頁面每 5 分鐘自動刷新 · 資料僅供參考，投資須自負風險
+    量化選股系統 v3 · 法人成交占比等比例加權 · 本頁面每 5 分鐘自動刷新 · 資料僅供參考，投資須自負風險
   </div>
 
 </div><!-- /container -->
