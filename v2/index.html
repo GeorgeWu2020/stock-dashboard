@@ -185,6 +185,7 @@ tr.detail-row td {
 }
 .tab-btn.active { color: #1a2035; border-bottom-color: #2471a3; }
 .tab-btn.short-tab.active { color: #8b1a1a; border-bottom-color: #c0392b; }
+.tab-btn.v35-tab.active { color: #5b2c8c; border-bottom-color: #7d3c98; }
 .tab-btn:hover { color: #1a2035; background: #f4f7fb; }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
@@ -222,7 +223,7 @@ tr.detail-row td {
         padding:2px 10px;border-radius:12px;letter-spacing:.5px">v2</span>
     </div>
     <div class="meta">
-      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-24 22:31
+      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-25 23:25
       &nbsp;·&nbsp; 量化選股系統 v2 · 傳統籌碼策略
     </div>
   </div>
@@ -255,6 +256,7 @@ tr.detail-row td {
   <div class="tab-bar" style="margin-top:24px">
     <button class="tab-btn active" onclick="switchTab('long',this)">📈 多頭策略 (48 檔)</button>
     <button class="tab-btn short-tab" onclick="switchTab('short',this)">📉 空頭策略 (95 檔)</button>
+    <button class="tab-btn v35-tab" onclick="switchTab('v35',this)">⭐ v3.5 首發訊號 (0 檔)</button>
   </div>
 
   <!-- ── 多頭 Tab ── -->
@@ -4129,6 +4131,92 @@ tr.detail-row td {
     </div>
   </div>
 
+  <!-- ── v3.5 首發訊號 Tab ── -->
+  <div id="tab-v35" class="tab-pane">
+    <div class="kpi-row" style="margin-top:16px;margin-bottom:16px">
+      
+        <div class="kpi-card" style="border-top:4px solid #c0392b">
+          <div class="kpi-label">D ↓↓</div>
+          <div class="kpi-val" style="color:#c0392b">0</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">歷史5日勝率 56.6%</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #d4850a">
+          <div class="kpi-label">C ↑↓</div>
+          <div class="kpi-val" style="color:#d4850a">0</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">歷史5日勝率 54.2%</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #1555a0">
+          <div class="kpi-label">B ↓↑</div>
+          <div class="kpi-val" style="color:#1555a0">0</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">歷史5日勝率 53.8%</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #1a7f3c">
+          <div class="kpi-label">A ↑↑</div>
+          <div class="kpi-val" style="color:#1a7f3c">0</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">歷史5日勝率 53.7%</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #7d3c98">
+          <div class="kpi-label">首發訊號總計</div>
+          <div class="kpi-val" style="color:#7d3c98">0</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">均值勝率 54~57%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="border-left-color:#7d3c98">
+        ⭐ v3.5 首發訊號清單
+        <span style="font-size:11px;font-weight:400;color:#888;margin-left:10px">
+          今日首次出現 · 回測5日勝率 54~57%
+        </span>
+      </div>
+      <div class="legend" style="background:#fdf2ff;border-radius:6px;padding:10px 16px;margin-bottom:8px">
+        <div style="font-size:12px;color:#555;line-height:2">
+          <b style="color:#7d3c98">策略邏輯：</b>
+          今日 fi_triggered=True 且 score≥50，且昨日未觸發（signal_streak=1）<br>
+          <b>等級排序（勝率高→低）：</b>
+          <span style="color:#c0392b;font-weight:bold">D↓↓ 56.6%</span> →
+          <span style="color:#d4850a;font-weight:bold">C↑↓ 54.2%</span> →
+          <span style="color:#1555a0;font-weight:bold">B↓↑ 53.8%</span> →
+          <span style="color:#1a7f3c;font-weight:bold">A↑↑ 53.7%</span>
+          &nbsp;（基於 2021-2026 回測，共 ~55,000 筆首發訊號）
+        </div>
+      </div>
+      <!-- v3.5 篩選列 -->
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px;flex-wrap:wrap">
+        <input id="filterV35Input" type="text" placeholder="🔍 代號 / 名稱關鍵字..."
+               oninput="filterV35()"
+               style="flex:1;max-width:280px;padding:6px 12px;border:1px solid #d0d5dd;
+                      border-radius:20px;font-size:13px;outline:none;
+                      font-family:inherit;transition:border .2s"
+               onfocus="this.style.borderColor='#7d3c98'"
+               onblur="this.style.borderColor='#d0d5dd'">
+        <button onclick="document.getElementById('filterV35Input').value='';filterV35()"
+                style="padding:5px 12px;border:1px solid #d0d5dd;border-radius:20px;
+                       background:#fff;cursor:pointer;font-size:12px;color:#666">✕ 清除</button>
+        <span id="filterV35Count" style="font-size:12px;color:#888"></span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr style="background:#3d1361;color:#fff">
+            <th class="sortable" onclick="sortV35('ticker')">代號<span class="sort-arrow"></span></th>
+            <th>名稱</th>
+            <th class="sortable" onclick="sortV35('zone')">等級<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35('score')">分數<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35('ratio')" title="外資法人成交占比">外資滲透<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35('fisk')" title="外資連續買超天數">籌碼連買<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35('close')">收盤<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35('expwr')" title="基於歷史回測之預期5日勝率">預期勝率<span class="sort-arrow"></span></th>
+          </tr>
+          
+        </table>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;background:#fdf2ff;border-radius:6px;font-size:11px;color:#888;line-height:1.8">
+        ⚠ 預期勝率為歷史回測統計值（2021/01–2026/04），非保證績效。
+        D 區等級（空頭格局）在首發訊號條件下勝率反而最高，可能因低位首發反彈機率較大。
+        建議搭配個股基本面與大盤環境判斷。
+      </div>
+    </div>
+  </div>
+
   <div class="footer">
     量化選股系統 v2 · 傳統籌碼策略 · 本頁面每 5 分鐘自動刷新 · 資料僅供參考，投資須自負風險
   </div>
@@ -4527,6 +4615,44 @@ function _doSort(tabId, rowSel, stateKey, key) {
 
 function sortLong(key)  { _doSort('tab-long',  'tr.stock-row',  'long',  key); }
 function sortShort(key) { _doSort('tab-short', 'tr.short-row', 'short', key); }
+function sortV35(key) {
+  const keyMap = {
+    ticker:'ticker', zone:'zone', score:'score', ratio:'ratio',
+    fisk:'fisk', close:'close', expwr:'expwr'
+  };
+  const attr = keyMap[key] || key;
+  const tab = document.getElementById('tab-v35');
+  const tbody = tab.querySelector('table');
+  const rows = Array.from(tbody.querySelectorAll('tr.v35-row'));
+  const isNum = ['zone','score','ratio','fisk','close','expwr'].includes(key);
+  const asc = (tbody._v35SortKey === attr && tbody._v35SortAsc);
+  tbody._v35SortKey = attr; tbody._v35SortAsc = !asc;
+  rows.sort((a, b) => {
+    let va = a.dataset[attr] ?? '', vb = b.dataset[attr] ?? '';
+    if (isNum) { va = parseFloat(va)||0; vb = parseFloat(vb)||0; }
+    const r = isNum ? (va - vb) : va.localeCompare(vb);
+    return asc ? r : -r;
+  });
+  rows.forEach(r => tbody.appendChild(r));
+  updateV35Count();
+}
+
+function filterV35() {
+  const q = (document.getElementById('filterV35Input').value || '').toLowerCase();
+  let vis = 0;
+  document.querySelectorAll('#tab-v35 tr.v35-row').forEach(r => {
+    const match = !q || r.dataset.ticker.toLowerCase().includes(q) ||
+                  r.dataset.name.toLowerCase().includes(q);
+    r.style.display = match ? '' : 'none';
+    if (match) vis++;
+  });
+  const el = document.getElementById('filterV35Count');
+  if (el) el.textContent = q ? `顯示 ${vis} / 0 檔` : '';
+}
+
+function updateV35Count() {
+  document.getElementById('filterV35Count').textContent = '';
+}
 
 // ── 圖表篩選狀態 ──────────────────────────────────────────────────────
 let _cfType  = null;   // 'grade' | 'flow' | null
