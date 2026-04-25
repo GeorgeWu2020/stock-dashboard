@@ -223,7 +223,7 @@ tr.detail-row td {
         padding:2px 10px;border-radius:12px;letter-spacing:.5px">v2</span>
     </div>
     <div class="meta">
-      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-26 03:13
+      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-26 03:43
       &nbsp;·&nbsp; 量化選股系統 v2 · 傳統籌碼策略
     </div>
   </div>
@@ -256,7 +256,7 @@ tr.detail-row td {
   <div class="tab-bar" style="margin-top:24px">
     <button class="tab-btn active" onclick="switchTab('long',this)">📈 多頭策略 (48 檔)</button>
     <button class="tab-btn short-tab" onclick="switchTab('short',this)">📉 空頭策略 (95 檔)</button>
-    <button class="tab-btn v35-tab" onclick="switchTab('v35',this)">⭐ v3.5 首發訊號 (0 檔)</button>
+    <button class="tab-btn v35-tab" onclick="switchTab('v35',this)">🤖 v3.5 ML選股 (0 檔)</button>
   </div>
 
   <!-- ── 多頭 Tab ── -->
@@ -4136,48 +4136,44 @@ tr.detail-row td {
     <div class="kpi-row" style="margin-top:16px;margin-bottom:16px">
       
         <div class="kpi-card" style="border-top:4px solid #c0392b">
-          <div class="kpi-label">D ↓↓</div>
+          <div class="kpi-label">ML勝率 >65%</div>
           <div class="kpi-val" style="color:#c0392b">0</div>
-          <div style="font-size:10px;color:#888;margin-top:2px">歷史5日勝率 56.6%</div>
         </div>
-        <div class="kpi-card" style="border-top:4px solid #d4850a">
-          <div class="kpi-label">C ↑↓</div>
-          <div class="kpi-val" style="color:#d4850a">0</div>
-          <div style="font-size:10px;color:#888;margin-top:2px">歷史5日勝率 54.2%</div>
+        <div class="kpi-card" style="border-top:4px solid #e67e22">
+          <div class="kpi-label">ML勝率 60-65%</div>
+          <div class="kpi-val" style="color:#e67e22">0</div>
         </div>
-        <div class="kpi-card" style="border-top:4px solid #1555a0">
-          <div class="kpi-label">B ↓↑</div>
-          <div class="kpi-val" style="color:#1555a0">0</div>
-          <div style="font-size:10px;color:#888;margin-top:2px">歷史5日勝率 53.8%</div>
+        <div class="kpi-card" style="border-top:4px solid #2471a3">
+          <div class="kpi-label">ML勝率 55-60%</div>
+          <div class="kpi-val" style="color:#2471a3">0</div>
         </div>
-        <div class="kpi-card" style="border-top:4px solid #1a7f3c">
-          <div class="kpi-label">A ↑↑</div>
-          <div class="kpi-val" style="color:#1a7f3c">0</div>
-          <div style="font-size:10px;color:#888;margin-top:2px">歷史5日勝率 53.7%</div>
+        <div class="kpi-card" style="border-top:4px solid #aaa">
+          <div class="kpi-label">ML勝率 <55%</div>
+          <div class="kpi-val" style="color:#aaa">0</div>
         </div>
         <div class="kpi-card" style="border-top:4px solid #7d3c98">
-          <div class="kpi-label">首發訊號總計</div>
+          <div class="kpi-label">ML選股總計</div>
           <div class="kpi-val" style="color:#7d3c98">0</div>
-          <div style="font-size:10px;color:#888;margin-top:2px">均值勝率 54~57%</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">門檻 >= 55%</div>
         </div>
     </div>
     <div class="card">
       <div class="card-title" style="border-left-color:#7d3c98">
-        ⭐ v3.5 首發訊號清單
+        🤖 v3.5 ML 選股清單
         <span style="font-size:11px;font-weight:400;color:#888;margin-left:10px">
-          今日首次出現 · 回測5日勝率 54~57%
+          XGBoost 預測 5 日上漲機率 &gt;= 55%
         </span>
       </div>
       <div class="legend" style="background:#fdf2ff;border-radius:6px;padding:10px 16px;margin-bottom:8px">
         <div style="font-size:12px;color:#555;line-height:2">
-          <b style="color:#7d3c98">策略邏輯：</b>
-          今日 fi_triggered=True 且 score≥50，且昨日未觸發（signal_streak=1）<br>
-          <b>等級排序（勝率高→低）：</b>
-          <span style="color:#c0392b;font-weight:bold">D↓↓ 56.6%</span> →
-          <span style="color:#d4850a;font-weight:bold">C↑↓ 54.2%</span> →
-          <span style="color:#1555a0;font-weight:bold">B↓↑ 53.8%</span> →
-          <span style="color:#1a7f3c;font-weight:bold">A↑↑ 53.7%</span>
-          &nbsp;（基於 2021-2026 回測，共 ~55,000 筆首發訊號）
+          <b style="color:#7d3c98">選股邏輯：</b>
+          對今日所有籌碼訊號股票以 XGBoost 預測 5 日上漲機率，取 ML 勝率 &gt;= 55% 的股票，依機率排序。<br>
+          <b>特徵：</b> zone · 均線位置 · 三大法人各自買超強度 / 連買天數 / 歷史勝率 · 成交占比 共 23 維<br>
+          <b>測試集表現（2025-2026）：</b>
+          AUC <b>0.58</b> ·
+          <span style="color:#c0392b;font-weight:bold">ML &gt;65% → 實際勝率 ~66%</span> ·
+          <span style="color:#e67e22;font-weight:bold">ML 60-65% → 約 59%</span> ·
+          <span style="color:#2471a3;font-weight:bold">ML 55-60% → 約 57%</span>
         </div>
       </div>
       <!-- v3.5 篩選列 -->
@@ -4210,9 +4206,8 @@ tr.detail-row td {
         </table>
       </div>
       <div style="margin-top:12px;padding:10px 14px;background:#fdf2ff;border-radius:6px;font-size:11px;color:#888;line-height:1.8">
-        ⚠ 預期勝率為歷史回測統計值（2021/01–2026/04），非保證績效。
-        D 區等級（空頭格局）在首發訊號條件下勝率反而最高，可能因低位首發反彈機率較大。
-        建議搭配個股基本面與大盤環境判斷。
+        ⚠ ML 勝率為 XGBoost 模型預測值（訓練期 2021-2024，測試期 2025-2026），非保證績效。
+        模型以三大法人籌碼特徵為主，不含基本面與總經資訊，建議搭配個股基本面與大盤環境判斷。
       </div>
     </div>
   </div>
