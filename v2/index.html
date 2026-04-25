@@ -223,7 +223,7 @@ tr.detail-row td {
         padding:2px 10px;border-radius:12px;letter-spacing:.5px">v2</span>
     </div>
     <div class="meta">
-      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-26 03:43
+      信號日期：2026-04-24 &nbsp;·&nbsp; 產生時間：2026-04-26 04:02
       &nbsp;·&nbsp; 量化選股系統 v2 · 傳統籌碼策略
     </div>
   </div>
@@ -4135,26 +4135,39 @@ tr.detail-row td {
   <div id="tab-v35" class="tab-pane">
     <div class="kpi-row" style="margin-top:16px;margin-bottom:16px">
       
+        <div class="kpi-card" style="border-top:4px solid #18a058">
+          <div class="kpi-label">ML 多頭選股</div>
+          <div class="kpi-val" style="color:#18a058">0</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">P(漲) >= 55%</div>
+        </div>
         <div class="kpi-card" style="border-top:4px solid #c0392b">
-          <div class="kpi-label">ML勝率 >65%</div>
+          <div class="kpi-label">多頭 >65%</div>
           <div class="kpi-val" style="color:#c0392b">0</div>
         </div>
         <div class="kpi-card" style="border-top:4px solid #e67e22">
-          <div class="kpi-label">ML勝率 60-65%</div>
+          <div class="kpi-label">多頭 60-65%</div>
           <div class="kpi-val" style="color:#e67e22">0</div>
         </div>
         <div class="kpi-card" style="border-top:4px solid #2471a3">
-          <div class="kpi-label">ML勝率 55-60%</div>
+          <div class="kpi-label">多頭 55-60%</div>
           <div class="kpi-val" style="color:#2471a3">0</div>
         </div>
-        <div class="kpi-card" style="border-top:4px solid #aaa">
-          <div class="kpi-label">ML勝率 <55%</div>
-          <div class="kpi-val" style="color:#aaa">0</div>
+        <div class="kpi-card" style="border-top:4px solid #7d3c98">
+          <div class="kpi-label">ML 空頭選股</div>
+          <div class="kpi-val" style="color:#7d3c98">0</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">P(跌) >= 55%</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #4a235a">
+          <div class="kpi-label">空頭 >65%</div>
+          <div class="kpi-val" style="color:#4a235a">0</div>
         </div>
         <div class="kpi-card" style="border-top:4px solid #7d3c98">
-          <div class="kpi-label">ML選股總計</div>
+          <div class="kpi-label">空頭 60-65%</div>
           <div class="kpi-val" style="color:#7d3c98">0</div>
-          <div style="font-size:10px;color:#888;margin-top:2px">門檻 >= 55%</div>
+        </div>
+        <div class="kpi-card" style="border-top:4px solid #a569bd">
+          <div class="kpi-label">空頭 55-60%</div>
+          <div class="kpi-val" style="color:#a569bd">0</div>
         </div>
     </div>
     <div class="card">
@@ -4166,48 +4179,86 @@ tr.detail-row td {
       </div>
       <div class="legend" style="background:#fdf2ff;border-radius:6px;padding:10px 16px;margin-bottom:8px">
         <div style="font-size:12px;color:#555;line-height:2">
-          <b style="color:#7d3c98">選股邏輯：</b>
-          對今日所有籌碼訊號股票以 XGBoost 預測 5 日上漲機率，取 ML 勝率 &gt;= 55% 的股票，依機率排序。<br>
-          <b>特徵：</b> zone · 均線位置 · 三大法人各自買超強度 / 連買天數 / 歷史勝率 · 成交占比 共 23 維<br>
-          <b>測試集表現（2025-2026）：</b>
-          AUC <b>0.58</b> ·
-          <span style="color:#c0392b;font-weight:bold">ML &gt;65% → 實際勝率 ~66%</span> ·
-          <span style="color:#e67e22;font-weight:bold">ML 60-65% → 約 59%</span> ·
-          <span style="color:#2471a3;font-weight:bold">ML 55-60% → 約 57%</span>
+          <b style="color:#7d3c98">模型：</b> XGBoost (AUC=0.58，訓練 2021-2024) · 特徵 23 維（三大法人流向 / 趨勢 / 均線）<br>
+          <b style="color:#18a058">多頭</b>：P(5日上漲) &gt;= 55% →
+          <span style="color:#c0392b;font-weight:bold">&gt;65% 實際勝率~66%</span> ·
+          <span style="color:#e67e22;font-weight:bold">60-65% → ~59%</span> ·
+          <span style="color:#2471a3;font-weight:bold">55-60% → ~57%</span>&nbsp;&nbsp;
+          <b style="color:#7d3c98">空頭</b>：P(5日下跌) &gt;= 55%（同模型反向）
         </div>
       </div>
-      <!-- v3.5 篩選列 -->
-      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px;flex-wrap:wrap">
-        <input id="filterV35Input" type="text" placeholder="🔍 代號 / 名稱關鍵字..."
-               oninput="filterV35()"
-               style="flex:1;max-width:280px;padding:6px 12px;border:1px solid #d0d5dd;
-                      border-radius:20px;font-size:13px;outline:none;
-                      font-family:inherit;transition:border .2s"
-               onfocus="this.style.borderColor='#7d3c98'"
+
+      <!-- ── ML 多頭 ── -->
+      <div class="card-title" style="border-left-color:#18a058;margin-top:16px">
+        📈 ML 多頭選股
+        <span style="font-size:11px;font-weight:400;color:#888;margin-left:8px">
+          P(5日上漲) &gt;= 55% · 共 0 檔
+        </span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap">
+        <input id="filterV35LInput" type="text" placeholder="🔍 代號 / 名稱..."
+               oninput="filterV35L()"
+               style="flex:1;max-width:260px;padding:5px 12px;border:1px solid #d0d5dd;
+                      border-radius:20px;font-size:13px;outline:none;font-family:inherit"
+               onfocus="this.style.borderColor='#18a058'"
                onblur="this.style.borderColor='#d0d5dd'">
-        <button onclick="document.getElementById('filterV35Input').value='';filterV35()"
-                style="padding:5px 12px;border:1px solid #d0d5dd;border-radius:20px;
-                       background:#fff;cursor:pointer;font-size:12px;color:#666">✕ 清除</button>
-        <span id="filterV35Count" style="font-size:12px;color:#888"></span>
+        <button onclick="document.getElementById('filterV35LInput').value='';filterV35L()"
+                style="padding:4px 12px;border:1px solid #d0d5dd;border-radius:20px;background:#fff;cursor:pointer;font-size:12px;color:#666">✕</button>
+        <span id="filterV35LCount" style="font-size:12px;color:#888"></span>
       </div>
       <div class="tbl-wrap">
         <table>
-          <tr style="background:#3d1361;color:#fff">
-            <th class="sortable" onclick="sortV35('ticker')">代號<span class="sort-arrow"></span></th>
+          <tr style="background:#1a5c2a;color:#fff">
+            <th class="sortable" onclick="sortV35L('ticker')">代號<span class="sort-arrow"></span></th>
             <th>名稱</th>
-            <th class="sortable" onclick="sortV35('zone')">等級<span class="sort-arrow"></span></th>
-            <th class="sortable" onclick="sortV35('score')">分數<span class="sort-arrow"></span></th>
-            <th class="sortable" onclick="sortV35('ratio')" title="外資法人成交占比">外資滲透<span class="sort-arrow"></span></th>
-            <th class="sortable" onclick="sortV35('fisk')" title="外資連續買超天數">籌碼連買<span class="sort-arrow"></span></th>
-            <th class="sortable" onclick="sortV35('close')">收盤<span class="sort-arrow"></span></th>
-            <th class="sortable" onclick="sortV35('expwr')" title="XGBoost ML 模型預測個股5日上漲機率（AUC=0.58，以2021-2024歷史訓練）">ML勝率預測<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35L('zone')">趨勢區<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35L('score')">分數<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35L('ratio')" title="外資成交占比">外資滲透<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35L('fisk')" title="外資連續買超天數">連買天</th>
+            <th class="sortable" onclick="sortV35L('close')">收盤<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35L('expwr')" title="P(5日上漲)">ML P(漲)<span class="sort-arrow"></span></th>
           </tr>
           
         </table>
       </div>
+
+      <!-- ── ML 空頭 ── -->
+      <div class="card-title" style="border-left-color:#7d3c98;margin-top:24px">
+        📉 ML 空頭選股
+        <span style="font-size:11px;font-weight:400;color:#888;margin-left:8px">
+          P(5日下跌) &gt;= 55% · 共 0 檔
+        </span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap">
+        <input id="filterV35SInput" type="text" placeholder="🔍 代號 / 名稱..."
+               oninput="filterV35S()"
+               style="flex:1;max-width:260px;padding:5px 12px;border:1px solid #d0d5dd;
+                      border-radius:20px;font-size:13px;outline:none;font-family:inherit"
+               onfocus="this.style.borderColor='#7d3c98'"
+               onblur="this.style.borderColor='#d0d5dd'">
+        <button onclick="document.getElementById('filterV35SInput').value='';filterV35S()"
+                style="padding:4px 12px;border:1px solid #d0d5dd;border-radius:20px;background:#fff;cursor:pointer;font-size:12px;color:#666">✕</button>
+        <span id="filterV35SCount" style="font-size:12px;color:#888"></span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr style="background:#4a235a;color:#fff">
+            <th class="sortable" onclick="sortV35S('ticker')">代號<span class="sort-arrow"></span></th>
+            <th>名稱</th>
+            <th class="sortable" onclick="sortV35S('zone')">趨勢區<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35S('score')">分數<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35S('ratio')" title="外資成交占比">外資滲透<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35S('fisk')" title="外資連續賣超天數">連賣天</th>
+            <th class="sortable" onclick="sortV35S('close')">收盤<span class="sort-arrow"></span></th>
+            <th class="sortable" onclick="sortV35S('expwr')" title="P(5日下跌)">ML P(跌)<span class="sort-arrow"></span></th>
+          </tr>
+          
+        </table>
+      </div>
+
       <div style="margin-top:12px;padding:10px 14px;background:#fdf2ff;border-radius:6px;font-size:11px;color:#888;line-height:1.8">
-        ⚠ ML 勝率為 XGBoost 模型預測值（訓練期 2021-2024，測試期 2025-2026），非保證績效。
-        模型以三大法人籌碼特徵為主，不含基本面與總經資訊，建議搭配個股基本面與大盤環境判斷。
+        ⚠ ML 預測為統計期望值（訓練 2021-2024），非保證績效。多頭 / 空頭選股可能存在同一股票（模型中性區間兩側均未達門檻時不入選）。
+        建議搭配個股基本面、大盤環境及風險管理判斷。
       </div>
     </div>
   </div>
@@ -4610,44 +4661,43 @@ function _doSort(tabId, rowSel, stateKey, key) {
 
 function sortLong(key)  { _doSort('tab-long',  'tr.stock-row',  'long',  key); }
 function sortShort(key) { _doSort('tab-short', 'tr.short-row', 'short', key); }
-function sortV35(key) {
-  const keyMap = {
-    ticker:'ticker', zone:'zone', score:'score', ratio:'ratio',
-    fisk:'fisk', close:'close', expwr:'expwr'
-  };
-  const attr = keyMap[key] || key;
-  const tab = document.getElementById('tab-v35');
-  const tbody = tab.querySelector('table');
-  const rows = Array.from(tbody.querySelectorAll('tr.v35-row'));
+// ── v3.5 ML 多頭排序 / 篩選 ──
+function _sortV35Table(rowClass, tableIdx, key, stateKey) {
   const isNum = ['zone','score','ratio','fisk','close','expwr'].includes(key);
-  const asc = (tbody._v35SortKey === attr && tbody._v35SortAsc);
-  tbody._v35SortKey = attr; tbody._v35SortAsc = !asc;
+  const tables = document.querySelectorAll('#tab-v35 table');
+  if (!tables[tableIdx]) return;
+  const tbody = tables[tableIdx];
+  const rows  = Array.from(tbody.querySelectorAll('tr.' + rowClass));
+  const asc   = (tbody[stateKey+'Key'] === key && tbody[stateKey+'Asc']);
+  tbody[stateKey+'Key'] = key; tbody[stateKey+'Asc'] = !asc;
   rows.sort((a, b) => {
-    let va = a.dataset[attr] ?? '', vb = b.dataset[attr] ?? '';
+    let va = a.dataset[key] ?? '', vb = b.dataset[key] ?? '';
     if (isNum) { va = parseFloat(va)||0; vb = parseFloat(vb)||0; }
     const r = isNum ? (va - vb) : va.localeCompare(vb);
     return asc ? r : -r;
   });
   rows.forEach(r => tbody.appendChild(r));
-  updateV35Count();
 }
-
-function filterV35() {
-  const q = (document.getElementById('filterV35Input').value || '').toLowerCase();
+function _filterV35Table(rowClass, inputId, countId, total) {
+  const q = (document.getElementById(inputId).value || '').toLowerCase();
   let vis = 0;
-  document.querySelectorAll('#tab-v35 tr.v35-row').forEach(r => {
+  document.querySelectorAll('#tab-v35 tr.' + rowClass).forEach(r => {
     const match = !q || r.dataset.ticker.toLowerCase().includes(q) ||
                   r.dataset.name.toLowerCase().includes(q);
     r.style.display = match ? '' : 'none';
     if (match) vis++;
   });
-  const el = document.getElementById('filterV35Count');
-  if (el) el.textContent = q ? `顯示 ${vis} / 0 檔` : '';
+  const el = document.getElementById(countId);
+  if (el) el.textContent = q ? `顯示 ${vis} / ${total} 檔` : '';
 }
 
-function updateV35Count() {
-  document.getElementById('filterV35Count').textContent = '';
-}
+function sortV35L(key) { _sortV35Table('v35l-row', 0, key, '_v35l'); }
+function sortV35S(key) { _sortV35Table('v35s-row', 1, key, '_v35s'); }
+function filterV35L() { _filterV35Table('v35l-row','filterV35LInput','filterV35LCount',0); }
+function filterV35S() { _filterV35Table('v35s-row','filterV35SInput','filterV35SCount',0); }
+// legacy aliases (安全起見保留)
+function sortV35(key) { sortV35L(key); }
+function filterV35() { filterV35L(); }
 
 // ── 圖表篩選狀態 ──────────────────────────────────────────────────────
 let _cfType  = null;   // 'grade' | 'flow' | null
