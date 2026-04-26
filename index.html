@@ -3,58 +3,504 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📊 量化選股 v4 — 2026/04/24</title>
+<title>🤖 v4 ML選股 — 2026/04/24</title>
 <style>
-* { box-sizing:border-box; margin:0; padding:0; }
-body {
-  font-family: 'Microsoft JhengHei','PingFang TC',sans-serif;
-  background: linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-  min-height: 100vh; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; color:#fff; padding:40px 20px;
-}
-.badge { background:#7d3c98; color:#fff; font-size:11px; font-weight:700;
-  padding:3px 10px; border-radius:12px; letter-spacing:.5px; margin-bottom:16px; }
-h1 { font-size:36px; font-weight:800; letter-spacing:2px; margin-bottom:8px; }
-.sub { font-size:15px; color:#c8b4e0; margin-bottom:40px; }
-.cards { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-bottom:48px; }
-.card {
-  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
-  border-radius:16px; padding:24px 32px; text-align:center; min-width:180px;
-}
-.card .num { font-size:40px; font-weight:800; color:#a78bfa; }
-.card .lbl { font-size:12px; color:#c4b5fd; margin-top:4px; }
-.links { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-.links a {
-  color:#ffe082; font-size:13px; text-decoration:none;
-  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
-  border-radius:20px; padding:8px 20px; transition:background .2s;
-}
-.links a:hover { background:rgba(255,255,255,.2); }
-.eta { margin-top:40px; font-size:12px; color:#7c6a9c; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
+  background:#f5f3ff;color:#222;min-height:100vh}
+/* ── header ── */
+.header{background:linear-gradient(135deg,#4b1c77,#7d3c98);
+  color:#fff;padding:0 24px;display:flex;align-items:center;
+  justify-content:space-between;min-height:56px;flex-wrap:wrap;gap:8px}
+.header-left{display:flex;align-items:center;gap:12px}
+.header-title{font-size:18px;font-weight:800;letter-spacing:.5px}
+.header-date{font-size:13px;opacity:.8;background:rgba(0,0,0,.2);
+  border-radius:12px;padding:2px 10px}
+.nav-links{display:flex;gap:8px;flex-wrap:wrap}
+.nav-links a{color:#ffe082;font-size:12px;text-decoration:none;
+  background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.3);
+  border-radius:16px;padding:4px 14px;white-space:nowrap;
+  transition:background .2s}
+.nav-links a:hover{background:rgba(0,0,0,.45)}
+/* ── market bar ── */
+.mkt-bar{background:#fff;border-bottom:1px solid #e0d6f5;
+  padding:8px 24px;display:flex;align-items:center;gap:20px;
+  font-size:13px;flex-wrap:wrap}
+.mkt-badge{font-weight:700;font-size:11px;padding:2px 10px;
+  border-radius:10px;color:#fff}
+/* ── kpi row ── */
+.kpi-row{display:flex;gap:16px;padding:16px 24px;flex-wrap:wrap}
+.kpi{background:#fff;border-radius:12px;padding:14px 20px;
+  flex:1;min-width:140px;text-align:center;
+  box-shadow:0 1px 6px rgba(0,0,0,.06);border-top:3px solid #7d3c98}
+.kpi-num{font-size:28px;font-weight:800;color:#6c35a0}
+.kpi-lbl{font-size:11px;color:#888;margin-top:4px}
+/* ── table section ── */
+.section{padding:0 24px 24px}
+.section-title{font-size:14px;font-weight:700;color:#4b1c77;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.controls{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;
+  align-items:center}
+.controls input{border:1px solid #ddd;border-radius:8px;padding:6px 12px;
+  font-size:13px;outline:none;flex:1;min-width:160px;max-width:280px}
+.controls input:focus{border-color:#7d3c98}
+.controls label{font-size:12px;color:#888;white-space:nowrap}
+.sort-hint{font-size:11px;color:#aaa}
+.tbl-wrap{overflow-x:auto;border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08)}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:13px}
+th{background:#4b1c77;color:#fff;padding:10px 8px;
+  text-align:left;white-space:nowrap;cursor:pointer;
+  user-select:none;position:sticky;top:0;z-index:2}
+th:hover{background:#6c35a0}
+th.sorted-asc::after{content:" ↑"}
+th.sorted-desc::after{content:" ↓"}
+td{padding:8px 8px;border-bottom:1px solid #f0eaf8;
+  white-space:nowrap}
+tr:hover td{background:#f3eeff!important}
+/* ── legend ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;
+  font-size:11px;color:#888;padding:8px 0 16px}
+.legend-item{display:flex;align-items:center;gap:4px}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+/* ── footer ── */
+.footer{background:#4b1c77;color:#c4b5fd;
+  padding:16px 24px;font-size:12px;text-align:center;margin-top:8px}
+.footer a{color:#ffe082;text-decoration:none}
 </style>
 </head>
 <body>
-  <div class="badge">🚧 開發中</div>
-  <h1>🤖 量化選股 v4</h1>
-  <div class="sub">XGBoost ML 全量選股 · 個股勝率預測 · 多頭 / 空頭雙向</div>
-  <div class="cards">
-    <div class="card">
-      <div class="num">78</div>
-      <div class="lbl">今日 v3 訊號股</div>
-    </div>
-    <div class="card">
-      <div class="num" style="color:#34d399">AUC 0.58</div>
-      <div class="lbl">ML 模型測試集表現</div>
-    </div>
-    <div class="card">
-      <div class="num" style="color:#fb923c">~66%</div>
-      <div class="lbl">ML &gt;65% 實際勝率</div>
-    </div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <span class="header-title">🤖 量化選股 v4 ML</span>
+    <span class="header-date">2026/04/24</span>
   </div>
-  <div class="links">
-    <a href="v3/index.html">📊 查看 v3 籌碼策略</a>
-    <a href="v2/index.html">📋 查看 v2 傳統版</a>
+  <div class="nav-links">
+    <a href="v3/index.html">📊 v3 籌碼策略</a>
+    <a href="v2/index.html">📋 v2 傳統版</a>
   </div>
-  <div class="eta">v4 正在開發中 · 資料日期：2026/04/24</div>
+</div>
+
+<!-- Market bar -->
+<div class="mkt-bar">
+  <span style="color:#555;font-weight:600">加權指數</span>
+  <span style="font-weight:700;font-size:15px">38,932</span>
+  <span class="mkt-badge" style="background:#e74c3c">極度超買</span>
+  <span>RSI <strong>93</strong></span>
+  <span style="color:#888">5日 <strong style="color:#18a058">+5.8%</strong></span>
+  <span style="color:#888">20日 <strong style="color:#18a058">+16.4%</strong></span>
+  <span style="margin-left:auto;color:#aaa;font-size:11px">更新：2026-04-26 20:00</span>
+</div>
+
+<!-- KPI -->
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-num">10</div>
+    <div class="kpi-lbl">ML 候選股（今日）</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num" style="color:#9b59b6">66.9%</div>
+    <div class="kpi-lbl">最高 ML 機率</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num" style="color:#18a058">~70%</div>
+    <div class="kpi-lbl">精確率目標（thr≥0.80）</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num" style="font-size:20px;padding-top:4px">78 / 48</div>
+    <div class="kpi-lbl">v3 / v2 籌碼訊號股</div>
+  </div>
+</div>
+
+<!-- Warn -->
+<div style="padding:0 24px"><div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;
+          padding:10px 16px;margin-bottom:16px;font-size:13px;color:#856404">
+          ⚠️ 大盤 RSI=93（極度超買）— 模型機率整體受壓，建議參考「日排名%ile」欄位而非絕對機率</div></div>
+
+<!-- Table -->
+<div class="section">
+  <div class="section-title">
+    🎯 ML 高機率候選股
+    <span style="font-size:12px;color:#9b59b6;font-weight:400">
+      XGBoost · 5日漲幅≥3% 機率 · 訓練期 2021–2024
+    </span>
+  </div>
+  <div class="controls">
+    <input type="text" id="filterInput" placeholder="搜尋代號或名稱..." oninput="filterRows()">
+    <span class="sort-hint">點擊表頭排序</span>
+  </div>
+  <div class="tbl-wrap">
+    <table id="stockTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">#</th>
+          <th onclick="sortTable(1)">代號</th>
+          <th onclick="sortTable(2)">名稱</th>
+          <th onclick="sortTable(3)">ML 機率</th>
+          <th onclick="sortTable(4)">日排名</th>
+          <th onclick="sortTable(5)">籌碼分</th>
+          <th onclick="sortTable(6)">外資%</th>
+          <th onclick="sortTable(7)">投信%</th>
+          <th onclick="sortTable(8)">法人數</th>
+          <th onclick="sortTable(9)">區域</th>
+          <th onclick="sortTable(10)">5日%</th>
+          <th onclick="sortTable(11)">20日%</th>
+          <th onclick="sortTable(12)">RSI</th>
+          <th onclick="sortTable(13)">ATR%</th>
+        </tr>
+      </thead>
+      <tbody id="stockBody">
+        
+        <tr style="background:#fff" data-prob="0.6686" data-score="90.5"
+            data-rsi="84.67153284238904" data-roc5="0.3435504469987229">
+          <td style="text-align:center;color:#999;font-size:12px">1</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">3189</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">景碩</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:66%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">66.9%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">100.0%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">90</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">6.7%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">4.6%</td>
+          <td style="text-align:center;font-weight:700;color:#18a058">2</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">34.4%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">49.6%</td>
+          <td style="text-align:center;color:#e67e22">85</td>
+          <td style="text-align:center;font-size:11px;color:#888">6.19%</td>
+        </tr>
+        <tr style="background:#faf8ff" data-prob="0.6652" data-score="78.2"
+            data-rsi="63.913680761210735" data-roc5="-0.1830508474576271">
+          <td style="text-align:center;color:#999;font-size:12px">2</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">6830</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">汎銓</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:66%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">66.5%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">99.7%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">78</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">5.7%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">1.0%</td>
+          <td style="text-align:center;font-weight:700;color:#1a7f3c">3</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#c0392b">-18.3%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">68.0%</td>
+          <td style="text-align:center;color:#555">64</td>
+          <td style="text-align:center;font-size:11px;color:#888">9.03%</td>
+        </tr>
+        <tr style="background:#fff" data-prob="0.6515" data-score="29.0"
+            data-rsi="90.05235601764207" data-roc5="0.2071823204419889">
+          <td style="text-align:center;color:#999;font-size:12px">3</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">8046</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">南電</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:65%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">65.2%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">99.3%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">29</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">22.0%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">3.3%</td>
+          <td style="text-align:center;font-weight:700;color:#18a058">2</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">20.7%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">61.9%</td>
+          <td style="text-align:center;color:#e67e22">90</td>
+          <td style="text-align:center;font-size:11px;color:#888">6.07%</td>
+        </tr>
+        <tr style="background:#faf8ff" data-prob="0.6475" data-score="7.6"
+            data-rsi="80.11363635726369" data-roc5="0.0203327171903882">
+          <td style="text-align:center;color:#999;font-size:12px">4</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">6213</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">聯茂</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:64%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">64.7%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">99.0%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">8</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">18.4%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">0.6%</td>
+          <td style="text-align:center;font-weight:700;color:#18a058">2</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">2.0%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">89.7%</td>
+          <td style="text-align:center;color:#e67e22">80</td>
+          <td style="text-align:center;font-size:11px;color:#888">7.85%</td>
+        </tr>
+        <tr style="background:#fff" data-prob="0.6389" data-score="31.6"
+            data-rsi="79.35267820740792" data-roc5="0.1240310077519379">
+          <td style="text-align:center;color:#999;font-size:12px">5</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">4919</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">新唐</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:63%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">63.9%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">98.7%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">32</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">5.0%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">0.2%</td>
+          <td style="text-align:center;font-weight:700;color:#1a7f3c">3</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">12.4%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">43.6%</td>
+          <td style="text-align:center;color:#e67e22">79</td>
+          <td style="text-align:center;font-size:11px;color:#888">7.81%</td>
+        </tr>
+        <tr style="background:#faf8ff" data-prob="0.6357" data-score="97.8"
+            data-rsi="92.92035397999844" data-roc5="0.1829787234042552">
+          <td style="text-align:center;color:#999;font-size:12px">6</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">2368</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">金像電</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:63%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">63.6%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">98.3%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">98</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">3.4%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">10.1%</td>
+          <td style="text-align:center;font-weight:700;color:#1a7f3c">3</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">18.3%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">50.8%</td>
+          <td style="text-align:center;color:#e67e22">93</td>
+          <td style="text-align:center;font-size:11px;color:#888">5.70%</td>
+        </tr>
+        <tr style="background:#fff" data-prob="0.6356" data-score="-4.5"
+            data-rsi="93.28358208630355" data-roc5="0.2236024844720496">
+          <td style="text-align:center;color:#999;font-size:12px">7</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">6531</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">愛普*</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:63%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">63.6%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">98.0%ile</td>
+          <td style="text-align:center;font-weight:600;color:#c0392b">-4</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">4.6%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">0.0%</td>
+          <td style="text-align:center;font-weight:700;color:#18a058">2</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">22.4%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">54.2%</td>
+          <td style="text-align:center;color:#e67e22">93</td>
+          <td style="text-align:center;font-size:11px;color:#888">7.75%</td>
+        </tr>
+        <tr style="background:#faf8ff" data-prob="0.6341" data-score="167.7"
+            data-rsi="74.576271180542" data-roc5="0.1143317230273752">
+          <td style="text-align:center;color:#999;font-size:12px">8</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">2455</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">全新</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:63%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">63.4%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">97.7%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">168</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">17.1%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">3.8%</td>
+          <td style="text-align:center;font-weight:700;color:#18a058">2</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">11.4%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">29.8%</td>
+          <td style="text-align:center;color:#e67e22">75</td>
+          <td style="text-align:center;font-size:11px;color:#888">7.00%</td>
+        </tr>
+        <tr style="background:#fff" data-prob="0.6283" data-score="140.9"
+            data-rsi="87.9551820693799" data-roc5="0.228615863141524">
+          <td style="text-align:center;color:#999;font-size:12px">9</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">3037</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">欣興</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:62%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">62.8%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">97.4%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">141</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">17.6%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">5.0%</td>
+          <td style="text-align:center;font-weight:700;color:#e67e22">1</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">22.9%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">56.1%</td>
+          <td style="text-align:center;color:#e67e22">88</td>
+          <td style="text-align:center;font-size:11px;color:#888">5.48%</td>
+        </tr>
+        <tr style="background:#faf8ff" data-prob="0.6282" data-score="118.4"
+            data-rsi="93.33333333266324" data-roc5="0.1776315789473683">
+          <td style="text-align:center;color:#999;font-size:12px">10</td>
+          <td style="font-weight:700;letter-spacing:.5px;color:#4b1c77">2383</td>
+          <td style="max-width:90px;white-space:nowrap;overflow:hidden;
+                     text-overflow:ellipsis;color:#333">台光電</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;max-width:60px;background:#ede;border-radius:4px;
+                          height:10px;overflow:hidden">
+                <div style="width:62%;height:100%;
+                            background:linear-gradient(90deg,#9b59b6,#a78bfa);
+                            border-radius:4px"></div>
+              </div>
+              <span style="font-weight:700;color:#6c35a0;white-space:nowrap">62.8%</span>
+            </div>
+          </td>
+          <td style="text-align:center;font-size:12px;color:#7d3c98">97.0%ile</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">118</td>
+          <td style="text-align:center;font-size:12px;color:#1555a0">6.0%</td>
+          <td style="text-align:center;font-size:12px;color:#1a7f3c">8.8%</td>
+          <td style="text-align:center;font-weight:700;color:#18a058">2</td>
+          <td style="text-align:center;font-size:11px;font-weight:600;
+                     color:#18a058">↑↑多頭</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">17.8%</td>
+          <td style="text-align:center;font-weight:600;color:#18a058">57.3%</td>
+          <td style="text-align:center;color:#e67e22">93</td>
+          <td style="text-align:center;font-size:11px;color:#888">5.46%</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#18a058"></div>正面/多頭</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>負面/空頭</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div>RSI偏高(&gt;70)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7d3c98"></div>RSI偏低(&lt;30)</div>
+    <div class="legend-item">法人數：三大法人同向買超家數（0~3，2以上為強勢）</div>
+    <div class="legend-item">日排名：今日全股機率百分位（100=最高）</div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  v4 ML 選股 · XGBoost · 特徵 72 維 · 閾值 0.70（精確率 ~64%）/ 0.80（精確率 ~70%）&nbsp;|&nbsp;
+  <a href="v3/index.html">v3 籌碼策略</a>&nbsp;·&nbsp;
+  <a href="v2/index.html">v2 傳統版</a>&nbsp;|&nbsp;
+  資料日期：2026/04/24 · 產生：2026-04-26 20:00
+</div>
+
+<script>
+// ── Sort ─────────────────────────────────────────────────────────────────────
+let _sortCol = -1, _sortAsc = true;
+function sortTable(col) {
+  const tbody = document.getElementById('stockBody');
+  const rows  = Array.from(tbody.querySelectorAll('tr[data-prob]'));
+  _sortAsc = (_sortCol === col) ? !_sortAsc : true;
+  _sortCol = col;
+  rows.sort((a, b) => {
+    const av = _cellVal(a, col), bv = _cellVal(b, col);
+    return _sortAsc ? av - bv : bv - av;
+  });
+  rows.forEach((r, i) => {
+    r.querySelector('td:first-child').textContent = i + 1;
+    tbody.appendChild(r);
+  });
+  document.querySelectorAll('th').forEach((th, i) => {
+    th.className = (i === col) ? (_sortAsc ? 'sorted-asc' : 'sorted-desc') : '';
+  });
+}
+function _cellVal(row, col) {
+  const td = row.querySelectorAll('td')[col];
+  if (!td) return 0;
+  const txt = td.textContent.replace(/[%↑↓多空頭偏強弱—ile]/g, '').trim();
+  return parseFloat(txt) || 0;
+}
+
+// ── Filter ───────────────────────────────────────────────────────────────────
+function filterRows() {
+  const q     = document.getElementById('filterInput').value.toLowerCase();
+  const tbody = document.getElementById('stockBody');
+  tbody.querySelectorAll('tr[data-prob]').forEach(r => {
+    const txt = r.textContent.toLowerCase();
+    r.style.display = (!q || txt.includes(q)) ? '' : 'none';
+  });
+}
+</script>
 </body>
 </html>
