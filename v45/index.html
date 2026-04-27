@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧪 v4.5 選股實驗 — 開發中</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
+  background:#f4f1fb;color:#222;min-height:100vh}
+
+/* ── Header ── */
+.hdr{background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 60%,#4a9fd4 100%);
+  color:#fff;padding:0 24px;display:flex;align-items:center;
+  justify-content:space-between;height:56px;flex-wrap:wrap;gap:8px;
+  box-shadow:0 2px 12px rgba(26,58,92,.4)}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.hdr-title{font-size:19px;font-weight:800;letter-spacing:.5px}
+.hdr-badge{font-size:11px;background:rgba(231,76,60,.8);color:#fff;
+  border-radius:10px;padding:2px 10px;font-weight:700;letter-spacing:.3px}
+.hdr-nav{display:flex;gap:8px}
+.hdr-nav a{color:#ffe082;font-size:12px;text-decoration:none;
+  background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.35);
+  border-radius:16px;padding:4px 14px;white-space:nowrap;transition:background .2s}
+.hdr-nav a:hover{background:rgba(0,0,0,.5)}
+.hdr-nav a.active{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.7);
+  color:#fff;font-weight:700}
+
+/* ── Main content ── */
+.main{max-width:900px;margin:60px auto;padding:0 24px}
+
+/* ── Dev card ── */
+.dev-card{background:#fff;border-radius:20px;padding:40px 44px;
+  box-shadow:0 4px 24px rgba(26,58,92,.12);
+  border-top:5px solid #2e6da4;text-align:center}
+.dev-icon{font-size:64px;margin-bottom:20px}
+.dev-title{font-size:26px;font-weight:800;color:#1a3a5c;margin-bottom:10px}
+.dev-sub{font-size:15px;color:#666;margin-bottom:32px;line-height:1.7}
+
+/* ── Version pill ── */
+.version-pill{display:inline-block;background:linear-gradient(90deg,#2e6da4,#4a9fd4);
+  color:#fff;font-size:13px;font-weight:700;padding:6px 20px;border-radius:20px;
+  letter-spacing:.5px;margin-bottom:32px}
+
+/* ── Feature list ── */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;text-align:left;margin-bottom:36px}
+.feat-item{background:#f4f8ff;border-radius:12px;padding:16px 18px;
+  border-left:4px solid #2e6da4}
+.feat-label{font-size:12px;font-weight:700;color:#2e6da4;margin-bottom:4px;
+  letter-spacing:.3px}
+.feat-desc{font-size:13px;color:#555;line-height:1.5}
+
+/* ── Status bar ── */
+.status-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.status-pill{display:flex;align-items:center;gap:6px;
+  background:#fff;border:1.5px solid #e0d0f0;border-radius:20px;
+  padding:6px 16px;font-size:12px;color:#666}
+.status-dot{width:8px;height:8px;border-radius:50%}
+.dot-todo{background:#aaa}
+.dot-wip{background:#f39c12;animation:pulse 1.5s infinite}
+.dot-done{background:#27ae60}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── Back link ── */
+.back-link{display:inline-flex;align-items:center;gap:6px;
+  color:#2e6da4;font-size:13px;text-decoration:none;font-weight:600;
+  background:#eaf3ff;border:1.5px solid #b8d8f8;border-radius:10px;
+  padding:8px 18px;transition:all .2s}
+.back-link:hover{background:#d0e8ff;border-color:#2e6da4}
+
+/* ── Footer ── */
+.footer{background:linear-gradient(90deg,#1a3a5c,#2e6da4);color:#c4e0f8;
+  padding:14px 24px;font-size:12px;text-align:center;margin-top:8px}
+.footer a{color:#ffe082;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-title">🧪 量化選股 v4.5</span>
+    <span class="hdr-badge">開發中</span>
+  </div>
+  <div class="hdr-nav">
+    <a href="../index.html">🤖 v4 ML</a>
+    <a href="../v3/index.html">📊 v3 籌碼</a>
+    <a href="../v2/index.html">📋 v2 傳統</a>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<div class="main">
+  <div class="dev-card">
+
+    <div class="dev-icon">🔬</div>
+    <div class="version-pill">v4.5 · 實驗版本</div>
+    <div class="dev-title">v4.5 選股策略 — 開發中</div>
+    <div class="dev-sub">
+      此頁面正在開發中，將承接 v4 ML 選股的下一代改進版本。<br>
+      功能規劃如下，請稍候——
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar">
+      <div class="status-pill">
+        <div class="status-dot dot-wip"></div>
+        開發進行中
+      </div>
+      <div class="status-pill">
+        <div class="status-dot dot-todo"></div>
+        尚未上線
+      </div>
+    </div>
+
+    <!-- Feature placeholders（開發時逐步填入） -->
+    <div class="feature-grid">
+      <div class="feat-item">
+        <div class="feat-label">🎯 特徵改善</div>
+        <div class="feat-desc">規劃中——</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-label">📐 模型升級</div>
+        <div class="feat-desc">規劃中——</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-label">📊 回測框架</div>
+        <div class="feat-desc">規劃中——</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-label">📡 資料來源</div>
+        <div class="feat-desc">規劃中——</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-label">🏷 標籤定義</div>
+        <div class="feat-desc">規劃中——</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-label">📈 Dashboard</div>
+        <div class="feat-desc">規劃中——</div>
+      </div>
+    </div>
+
+    <a class="back-link" href="../index.html">← 返回 v4 ML 選股主頁</a>
+
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<div class="footer">
+  v4.5 實驗版 · 開發中 &nbsp;|&nbsp;
+  <a href="../index.html">v4 ML</a>&nbsp;·&nbsp;
+  <a href="../v3/index.html">v3 籌碼策略</a>&nbsp;·&nbsp;
+  <a href="../v2/index.html">v2 傳統版</a>
+</div>
+
+</body>
+</html>
