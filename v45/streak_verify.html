@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v4.5 訊號連續天數驗證</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
+  background:#f0f4f8;color:#222;min-height:100vh}
+.hdr{background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 60%,#4a9fd4 100%);
+  color:#fff;padding:16px 28px;}
+.hdr h1{font-size:20px;font-weight:800}
+.hdr p{font-size:13px;opacity:.8;margin-top:4px}
+.main{max-width:900px;margin:0 auto;padding:24px}
+.card{background:#fff;border-radius:16px;padding:24px 28px;
+  box-shadow:0 2px 12px rgba(26,58,92,.1);margin-bottom:24px}
+.card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:800;color:#1a3a5c;flex:1}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px}
+.badge-test{background:#2e6da4;color:#fff}
+.badge-train{background:#aaa;color:#fff}
+.badge-warn{background:#f39c12;color:#fff}
+.note{background:#eaf2fb;border-left:4px solid #2e6da4;padding:10px 14px;
+  font-size:12px;color:#444;border-radius:0 8px 8px 0;margin-bottom:16px;
+  line-height:1.6}
+.warn{background:#fef9e7;border-left:4px solid #f39c12}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f4f8ff;color:#1a3a5c;font-weight:700;
+  padding:10px 12px;text-align:center;white-space:nowrap;
+  border-bottom:2px solid #dce8f5}
+th:first-child{text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #f0f4f8;
+  vertical-align:middle;text-align:center}
+td:first-child{text-align:left}
+tr:last-child td{border-bottom:none}
+.td-streak{font-weight:700;color:#1a3a5c}
+.td-n{font-size:12px;color:#555}
+.sub{font-size:10px;color:#aaa}
+.td-prob{font-size:12px;color:#888}
+.insight{background:#f4f8ff;border-radius:12px;padding:16px 18px;
+  margin-top:18px;font-size:13px;line-height:1.8;color:#333}
+.insight strong{color:#1a3a5c}
+.kpi-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.kpi{background:#f4f8ff;border-radius:12px;padding:14px 18px;
+  flex:1;min-width:100px;text-align:center;border-top:3px solid #2e6da4}
+.kpi-num{font-size:22px;font-weight:800;color:#2e6da4}
+.kpi-lbl{font-size:11px;color:#999;margin-top:3px}
+.footer{text-align:center;font-size:11px;color:#aaa;padding:12px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <h1>🔬 v4.5 訊號連續天數驗證</h1>
+  <p>每日 Top-10 選股 · 連續出現幾天後買進，勝率/報酬最佳？ · 產生：2026-04-27 20:49</p>
+</div>
+
+<div class="main">
+
+<!-- KPI -->
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-num">3,078</div>
+    <div class="kpi-lbl">測試期樣本（2025+）</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num">308</div>
+    <div class="kpi-lbl">測試交易日數</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num">10</div>
+    <div class="kpi-lbl">每日 Top-N</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num">62.9%</div>
+    <div class="kpi-lbl">streak=1 基準達標率</div>
+  </div>
+</div>
+
+<!-- 測試期 -->
+<div class="card">
+  <div class="card-hdr">
+    <span class="card-title">📊 測試期分析（2025-01-01 以後）</span>
+    <span class="badge badge-test">Out-of-sample · 關鍵</span>
+  </div>
+  <div class="note">
+    <strong>模型訓練截止：2024-12-31</strong> — 以下為真正未見過的資料，數字最可信。<br>
+    streak 定義：在「每日 Top-10」中連續出現的交易日數。streak=1 表示首次出現。
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>連續訊號天數</th>
+        <th>樣本數<br>(佔比)</th>
+        <th>達標率<br>(≥3%)</th>
+        <th>vs streak=1<br>勝率提升</th>
+        <th>平均<br>最高報酬</th>
+        <th>中位<br>最高報酬</th>
+        <th>P75<br>最高報酬</th>
+        <th>平均<br>ML機率</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td class="td-streak">1天（首次）</td>
+          <td class="td-n">1,533<br><span class="sub">49.8%</span></td>
+          <td style="background:#d4efdf;font-weight:700">62.9%</td>
+          <td style="color:#999;font-weight:700">—</td>
+          <td style="color:#1e8449;font-weight:700">7.23%</td>
+          <td>5.24%</td>
+          <td>10.93%</td>
+          <td class="td-prob">64.2%</td>
+        </tr>
+
+        <tr>
+          <td class="td-streak">2天（連續）</td>
+          <td class="td-n">564<br><span class="sub">18.3%</span></td>
+          <td style="background:#d4efdf;font-weight:700">64.4%</td>
+          <td style="color:#27ae60;font-weight:700">+2.2%</td>
+          <td style="color:#1e8449;font-weight:700">7.25%</td>
+          <td>5.08%</td>
+          <td>11.29%</td>
+          <td class="td-prob">65.0%</td>
+        </tr>
+
+        <tr>
+          <td class="td-streak">3天（連續）</td>
+          <td class="td-n">286<br><span class="sub">9.3%</span></td>
+          <td style="background:#d4efdf;font-weight:700">58.4%</td>
+          <td style="color:#c0392b;font-weight:700">-7.2%</td>
+          <td style="color:#1e8449;font-weight:700">7.21%</td>
+          <td>5.21%</td>
+          <td>12.21%</td>
+          <td class="td-prob">65.1%</td>
+        </tr>
+
+        <tr>
+          <td class="td-streak">4天+（連續）</td>
+          <td class="td-n">695<br><span class="sub">22.6%</span></td>
+          <td style="background:#d4efdf;font-weight:700">60.7%</td>
+          <td style="color:#c0392b;font-weight:700">-3.5%</td>
+          <td style="color:#1e8449;font-weight:700">6.85%</td>
+          <td>5.02%</td>
+          <td>11.17%</td>
+          <td class="td-prob">65.3%</td>
+        </tr>
+    </tbody>
+  </table>
+  <div class="insight">
+    <strong>streak 分布（測試期）：</strong>streak=1：1533筆  streak=2：564筆  streak=3：286筆  streak=4：181筆  streak=5：127筆  streak=6：92筆  streak=7：67筆  streak=8：48筆  streak=9：39筆  streak=10：31筆  streak=11：24筆  streak=12：20筆  streak=13：16筆  streak=14：11筆  streak=15：10筆  streak=16：6筆  streak=17：5筆  streak=18：3筆  streak=19：3筆  streak=20：3筆  streak=21：3筆  streak=22：3筆  streak=23：1筆  streak=24：1筆  streak=25：1筆
+  </div>
+</div>
+
+<!-- 訓練期 -->
+<div class="card">
+  <div class="card-hdr">
+    <span class="card-title">📋 訓練期分析（2020-01-01 ~ 2024-12-31）</span>
+    <span class="badge badge-train">In-sample · 參考用</span>
+    <span class="badge badge-warn">數字偏樂觀</span>
+  </div>
+  <div class="note warn">
+    模型訓練時見過這些資料，數字會偏樂觀。僅供參考，不要依此決策。
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>連續訊號天數</th>
+        <th>樣本數<br>(佔比)</th>
+        <th>達標率<br>(≥3%)</th>
+        <th>vs streak=1<br>勝率提升</th>
+        <th>平均<br>最高報酬</th>
+        <th>中位<br>最高報酬</th>
+        <th>P75<br>最高報酬</th>
+        <th>平均<br>ML機率</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td class="td-streak">1天（首次）</td>
+          <td class="td-n">5,105<br><span class="sub">42.0%</span></td>
+          <td style="background:#d4efdf;font-weight:700">60.2%</td>
+          <td style="color:#999;font-weight:700">—</td>
+          <td style="color:#1e8449;font-weight:700">5.59%</td>
+          <td>4.28%</td>
+          <td>8.91%</td>
+          <td class="td-prob">62.9%</td>
+        </tr>
+
+        <tr>
+          <td class="td-streak">2天（連續）</td>
+          <td class="td-n">2,097<br><span class="sub">17.3%</span></td>
+          <td style="background:#d4efdf;font-weight:700">61.7%</td>
+          <td style="color:#27ae60;font-weight:700">+2.5%</td>
+          <td style="color:#1e8449;font-weight:700">6.13%</td>
+          <td>4.76%</td>
+          <td>9.87%</td>
+          <td class="td-prob">63.4%</td>
+        </tr>
+
+        <tr>
+          <td class="td-streak">3天（連續）</td>
+          <td class="td-n">1,162<br><span class="sub">9.6%</span></td>
+          <td style="background:#d4efdf;font-weight:700">60.1%</td>
+          <td style="color:#c0392b;font-weight:700">-0.2%</td>
+          <td style="color:#1e8449;font-weight:700">6.07%</td>
+          <td>4.50%</td>
+          <td>9.91%</td>
+          <td class="td-prob">63.7%</td>
+        </tr>
+
+        <tr>
+          <td class="td-streak">4天+（連續）</td>
+          <td class="td-n">3,786<br><span class="sub">31.2%</span></td>
+          <td style="background:#d4efdf;font-weight:700">62.9%</td>
+          <td style="color:#27ae60;font-weight:700">+4.4%</td>
+          <td style="color:#1e8449;font-weight:700">6.79%</td>
+          <td>5.15%</td>
+          <td>10.87%</td>
+          <td class="td-prob">64.4%</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 解讀說明 -->
+<div class="card">
+  <div class="card-hdr">
+    <span class="card-title">💡 如何解讀</span>
+  </div>
+  <div style="font-size:13px;line-height:2;color:#444">
+    <p><strong>達標率（Hit Rate）：</strong>定義為 5 日內最高收盤漲幅 ≥ 3%。</p>
+    <p><strong>vs streak=1 提升：</strong>相較於「首次出現就買」，等待確認後勝率的增幅。正值代表過濾有效。</p>
+    <p><strong>樣本佔比：</strong>streak 越長，樣本越少。需考量錯過機會的成本（recall 下降）。</p>
+    <p><strong>建議策略：</strong>若 streak=2 的達標率顯著高於 streak=1，可設「連續 2 天入選才買進」。
+       若差異不大，則首次出現即可進場，保留更多機會。</p>
+    <p><strong>說明：</strong>streak 基於「是否在 Top-10 中出現」，不考慮機率絕對值的高低。</p>
+  </div>
+</div>
+
+</div>
+<div class="footer">v4.5 streak 驗證 · 每日 Top-10 · 達標門檻 ≥3% · 2026-04-27 20:49</div>
+</body>
+</html>
