@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V5 ML 選股 Dashboard — 2026/05/05</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#e0e0e0;font-family:'Segoe UI',Arial,sans-serif;font-size:13px}
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,#0d1f1a 0%,#111a14 50%,#150d1f 100%);
+      padding:16px 24px;border-bottom:1px solid #30363d;
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.hdr-title{font-size:19px;font-weight:700;color:#e0e0e0}
+.hdr-title em{color:#1abc9c;font-style:normal}
+.hdr-title b{color:#8e44ad}
+.hdr-meta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.meta-tag{background:#161b22;border:1px solid #30363d;border-radius:8px;
+           padding:5px 12px;font-size:12px;text-align:center}
+.meta-tag .val{font-size:15px;font-weight:700;display:block}
+/* ── KPI ── */
+.kpi-row{display:flex;gap:12px;padding:14px 20px;flex-wrap:wrap}
+.kpi{background:#161b22;border:1px solid #1abc9c44;border-radius:10px;
+      padding:12px 18px;min-width:110px;position:relative;overflow:hidden}
+.kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;background:#1abc9c}
+.kpi-val{font-size:26px;font-weight:800;color:#1abc9c}
+.kpi-label{font-size:11px;color:#888;margin-top:3px}
+/* ── STAT ROW ── */
+.stat-row{display:flex;gap:12px;padding:0 20px 12px;flex-wrap:wrap}
+.stat-card{background:#161b22;border:1px solid #30363d;border-radius:8px;
+            padding:10px 14px;font-size:12px;flex:1;min-width:150px}
+.stat-card h4{font-size:11px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+/* ── CONTROLS ── */
+.ctrl{display:flex;gap:10px;padding:8px 20px 10px;align-items:center;flex-wrap:wrap;
+       border-bottom:1px solid #30363d}
+.ctrl input{background:#161b22;border:1px solid #30363d;color:#e0e0e0;
+             padding:6px 12px;border-radius:6px;font-size:12px;width:200px}
+.ctrl input:focus{outline:none;border-color:#1abc9c}
+.ctrl-btn{background:#161b22;border:1px solid #30363d;color:#ccc;
+           padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:.15s}
+.ctrl-btn:hover{background:#1e2a24;border-color:#1abc9c}
+.ctrl-btn.active{background:rgba(26,188,156,.2);border-color:#1abc9c;color:#1abc9c}
+.ctrl-info{color:#888;font-size:11px;margin-left:auto}
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;padding:12px 20px 24px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#0d1117;color:#888;font-size:10px;text-transform:uppercase;letter-spacing:.4px;
+    padding:8px 10px;border-bottom:1px solid #30363d;white-space:nowrap;cursor:pointer}
+th:hover{color:#1abc9c}
+td{padding:9px 10px;border-bottom:1px solid #1c2128;vertical-align:middle}
+tr:hover td{background:rgba(26,188,156,.04)}
+tr.hidden{display:none}
+/* ── FOOTER ── */
+.footer{text-align:center;padding:16px;color:#444;font-size:11px;border-top:1px solid #30363d}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div class="hdr">
+  <div>
+    <div class="hdr-title">
+      <em>V5</em> ML 選股 &nbsp;|&nbsp; <b>訊號記憶衰退</b> + XGBoost
+    </div>
+    <div style="color:#555;font-size:11px;margin-top:3px">
+      84 特徵 · EW 衰退特徵 · half_life=5 交易日
+    </div>
+  </div>
+  <div class="hdr-meta">
+    <div class="meta-tag">
+      <span class="val" style="color:#ddd">2026/05/05</span>
+      <span>分析日期</span>
+    </div>
+    <div class="meta-tag">
+      <span class="val" style="color:#e74c3c">83</span>
+      <span>大盤 RSI(14)</span>
+    </div>
+    <div class="meta-tag">
+      <span class="val" style="color:#27ae60">+25.2%</span>
+      <span>20日漲幅</span>
+    </div>
+    <div class="meta-tag">
+      <span class="val" style="color:#ddd">40,769</span>
+      <span>加權指數</span>
+    </div>
+    <a href="../index.html"
+       style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+              background:#161b22;border:1px solid rgba(26,188,156,.4);border-radius:8px;
+              padding:5px 14px;text-decoration:none;color:#1abc9c;font-size:12px;
+              transition:background .2s;white-space:nowrap"
+       onmouseover="this.style.background='rgba(26,188,156,.15)'"
+       onmouseout="this.style.background='#161b22'">
+      <span style="font-size:15px;line-height:1.2">🏠</span>
+      <span>v4 主頁</span>
+    </a>
+  </div>
+</div>
+
+<div style="margin:8px 20px;padding:10px 16px;background:rgba(231,76,60,.12);border-left:3px solid #e74c3c;border-radius:4px;font-size:12px;color:#e0e0e0">⚠️ 大盤 RSI=83（極度超買）—— 機率偏保守，建議優先看 EW 動能方向</div>
+
+<!-- ══ KPI ══ -->
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-accent"></div>
+    <div class="kpi-val">0</div>
+    <div class="kpi-label">★★★ 70%+ 高信心</div>
+  </div>
+  <div class="kpi" style="border-color:#8e44ad44">
+    <div class="kpi-accent" style="background:#8e44ad"></div>
+    <div class="kpi-val" style="color:#8e44ad">2</div>
+    <div class="kpi-label">★★ 65%+ 中信心</div>
+  </div>
+  <div class="kpi" style="border-color:#95a5a644">
+    <div class="kpi-accent" style="background:#95a5a6"></div>
+    <div class="kpi-val" style="color:#95a5a6">14</div>
+    <div class="kpi-label">★ 60%+ 基本門檻</div>
+  </div>
+  <div class="kpi" style="border-color:#ddd2">
+    <div class="kpi-accent" style="background:#ddd4"></div>
+    <div class="kpi-val" style="color:#ddd">14</div>
+    <div class="kpi-label">全部選股</div>
+  </div>
+  <div class="kpi" style="border-color:#1abc9c44">
+    <div class="kpi-accent"></div>
+    <div class="kpi-val">66.2%</div>
+    <div class="kpi-label">最高機率</div>
+  </div>
+</div>
+
+<!-- ══ STAT CARDS ══ -->
+<div class="stat-row">
+  <div class="stat-card">
+    <h4>機率分布</h4>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="color:#aaa;width:65px">0.60-0.64</span><div style="display:inline-block;width:80px;height:10px;background:#1abc9c;border-radius:2px;vertical-align:middle"></div><span style="color:#1abc9c">12</span></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="color:#aaa;width:65px">0.65-0.69</span><div style="display:inline-block;width:13px;height:10px;background:#1abc9c;border-radius:2px;vertical-align:middle"></div><span style="color:#1abc9c">2</span></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="color:#aaa;width:65px">0.70+</span><div style="display:inline-block;width:0px;height:10px;background:#1abc9c;border-radius:2px;vertical-align:middle"></div><span style="color:#1abc9c">0</span></div>
+  </div>
+  <div class="stat-card">
+    <h4>EW 動能方向</h4>
+    <div style="display:flex;gap:16px;margin-top:4px">
+      <div>
+        <div style="font-size:20px;font-weight:700;color:#27ae60">▲ 10</div>
+        <div style="color:#888;font-size:11px">上升動能</div>
+      </div>
+      <div>
+        <div style="font-size:20px;font-weight:700;color:#e74c3c">▼ 4</div>
+        <div style="color:#888;font-size:11px">下降動能</div>
+      </div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <h4>外資訊號新鮮度</h4>
+    <div style="margin-top:4px">
+      <div style="font-size:20px;font-weight:700;color:#1abc9c">🔥 8</div>
+      <div style="color:#888;font-size:11px">今日觸發（fi_days_since=0）</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <h4>大盤背景</h4>
+    <div style="margin-top:4px;display:flex;gap:12px">
+      <div><span style="background:#e74c3c;color:#fff;border-radius:8px;padding:2px 10px;font-size:11px;font-weight:700">極度超買 RSI 83</span></div>
+      <div style="font-size:12px">
+        <div style="color:#27ae60">5日 +2.9%</div>
+        <div style="color:#27ae60">20日 +25.2%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONTROLS ══ -->
+<div class="ctrl">
+  <input type="text" id="searchBox" placeholder="搜尋代號或名稱…" oninput="_applyFilters()" autocomplete="off">
+  <button class="ctrl-btn active" id="btn-all"  onclick="_setTier('all', this)">全部 (14)</button>
+  <button class="ctrl-btn" id="btn-70"  onclick="_setTier('70', this)">70%+ (0)</button>
+  <button class="ctrl-btn" id="btn-65"  onclick="_setTier('65', this)">65%+ (2)</button>
+  <button class="ctrl-btn" id="btn-ew-up"   onclick="_setMom(1, this)"  style="border-color:#27ae6044">▲ EW上升 (10)</button>
+  <button class="ctrl-btn" id="btn-ew-down" onclick="_setMom(-1, this)" style="border-color:#e74c3c44">▼ EW下降 (4)</button>
+  <button class="ctrl-btn" id="btn-fresh"   onclick="_setFresh(this)"   style="border-color:#1abc9c44">🔥 今日觸發 (8)</button>
+  <span class="ctrl-info" id="ctrl-count">14 支</span>
+</div>
+
+<!-- ══ TABLE ══ -->
+<div class="tbl-wrap">
+  <table id="mainTable">
+    <thead>
+      <tr>
+        <th onclick="_sort('ticker')">代號 / 名稱</th>
+        <th onclick="_sort('prob')">機率 ↕</th>
+        <th onclick="_sort('score')" style="text-align:right">籌碼分數</th>
+        <th style="text-align:right">收盤</th>
+        <th>三機構流量</th>
+        <th style="text-align:center">機構數</th>
+        <th>訊號記憶</th>
+        <th>EW 強度</th>
+        <th>動能</th>
+        <th onclick="_sort('rsi14')" style="text-align:right">RSI</th>
+        <th onclick="_sort('roc5d')">5日漲</th>
+        <th onclick="_sort('roc20d')">20日漲</th>
+        <th style="text-align:center">Zone</th>
+        <th>產業</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+<tr data-prob="0.6616" data-tier="65">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">3715</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">定穎投控</span>
+    
+  </td>
+  <td><span style="background:rgba(142,68,173,.20);color:#8e44ad;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">66.2% <span style="font-size:10px;opacity:.7">★★</span></span></td>
+  <td style="color:#ddd;text-align:right">+28.6</td>
+  <td style="color:#ccc;text-align:right">179.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:8%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">2.5%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:0%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">0.0%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:3%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">1.1%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">2</span>
+  </td>
+  <td>
+    <span style="background:rgba(26,188,156,.2);color:#1abc9c;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">今日觸發</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.547</span></div>
+      <div>合計: <span style="color:#aaa">0.750</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#e74c3c;font-weight:700;font-size:14px">▼</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#ccc;font-weight:600">43</span>
+  </td>
+  <td><span style="color:#e74c3c">-2.2%</span></td>
+  <td><span style="color:#e74c3c">-0.6%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#2980b9;border:1px solid #2980b9;border-radius:4px;padding:1px 6px;font-size:11px">B</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">電子零組件業</td>
+</tr>
+<tr data-prob="0.6502" data-tier="65">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">3037</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">欣興</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(142,68,173,.20);color:#8e44ad;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">65.0% <span style="font-size:10px;opacity:.7">★★</span></span></td>
+  <td style="color:#ddd;text-align:right">-63.1</td>
+  <td style="color:#ccc;text-align:right">903.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:30%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">10.0%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:5%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">1.7%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:1%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.4%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">3</span>
+  </td>
+  <td>
+    <span style="background:rgba(26,188,156,.2);color:#1abc9c;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">今日觸發</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.987</span></div>
+      <div>合計: <span style="color:#aaa">1.664</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#e74c3c;font-weight:700;font-size:14px">▼</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#e74c3c;font-weight:600">88</span>
+  </td>
+  <td><span style="color:#27ae60">+7.6%</span></td>
+  <td><span style="color:#27ae60">+74.0%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">電子零組件業</td>
+</tr>
+<tr data-prob="0.6482" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">6515</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">穎崴</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">64.8% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+29.2</td>
+  <td style="color:#ccc;text-align:right">10700.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:0%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">0.0%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:11%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">3.7%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:0%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.0%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">2</span>
+  </td>
+  <td>
+    <span style="background:rgba(127,179,211,.15);color:#7fb3d3;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">中記憶 4天</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.464</span></div>
+      <div>合計: <span style="color:#aaa">1.186</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#e74c3c;font-weight:700;font-size:14px">▼</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#e67e22;font-weight:600">72</span>
+  </td>
+  <td><span style="color:#27ae60">+6.4%</span></td>
+  <td><span style="color:#27ae60">+46.8%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">半導體業</td>
+</tr>
+<tr data-prob="0.6449" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">3189</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">景碩</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">64.5% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+15.2</td>
+  <td style="color:#ccc;text-align:right">531.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:1%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">0.5%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:8%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">2.5%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:2%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.6%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">2</span>
+  </td>
+  <td>
+    <span style="background:rgba(80,80,80,.2);color:#555;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">弱記憶 6天</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.393</span></div>
+      <div>合計: <span style="color:#aaa">0.581</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#e74c3c;font-weight:700;font-size:14px">▼</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#e74c3c;font-weight:600">86</span>
+  </td>
+  <td><span style="color:#27ae60">+1.0%</span></td>
+  <td><span style="color:#27ae60">+59.9%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">半導體業</td>
+</tr>
+<tr data-prob="0.6433" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">2368</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">金像電</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">64.3% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+93.6</td>
+  <td style="color:#ccc;text-align:right">1440.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:29%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">9.6%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:10%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">3.4%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:4%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">1.3%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">3</span>
+  </td>
+  <td>
+    <span style="background:rgba(26,188,156,.2);color:#1abc9c;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">今日觸發</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.463</span></div>
+      <div>合計: <span style="color:#aaa">0.867</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#e74c3c;font-weight:600">88</span>
+  </td>
+  <td><span style="color:#27ae60">+3.6%</span></td>
+  <td><span style="color:#27ae60">+52.2%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">電子零組件業</td>
+</tr>
+<tr data-prob="0.6268" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">6830</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">汎銓</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">62.7% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+13.1</td>
+  <td style="color:#ccc;text-align:right">925.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:0%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">0.0%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:5%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">1.6%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:5%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">1.5%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">1</span>
+  </td>
+  <td>
+    <span style="background:rgba(127,179,211,.15);color:#7fb3d3;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">中記憶 4天</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.455</span></div>
+      <div>合計: <span style="color:#aaa">0.685</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#ccc;font-weight:600">61</span>
+  </td>
+  <td><span style="color:#27ae60">+27.9%</span></td>
+  <td><span style="color:#27ae60">+80.2%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">其他電子業</td>
+</tr>
+<tr data-prob="0.6240" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">3665</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">貿聯-KY</span>
+    
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">62.4% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+93.6</td>
+  <td style="color:#ccc;text-align:right">2940.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:35%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">11.7%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:0%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">0.0%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:0%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.0%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">1</span>
+  </td>
+  <td>
+    <span style="background:rgba(26,188,156,.2);color:#1abc9c;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">今日觸發</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.658</span></div>
+      <div>合計: <span style="color:#aaa">0.979</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#e74c3c;font-weight:600">81</span>
+  </td>
+  <td><span style="color:#27ae60">+6.3%</span></td>
+  <td><span style="color:#27ae60">+53.9%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">其他電子業</td>
+</tr>
+<tr data-prob="0.6195" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">8046</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">南電</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">61.9% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+60.3</td>
+  <td style="color:#ccc;text-align:right">997.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:13%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">4.4%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:9%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">3.0%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:0%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.1%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">3</span>
+  </td>
+  <td>
+    <span style="background:rgba(26,188,156,.2);color:#1abc9c;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">今日觸發</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.706</span></div>
+      <div>合計: <span style="color:#aaa">0.908</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#e74c3c;font-weight:600">89</span>
+  </td>
+  <td><span style="color:#27ae60">+9.2%</span></td>
+  <td><span style="color:#27ae60">+75.5%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">電子零組件業</td>
+</tr>
+<tr data-prob="0.6194" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">2454</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">聯發科</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">61.9% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+0.0</td>
+  <td style="color:#ccc;text-align:right">3155.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:69%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">22.9%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:2%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">0.5%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:2%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.6%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">0</span>
+  </td>
+  <td>
+    <span style="background:rgba(127,179,211,.15);color:#7fb3d3;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">中記憶 5天</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.709</span></div>
+      <div>合計: <span style="color:#aaa">1.029</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#e74c3c;font-weight:600">92</span>
+  </td>
+  <td><span style="color:#27ae60">+29.6%</span></td>
+  <td><span style="color:#27ae60">+115.4%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">半導體業</td>
+</tr>
+<tr data-prob="0.6147" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">3450</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">聯鈞</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">61.5% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+40.3</td>
+  <td style="color:#ccc;text-align:right">332.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:0%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">0.0%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:12%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">4.1%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:3%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.9%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">3</span>
+  </td>
+  <td>
+    <span style="background:rgba(26,188,156,.2);color:#1abc9c;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">今日觸發</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.485</span></div>
+      <div>合計: <span style="color:#aaa">0.778</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#ccc;font-weight:600">56</span>
+  </td>
+  <td><span style="color:#27ae60">+4.4%</span></td>
+  <td><span style="color:#27ae60">+34.1%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">半導體業</td>
+</tr>
+<tr data-prob="0.6092" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">3583</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">辛耘</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">60.9% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">-101.5</td>
+  <td style="color:#ccc;text-align:right">793.00</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:64%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">21.3%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:24%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">7.9%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:2%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.7%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">3</span>
+  </td>
+  <td>
+    <span style="background:rgba(26,188,156,.2);color:#1abc9c;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">今日觸發</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.841</span></div>
+      <div>合計: <span style="color:#aaa">1.236</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#ccc;font-weight:600">59</span>
+  </td>
+  <td><span style="color:#e74c3c">-2.7%</span></td>
+  <td><span style="color:#27ae60">+70.5%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">半導體業</td>
+</tr>
+<tr data-prob="0.6060" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">3532</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">台勝科</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">60.6% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">-246.0</td>
+  <td style="color:#ccc;text-align:right">207.50</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:56%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">18.6%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:53%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">17.6%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:16%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">5.5%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">3</span>
+  </td>
+  <td>
+    <span style="background:rgba(26,188,156,.2);color:#1abc9c;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">今日觸發</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">1.162</span></div>
+      <div>合計: <span style="color:#aaa">2.428</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#ccc;font-weight:600">64</span>
+  </td>
+  <td><span style="color:#27ae60">+20.3%</span></td>
+  <td><span style="color:#27ae60">+53.7%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">半導體業</td>
+</tr>
+<tr data-prob="0.6058" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">3030</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">德律</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">60.6% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+8.5</td>
+  <td style="color:#ccc;text-align:right">376.50</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:79%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">26.3%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:2%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">0.5%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:5%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">1.6%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">2</span>
+  </td>
+  <td>
+    <span style="background:rgba(142,68,173,.2);color:#8e44ad;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">強記憶 2天</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">0.967</span></div>
+      <div>合計: <span style="color:#aaa">1.098</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#ccc;font-weight:600">69</span>
+  </td>
+  <td><span style="color:#27ae60">+19.3%</span></td>
+  <td><span style="color:#27ae60">+46.8%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">其他電子業</td>
+</tr>
+<tr data-prob="0.6017" data-tier="60">
+  <td style="white-space:nowrap">
+    <span style="font-weight:700;color:#e0e0e0">2408</span>
+    <span style="color:#888;font-size:11px;margin-left:4px">南亞科</span>
+    <span style="background:#e67e22;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">購</span><span style="background:#8e44ad;color:#fff;border-radius:3px;padding:1px 4px;font-size:10px;margin-left:2px">售</span>
+  </td>
+  <td><span style="background:rgba(52,73,94,.35);color:#7f8c8d;border-radius:6px;padding:3px 8px;font-weight:700;font-size:13px">60.2% <span style="font-size:10px;opacity:.7">★</span></span></td>
+  <td style="color:#ddd;text-align:right">+23.4</td>
+  <td style="color:#ccc;text-align:right">256.50</td>
+  <td>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#2980b9;font-size:10px;width:14px">外</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:48%;height:100%;background:#2980b9;border-radius:3px"></div></div>
+        <span style="color:#2980b9;font-size:10px">15.8%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#e67e22;font-size:10px;width:14px">投</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:7%;height:100%;background:#e67e22;border-radius:3px"></div></div>
+        <span style="color:#e67e22;font-size:10px">2.3%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#27ae60;font-size:10px;width:14px">自</span>
+        <div style="display:inline-block;width:55px;height:6px;background:#1e2235;border-radius:3px;vertical-align:middle"><div style="width:2%;height:100%;background:#27ae60;border-radius:3px"></div></div>
+        <span style="color:#27ae60;font-size:10px">0.7%</span>
+      </div>
+    </div>
+  </td>
+  <td style="text-align:center">
+    <span style="color:#ccc;font-size:12px;font-weight:600">2</span>
+  </td>
+  <td>
+    <span style="background:rgba(142,68,173,.2);color:#8e44ad;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap">強記憶 3天</span>
+  </td>
+  <td>
+    <div style="font-size:11px">
+      <div>EW: <span style="color:#8e44ad;font-weight:600">1.188</span></div>
+      <div>合計: <span style="color:#aaa">1.332</span></div>
+    </div>
+  </td>
+  <td>
+    <span style="color:#27ae60;font-weight:700;font-size:14px">▲</span>
+  </td>
+  <td style="text-align:right">
+    <span style="color:#ccc;font-weight:600">63</span>
+  </td>
+  <td><span style="color:#27ae60">+13.2%</span></td>
+  <td><span style="color:#27ae60">+27.9%</span></td>
+  <td style="text-align:center"><span style="background:rgba(0,0,0,.3);color:#27ae60;border:1px solid #27ae60;border-radius:4px;padding:1px 6px;font-size:11px">A</span></td>
+  <td style="color:#888;font-size:11px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">半導體業</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  V5 ML 選股 · XGBoost 84 特徵 · 標籤5日最高漲幅≥3% · 閾值0.60 &nbsp;|&nbsp;
+  EW half_life=5d · lookback=30d &nbsp;|&nbsp;
+  2026/05/05 · 2026-05-05 23:57
+</div>
+
+<script>
+let _tierFilter = 'all';
+let _momFilter  = 0;
+let _freshFilter = false;
+let _sortCol = 'prob';
+let _sortAsc = false;
+
+function _setTier(t, btn) {
+  _tierFilter = t; _momFilter = 0; _freshFilter = false;
+  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _applyFilters();
+}
+function _setMom(m, btn) {
+  _momFilter = (_momFilter === m) ? 0 : m;
+  _freshFilter = false; _tierFilter = 'all';
+  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  if (_momFilter !== 0) btn.classList.add('active');
+  else document.getElementById('btn-all').classList.add('active');
+  _applyFilters();
+}
+function _setFresh(btn) {
+  _freshFilter = !_freshFilter; _momFilter = 0; _tierFilter = 'all';
+  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  if (_freshFilter) btn.classList.add('active');
+  else document.getElementById('btn-all').classList.add('active');
+  _applyFilters();
+}
+function _applyFilters() {
+  const q = document.getElementById('searchBox').value.toLowerCase().trim();
+  const rows = document.querySelectorAll('#tbody tr');
+  let vis = 0;
+  rows.forEach(tr => {
+    const prob = parseFloat(tr.dataset.prob || 0);
+    const tier = tr.dataset.tier;
+    const txt  = tr.innerText.toLowerCase();
+    const momSpan = tr.querySelector('td:nth-child(9) span');
+    const momTxt  = momSpan ? momSpan.textContent.trim() : '';
+    const ewBadge = tr.querySelector('td:nth-child(7) span');
+    const isFresh = ewBadge ? ewBadge.textContent.includes('今日觸發') : false;
+
+    let ok = true;
+    if (_tierFilter === '70' && tier !== '70') ok = false;
+    if (_tierFilter === '65' && tier === '60') ok = false;
+    if (_momFilter === 1  && momTxt !== '▲') ok = false;
+    if (_momFilter === -1 && momTxt !== '▼') ok = false;
+    if (_freshFilter && !isFresh) ok = false;
+    if (q && !txt.includes(q)) ok = false;
+
+    tr.classList.toggle('hidden', !ok);
+    if (ok) vis++;
+  });
+  document.getElementById('ctrl-count').textContent = vis + ' 支';
+}
+function _sort(col) {
+  if (_sortCol === col) _sortAsc = !_sortAsc;
+  else { _sortCol = col; _sortAsc = false; }
+  const tbody = document.getElementById('tbody');
+  const rows  = Array.from(tbody.querySelectorAll('tr'));
+  const colIdx = {'prob':1,'score':2,'rsi14':9,'roc5d':10,'roc20d':11,'ticker':0};
+  const idx = colIdx[col] ?? 1;
+  rows.sort((a, b) => {
+    const av = a.cells[idx]?.innerText.replace(/[^0-9.\-+%]/g,'') || '0';
+    const bv = b.cells[idx]?.innerText.replace(/[^0-9.\-+%]/g,'') || '0';
+    const an = parseFloat(av) || 0;
+    const bn = parseFloat(bv) || 0;
+    return _sortAsc ? an - bn : bn - an;
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+</script>
+</body>
+</html>
