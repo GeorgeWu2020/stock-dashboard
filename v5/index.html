@@ -76,11 +76,11 @@ tr.hidden{display:none}
       <span>大盤 RSI(14)</span>
     </div>
     <div class="meta-tag">
-      <span class="val" style="color:#27ae60">+25.2%</span>
+      <span class="val" style="color:#27ae60">+23.8%</span>
       <span>20日漲幅</span>
     </div>
     <div class="meta-tag">
-      <span class="val" style="color:#ddd">40,769</span>
+      <span class="val" style="color:#ddd">41,139</span>
       <span>加權指數</span>
     </div>
     <a href="../index.html"
@@ -158,8 +158,8 @@ tr.hidden{display:none}
     <div style="margin-top:4px;display:flex;gap:12px">
       <div><span style="background:#e74c3c;color:#fff;border-radius:8px;padding:2px 10px;font-size:11px;font-weight:700">極度超買 RSI 83</span></div>
       <div style="font-size:12px">
-        <div style="color:#27ae60">5日 +2.9%</div>
-        <div style="color:#27ae60">20日 +25.2%</div>
+        <div style="color:#27ae60">5日 +4.1%</div>
+        <div style="color:#27ae60">20日 +23.8%</div>
       </div>
     </div>
   </div>
@@ -920,7 +920,7 @@ tr.hidden{display:none}
 <div class="footer">
   V5 ML 選股 · XGBoost 84 特徵 · 標籤5日最高漲幅≥3% · 閾值0.60 &nbsp;|&nbsp;
   EW half_life=5d · lookback=30d &nbsp;|&nbsp;
-  2026/05/05 · 2026-05-05 23:57
+  2026/05/05 · 2026-05-06 23:46
 </div>
 
 <script>
@@ -985,8 +985,8 @@ function _sort(col) {
   const colIdx = {'prob':1,'score':2,'rsi14':9,'roc5d':10,'roc20d':11,'ticker':0};
   const idx = colIdx[col] ?? 1;
   rows.sort((a, b) => {
-    const av = a.cells[idx]?.innerText.replace(/[^0-9.\-+%]/g,'') || '0';
-    const bv = b.cells[idx]?.innerText.replace(/[^0-9.\-+%]/g,'') || '0';
+    const av = a.cells[idx]?.innerText.replace(/[^0-9.+%\-]/g,'') || '0';
+    const bv = b.cells[idx]?.innerText.replace(/[^0-9.+%\-]/g,'') || '0';
     const an = parseFloat(av) || 0;
     const bn = parseFloat(bv) || 0;
     return _sortAsc ? an - bn : bn - an;
