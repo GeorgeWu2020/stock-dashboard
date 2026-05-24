@@ -39,13 +39,13 @@ tr:hover td{background:#1c2128}
 <body>
 <div class="hdr">
   <h1>🏆 Final 實戰版模擬</h1>
-  <div class="sub">回測期間：2026/04/20 ～ 2026/05/22 &nbsp;|&nbsp; 更新：2026/05/24 22:42</div>
+  <div class="sub">回測期間：2026/04/20 ～ 2026/05/22 &nbsp;|&nbsp; 更新：2026/05/24 22:49</div>
 </div>
 
 <div class="rule-bar">
   <span>觀察池：<strong>prob≥60% Top-10</strong>（優先不同產業）</span>
   <span>進場：<strong>連續2天</strong>訊號才買（D2隔天開盤）每日最多<strong>3檔</strong></span>
-  <span>每支：<strong>100萬</strong>零股</span>
+  <span>每支：<strong>30萬</strong>零股</span>
   <span>🎯 停利：消失第1天 + 報酬<strong>≥5%</strong> → 隔天賣</span>
   <span>出場：連續消失<strong>4天</strong>才賣</span>
   <span>回歸：消失&lt;4天回來 → 清除警戒繼續持有</span>
@@ -56,31 +56,31 @@ tr:hover td{background:#1c2128}
 <div class="cards">
   <div class="card">
     <div class="label">已實現損益</div>
-    <div class="val neg">-145,952</div>
+    <div class="val pos">+159,239</div>
   </div>
   <div class="card">
     <div class="label">未實現損益</div>
-    <div class="val pos">+106,284</div>
+    <div class="val neg">-67,425</div>
   </div>
   <div class="card">
     <div class="label">總損益</div>
-    <div class="val neg">-39,668</div>
+    <div class="val pos">+91,814</div>
   </div>
   <div class="card">
     <div class="label">結清 / 勝率</div>
-    <div class="val">15 / 60%</div>
+    <div class="val">28 / 68%</div>
   </div>
   <div class="card">
     <div class="label">均報酬</div>
-    <div class="val">-1.0%</div>
+    <div class="val">+1.9%</div>
   </div>
   <div class="card">
     <div class="label">持倉中</div>
-    <div class="val">2 支</div>
+    <div class="val">5 支</div>
   </div>
   <div class="card">
     <div class="label">持倉成本</div>
-    <div class="val">1,999,687</div>
+    <div class="val">1,497,917</div>
   </div>
 </div>
 
@@ -90,7 +90,7 @@ tr:hover td{background:#1c2128}
 </div>
 
 <div class="section">
-  <h2>📂 持倉中（2 支）</h2>
+  <h2>📂 持倉中（5 支）</h2>
   <table>
     <thead><tr>
       <th>股票</th><th>產業</th><th>買入日</th><th class="num">買入價</th>
@@ -104,30 +104,66 @@ tr:hover td{background:#1c2128}
   <td class="small-grey">半導體業</td>
   <td>2026/05/21</td>
   <td class="num">52.6</td>
-  <td class="num">19,011</td>
-  <td class="num">999,979</td>
+  <td class="num">5,703</td>
+  <td class="num">299,978</td>
   <td class="num pos">54.6<br><span class="small-grey">+3.8%</span></td>
-  <td class="num pos">+38,022</td>
+  <td class="num pos">+11,406</td>
   <td><span class="s-warn">⚠️ 消失2天（共4天賣）</span></td>
   <td class="small-grey">62%</td>
 </tr>
 <tr>
-  <td><strong>3037</strong><br><span class="small-grey">欣興</span></td>
+  <td><strong>2486</strong><br><span class="small-grey">一詮</span></td>
+  <td class="small-grey">光電業</td>
+  <td>2026/05/11</td>
+  <td class="num">291.0</td>
+  <td class="num">1,030</td>
+  <td class="num">299,730</td>
+  <td class="num neg">271.0<br><span class="small-grey">-6.9%</span></td>
+  <td class="num neg">-20,600</td>
+  <td><span class="s-warn s-hot">⚠️ 消失4天（明日賣出）</span></td>
+  <td class="small-grey">61%</td>
+</tr>
+<tr>
+  <td><strong>3006</strong><br><span class="small-grey">晶豪科</span></td>
+  <td class="small-grey">半導體業</td>
+  <td>2026/05/19</td>
+  <td class="num">261.0</td>
+  <td class="num">1,149</td>
+  <td class="num">299,889</td>
+  <td class="num neg">237.5<br><span class="small-grey">-9.0%</span></td>
+  <td class="num neg">-27,002</td>
+  <td><span class="s-warn s-hot">⚠️ 消失4天（明日賣出）</span></td>
+  <td class="small-grey">61%</td>
+</tr>
+<tr>
+  <td><strong>3653</strong><br><span class="small-grey">健策</span></td>
   <td class="small-grey">電子零組件業</td>
-  <td>2026/05/06</td>
-  <td class="num">908.0</td>
-  <td class="num">1,101</td>
-  <td class="num">999,708</td>
-  <td class="num pos">970.0<br><span class="small-grey">+6.8%</span></td>
-  <td class="num pos">+68,262</td>
+  <td>2026/05/12</td>
+  <td class="num">4,050.0</td>
+  <td class="num">74</td>
+  <td class="num">299,700</td>
+  <td class="num neg">3,660.0<br><span class="small-grey">-9.6%</span></td>
+  <td class="num neg">-28,860</td>
+  <td><span class="s-warn">⚠️ 消失2天（共4天賣）</span></td>
+  <td class="small-grey">63%</td>
+</tr>
+<tr>
+  <td><strong>6442</strong><br><span class="small-grey">光聖</span></td>
+  <td class="small-grey">通信網路業</td>
+  <td>2026/05/15</td>
+  <td class="num">1,890.0</td>
+  <td class="num">158</td>
+  <td class="num">298,620</td>
+  <td class="num neg">1,875.0<br><span class="small-grey">-0.8%</span></td>
+  <td class="num neg">-2,370</td>
   <td><span class="s-warn s-hot">⚠️ 消失3天（明日賣出）</span></td>
-  <td class="small-grey">67%</td>
+  <td class="small-grey">64%</td>
 </tr></tbody>
   </table>
 </div>
 
 <div class="section">
-  <h2>✅ 已結清（15 筆）</h2>
+  <h2>✅ 已結清（28 筆）</h2>
   <table>
     <thead><tr>
       <th>股票</th><th>產業</th><th>買入</th><th>賣出</th>
@@ -136,112 +172,232 @@ tr:hover td{background:#1c2128}
     </tr></thead>
     <tbody>
 <tr>
-  <td><strong>3653</strong><br><span class="small-grey">健策</span></td>
-  <td class="small-grey">電子零組件業</td>
-  <td>2026/05/21<br><span class="small-grey">@3,280.0</span></td>
-  <td>2026/05/22<br><span class="small-grey">@3,505.0</span></td>
-  <td class="num">304</td>
-  <td class="num pos">+68,400<br><span class="small-grey">+6.9%</span></td>
-  <td>🎯 takeprofit</td>
-  <td class="small-grey">60%</td>
-</tr>
-<tr>
   <td><strong>3665</strong><br><span class="small-grey">貿聯-KY</span></td>
   <td class="small-grey">其他電子業</td>
   <td>2026/05/19<br><span class="small-grey">@2,060.0</span></td>
   <td>2026/05/22<br><span class="small-grey">@2,255.0</span></td>
-  <td class="num">485</td>
-  <td class="num pos">+94,575<br><span class="small-grey">+9.5%</span></td>
+  <td class="num">145</td>
+  <td class="num pos">+28,275<br><span class="small-grey">+9.5%</span></td>
   <td>🎯 takeprofit</td>
+  <td class="small-grey">64%</td>
+</tr>
+<tr>
+  <td><strong>3037</strong><br><span class="small-grey">欣興</span></td>
+  <td class="small-grey">電子零組件業</td>
+  <td>2026/05/20<br><span class="small-grey">@819.0</span></td>
+  <td>2026/05/21<br><span class="small-grey">@870.0</span></td>
+  <td class="num">366</td>
+  <td class="num pos">+18,666<br><span class="small-grey">+6.2%</span></td>
+  <td>🎯 takeprofit</td>
+  <td class="small-grey">62%</td>
+</tr>
+<tr>
+  <td><strong>2408</strong><br><span class="small-grey">南亞科</span></td>
+  <td class="small-grey">半導體業</td>
+  <td>2026/05/07<br><span class="small-grey">@293.0</span></td>
+  <td>2026/05/21<br><span class="small-grey">@291.5</span></td>
+  <td class="num">1,023</td>
+  <td class="num neg">-1,534<br><span class="small-grey">-0.5%</span></td>
+  <td>⏹️ absent</td>
   <td class="small-grey">64%</td>
 </tr>
 <tr>
   <td><strong>6515</strong><br><span class="small-grey">穎崴</span></td>
   <td class="small-grey">半導體業</td>
-  <td>2026/05/06<br><span class="small-grey">@10,400.0</span></td>
+  <td>2026/04/24<br><span class="small-grey">@10,980.0</span></td>
   <td>2026/05/21<br><span class="small-grey">@9,405.0</span></td>
-  <td class="num">96</td>
-  <td class="num neg">-95,520<br><span class="small-grey">-9.6%</span></td>
+  <td class="num">27</td>
+  <td class="num neg">-42,525<br><span class="small-grey">-14.3%</span></td>
   <td>⏹️ absent</td>
+  <td class="small-grey">67%</td>
+</tr>
+<tr>
+  <td><strong>3481</strong><br><span class="small-grey">群創</span></td>
+  <td class="small-grey">光電業</td>
+  <td>2026/05/15<br><span class="small-grey">@35.8</span></td>
+  <td>2026/05/20<br><span class="small-grey">@37.8</span></td>
+  <td class="num">8,379</td>
+  <td class="num pos">+16,758<br><span class="small-grey">+5.6%</span></td>
+  <td>🎯 takeprofit</td>
   <td class="small-grey">66%</td>
 </tr>
 <tr>
   <td><strong>3450</strong><br><span class="small-grey">聯鈞</span></td>
   <td class="small-grey">半導體業</td>
-  <td>2026/05/12<br><span class="small-grey">@455.0</span></td>
+  <td>2026/05/11<br><span class="small-grey">@426.0</span></td>
   <td>2026/05/20<br><span class="small-grey">@395.0</span></td>
-  <td class="num">2,197</td>
-  <td class="num neg">-131,820<br><span class="small-grey">-13.2%</span></td>
+  <td class="num">704</td>
+  <td class="num neg">-21,824<br><span class="small-grey">-7.3%</span></td>
   <td>⏹️ absent</td>
-  <td class="small-grey">64%</td>
+  <td class="small-grey">61%</td>
 </tr>
 <tr>
   <td><strong>6789</strong><br><span class="small-grey">采鈺</span></td>
   <td class="small-grey">半導體業</td>
-  <td>2026/05/05<br><span class="small-grey">@613.0</span></td>
+  <td>2026/05/04<br><span class="small-grey">@588.0</span></td>
   <td>2026/05/20<br><span class="small-grey">@523.0</span></td>
-  <td class="num">1,631</td>
-  <td class="num neg">-146,790<br><span class="small-grey">-14.7%</span></td>
+  <td class="num">510</td>
+  <td class="num neg">-33,150<br><span class="small-grey">-11.1%</span></td>
   <td>⏹️ absent</td>
-  <td class="small-grey">67%</td>
+  <td class="small-grey">63%</td>
+</tr>
+<tr>
+  <td><strong>2303</strong><br><span class="small-grey">聯電</span></td>
+  <td class="small-grey">半導體業</td>
+  <td>2026/05/14<br><span class="small-grey">@102.0</span></td>
+  <td>2026/05/18<br><span class="small-grey">@108.5</span></td>
+  <td class="num">2,941</td>
+  <td class="num pos">+19,116<br><span class="small-grey">+6.4%</span></td>
+  <td>🎯 takeprofit</td>
+  <td class="small-grey">63%</td>
+</tr>
+<tr>
+  <td><strong>3017</strong><br><span class="small-grey">奇鋐</span></td>
+  <td class="small-grey">電腦及週邊設備業</td>
+  <td>2026/05/12<br><span class="small-grey">@2,625.0</span></td>
+  <td>2026/05/18<br><span class="small-grey">@2,350.0</span></td>
+  <td class="num">114</td>
+  <td class="num neg">-31,350<br><span class="small-grey">-10.5%</span></td>
+  <td>⏹️ absent</td>
+  <td class="small-grey">62%</td>
 </tr>
 <tr>
   <td><strong>8046</strong><br><span class="small-grey">南電</span></td>
   <td class="small-grey">電子零組件業</td>
   <td>2026/05/07<br><span class="small-grey">@970.0</span></td>
   <td>2026/05/18<br><span class="small-grey">@775.0</span></td>
-  <td class="num">1,030</td>
-  <td class="num neg">-200,850<br><span class="small-grey">-20.1%</span></td>
+  <td class="num">309</td>
+  <td class="num neg">-60,255<br><span class="small-grey">-20.1%</span></td>
   <td>⏹️ absent</td>
   <td class="small-grey">65%</td>
 </tr>
 <tr>
-  <td><strong>2408</strong><br><span class="small-grey">南亞科</span></td>
+  <td><strong>3665</strong><br><span class="small-grey">貿聯-KY</span></td>
+  <td class="small-grey">其他電子業</td>
+  <td>2026/05/04<br><span class="small-grey">@2,950.0</span></td>
+  <td>2026/05/15<br><span class="small-grey">@2,335.0</span></td>
+  <td class="num">101</td>
+  <td class="num neg">-62,115<br><span class="small-grey">-20.8%</span></td>
+  <td>⏹️ absent</td>
+  <td class="small-grey">60%</td>
+</tr>
+<tr>
+  <td><strong>3189</strong><br><span class="small-grey">景碩</span></td>
   <td class="small-grey">半導體業</td>
-  <td>2026/05/08<br><span class="small-grey">@282.0</span></td>
-  <td>2026/05/11<br><span class="small-grey">@300.5</span></td>
-  <td class="num">3,546</td>
-  <td class="num pos">+65,601<br><span class="small-grey">+6.6%</span></td>
+  <td>2026/05/08<br><span class="small-grey">@487.0</span></td>
+  <td>2026/05/14<br><span class="small-grey">@506.0</span></td>
+  <td class="num">616</td>
+  <td class="num pos">+11,704<br><span class="small-grey">+3.9%</span></td>
+  <td>⏹️ absent</td>
+  <td class="small-grey">63%</td>
+</tr>
+<tr>
+  <td><strong>3037</strong><br><span class="small-grey">欣興</span></td>
+  <td class="small-grey"></td>
+  <td>2026/04/27<br><span class="small-grey">@835.0</span></td>
+  <td>2026/05/14<br><span class="small-grey">@910.0</span></td>
+  <td class="num">359</td>
+  <td class="num pos">+26,925<br><span class="small-grey">+9.0%</span></td>
   <td>🎯 takeprofit</td>
-  <td class="small-grey">67%</td>
+  <td class="small-grey">63%</td>
+</tr>
+<tr>
+  <td><strong>2344</strong><br><span class="small-grey">華邦電</span></td>
+  <td class="small-grey">半導體業</td>
+  <td>2026/05/06<br><span class="small-grey">@108.5</span></td>
+  <td>2026/05/13<br><span class="small-grey">@117.0</span></td>
+  <td class="num">2,764</td>
+  <td class="num pos">+23,494<br><span class="small-grey">+7.8%</span></td>
+  <td>🎯 takeprofit</td>
+  <td class="small-grey">62%</td>
+</tr>
+<tr>
+  <td><strong>3532</strong><br><span class="small-grey">台勝科</span></td>
+  <td class="small-grey">半導體業</td>
+  <td>2026/05/06<br><span class="small-grey">@242.0</span></td>
+  <td>2026/05/12<br><span class="small-grey">@269.0</span></td>
+  <td class="num">1,239</td>
+  <td class="num pos">+33,453<br><span class="small-grey">+11.2%</span></td>
+  <td>⏹️ absent</td>
+  <td class="small-grey">65%</td>
+</tr>
+<tr>
+  <td><strong>3443</strong><br><span class="small-grey">創意</span></td>
+  <td class="small-grey">半導體業</td>
+  <td>2026/05/05<br><span class="small-grey">@4,700.0</span></td>
+  <td>2026/05/11<br><span class="small-grey">@5,300.0</span></td>
+  <td class="num">63</td>
+  <td class="num pos">+37,800<br><span class="small-grey">+12.8%</span></td>
+  <td>⏹️ absent</td>
+  <td class="small-grey">62%</td>
+</tr>
+<tr>
+  <td><strong>6415</strong><br><span class="small-grey">矽力-KY</span></td>
+  <td class="small-grey">半導體業</td>
+  <td>2026/04/29<br><span class="small-grey">@406.5</span></td>
+  <td>2026/05/07<br><span class="small-grey">@429.0</span></td>
+  <td class="num">738</td>
+  <td class="num pos">+16,605<br><span class="small-grey">+5.5%</span></td>
+  <td>🎯 takeprofit</td>
+  <td class="small-grey">65%</td>
 </tr>
 <tr>
   <td><strong>2383</strong><br><span class="small-grey">台光電</span></td>
   <td class="small-grey">電子零組件業</td>
-  <td>2026/04/30<br><span class="small-grey">@4,550.0</span></td>
+  <td>2026/04/28<br><span class="small-grey">@4,650.0</span></td>
   <td>2026/05/07<br><span class="small-grey">@5,110.0</span></td>
-  <td class="num">219</td>
-  <td class="num pos">+122,640<br><span class="small-grey">+12.3%</span></td>
+  <td class="num">64</td>
+  <td class="num pos">+29,440<br><span class="small-grey">+9.9%</span></td>
   <td>⏹️ absent</td>
-  <td class="small-grey">61%</td>
+  <td class="small-grey">64%</td>
+</tr>
+<tr>
+  <td><strong>3576</strong><br><span class="small-grey">聯合再生</span></td>
+  <td class="small-grey">光電業</td>
+  <td>2026/04/29<br><span class="small-grey">@14.8</span></td>
+  <td>2026/05/06<br><span class="small-grey">@15.8</span></td>
+  <td class="num">20,270</td>
+  <td class="num pos">+19,256<br><span class="small-grey">+6.4%</span></td>
+  <td>⏹️ absent</td>
+  <td class="small-grey">62%</td>
+</tr>
+<tr>
+  <td><strong>4919</strong><br><span class="small-grey">新唐</span></td>
+  <td class="small-grey">半導體業</td>
+  <td>2026/04/28<br><span class="small-grey">@142.0</span></td>
+  <td>2026/05/06<br><span class="small-grey">@172.0</span></td>
+  <td class="num">2,112</td>
+  <td class="num pos">+63,360<br><span class="small-grey">+21.1%</span></td>
+  <td>🎯 takeprofit</td>
+  <td class="small-grey">63%</td>
 </tr>
 <tr>
   <td><strong>6830</strong><br><span class="small-grey">汎銓</span></td>
   <td class="small-grey">其他電子業</td>
   <td>2026/04/22<br><span class="small-grey">@908.0</span></td>
   <td>2026/05/06<br><span class="small-grey">@990.0</span></td>
-  <td class="num">1,101</td>
-  <td class="num pos">+90,282<br><span class="small-grey">+9.0%</span></td>
+  <td class="num">330</td>
+  <td class="num pos">+27,060<br><span class="small-grey">+9.0%</span></td>
   <td>⏹️ absent</td>
   <td class="small-grey">68%</td>
 </tr>
 <tr>
   <td><strong>6531</strong><br><span class="small-grey">愛普*</span></td>
-  <td class="small-grey">半導體業</td>
-  <td>2026/04/30<br><span class="small-grey">@877.0</span></td>
+  <td class="small-grey"></td>
+  <td>2026/04/27<br><span class="small-grey">@792.0</span></td>
   <td>2026/05/05<br><span class="small-grey">@930.0</span></td>
-  <td class="num">1,140</td>
-  <td class="num pos">+60,420<br><span class="small-grey">+6.0%</span></td>
+  <td class="num">378</td>
+  <td class="num pos">+52,164<br><span class="small-grey">+17.4%</span></td>
   <td>🎯 takeprofit</td>
-  <td class="small-grey">63%</td>
+  <td class="small-grey">64%</td>
 </tr>
 <tr>
   <td><strong>6442</strong><br><span class="small-grey">光聖</span></td>
   <td class="small-grey">通信網路業</td>
   <td>2026/04/22<br><span class="small-grey">@2,320.0</span></td>
   <td>2026/05/05<br><span class="small-grey">@2,115.0</span></td>
-  <td class="num">431</td>
-  <td class="num neg">-88,355<br><span class="small-grey">-8.8%</span></td>
+  <td class="num">129</td>
+  <td class="num neg">-26,445<br><span class="small-grey">-8.8%</span></td>
   <td>⏹️ absent</td>
   <td class="small-grey">65%</td>
 </tr>
@@ -250,18 +406,28 @@ tr:hover td{background:#1c2128}
   <td class="small-grey">半導體業</td>
   <td>2026/04/29<br><span class="small-grey">@729.0</span></td>
   <td>2026/05/04<br><span class="small-grey">@824.0</span></td>
-  <td class="num">1,371</td>
-  <td class="num pos">+130,245<br><span class="small-grey">+13.0%</span></td>
+  <td class="num">411</td>
+  <td class="num pos">+39,045<br><span class="small-grey">+13.0%</span></td>
   <td>🎯 takeprofit</td>
   <td class="small-grey">66%</td>
+</tr>
+<tr>
+  <td><strong>2455</strong><br><span class="small-grey">全新</span></td>
+  <td class="small-grey"></td>
+  <td>2026/04/27<br><span class="small-grey">@351.0</span></td>
+  <td>2026/05/04<br><span class="small-grey">@362.5</span></td>
+  <td class="num">854</td>
+  <td class="num pos">+9,821<br><span class="small-grey">+3.3%</span></td>
+  <td>⏹️ absent</td>
+  <td class="small-grey">63%</td>
 </tr>
 <tr>
   <td><strong>8021</strong><br><span class="small-grey">尖點</span></td>
   <td class="small-grey">其他電子業</td>
   <td>2026/04/23<br><span class="small-grey">@468.0</span></td>
   <td>2026/04/29<br><span class="small-grey">@378.0</span></td>
-  <td class="num">2,136</td>
-  <td class="num neg">-192,240<br><span class="small-grey">-19.2%</span></td>
+  <td class="num">641</td>
+  <td class="num neg">-57,690<br><span class="small-grey">-19.2%</span></td>
   <td>⏹️ absent</td>
   <td class="small-grey">64%</td>
 </tr>
@@ -270,8 +436,8 @@ tr:hover td{background:#1c2128}
   <td class="small-grey">其他電子業</td>
   <td>2026/04/23<br><span class="small-grey">@2,030.0</span></td>
   <td>2026/04/29<br><span class="small-grey">@2,085.0</span></td>
-  <td class="num">492</td>
-  <td class="num pos">+27,060<br><span class="small-grey">+2.7%</span></td>
+  <td class="num">147</td>
+  <td class="num pos">+8,085<br><span class="small-grey">+2.7%</span></td>
   <td>⏹️ absent</td>
   <td class="small-grey">64%</td>
 </tr>
@@ -280,8 +446,8 @@ tr:hover td{background:#1c2128}
   <td class="small-grey">半導體業</td>
   <td>2026/04/22<br><span class="small-grey">@496.0</span></td>
   <td>2026/04/28<br><span class="small-grey">@521.0</span></td>
-  <td class="num">2,016</td>
-  <td class="num pos">+50,400<br><span class="small-grey">+5.0%</span></td>
+  <td class="num">604</td>
+  <td class="num pos">+15,100<br><span class="small-grey">+5.0%</span></td>
   <td>🎯 takeprofit</td>
   <td class="small-grey">65%</td>
 </tr></tbody>
@@ -289,11 +455,11 @@ tr:hover td{background:#1c2128}
 </div>
 
 <div class="footer">
-  🏆 Final 實戰版 · prob≥60% 觀察Top-10 每日買Top-3 · 每支100萬 · 進場2天 · 停利5% · 出場4天 · 上限500萬 &nbsp;|&nbsp;
+  🏆 Final 實戰版 · prob≥60% 觀察Top-10 每日買Top-3 · 每支30萬 · 進場2天 · 停利5% · 出場4天 · 上限500萬 &nbsp;|&nbsp;
   <a href="../sim5/index.html">V5精選</a> ·
   <a href="../sim55/index.html">V5.5加碼</a> ·
   <a href="../index.html">首頁</a>
-  &nbsp;|&nbsp; 2026/05/24 22:42
+  &nbsp;|&nbsp; 2026/05/24 22:49
 </div>
 
 <script>
@@ -303,7 +469,7 @@ new Chart(document.getElementById('eqChart'), {
     labels: ["20260420", "20260421", "20260422", "20260423", "20260424", "20260427", "20260428", "20260429", "20260430", "20260504", "20260505", "20260506", "20260507", "20260508", "20260511", "20260512", "20260513", "20260514", "20260515", "20260518", "20260519", "20260520", "20260521", "20260522"],
     datasets: [{
       label: '累積損益',
-      data: [0, 0, -63370, -315981, -423277, -663640, -468953, -340227, -226050, 31372, 86038, -2001, 59518, -136716, 99483, 117485, 25649, -14665, -251901, -254698, -445823, -479787, -245252, -39668],
+      data: [0, 0, -18978, -94604, -151597, -283655, -194938, -165305, 5829, 152151, 160373, 158790, 241947, 114742, 268076, 274870, 170918, 173245, 71161, 71305, -83830, -98334, 18894, 91814],
       borderColor: '#3fb950',
       backgroundColor: 'rgba(63,185,80,0.08)',
       borderWidth: 2,
