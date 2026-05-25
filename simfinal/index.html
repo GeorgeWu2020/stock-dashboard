@@ -123,13 +123,22 @@ tr:hover td{background:#1c2128}
 .badge-tp{background:rgba(88,166,255,.15);color:#58a6ff}
 .badge-ab{background:rgba(139,148,158,.15);color:#8b949e}
 
-/* ── 觀察池 ── */
+/* ── 明日排程（買入 + 賣出並排）── */
+.sched-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.sched-grid{grid-template-columns:1fr}}
+.sched-col-hdr{font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;
+                letter-spacing:.4px;margin-bottom:8px;display:flex;align-items:center;
+                justify-content:space-between}
+.sched-col-hdr .sc-count{font-size:11px;font-weight:400;color:#484f58}
 .watch-wrap{display:flex;flex-wrap:wrap;gap:8px}
 .watch-chip{background:#161b22;border:1px solid #21262d;border-radius:8px;
              padding:8px 12px;display:flex;align-items:center;gap:8px}
+.watch-chip-sell{border-color:rgba(218,54,51,.25);background:rgba(218,54,51,.05)}
+.watch-name{font-size:12px;font-weight:600;color:#e6edf3}
 .watch-prob{font-size:11px;font-weight:700;color:#d29922}
 .watch-ind{font-size:11px;color:#8b949e}
 .watch-since{font-size:10px;color:#484f58}
+.watch-sell-reason{font-size:11px;color:#f85149;font-weight:600}
 
 /* ── 分項統計 ── */
 .stat-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
@@ -158,7 +167,7 @@ details[open] summary::before{content:'▼ '}
 <div class="topbar">
   <div>
     <span class="topbar-title">🏆 Final 實戰版</span>
-    <span class="topbar-sub">2026/04/20 ～ 2026/05/25 &nbsp;·&nbsp; 更新 2026/05/26 03:55</span>
+    <span class="topbar-sub">2026/04/20 ～ 2026/05/25 &nbsp;·&nbsp; 更新 2026/05/26 04:01</span>
   </div>
   <div class="topbar-nav">
     <a href="../index.html">首頁</a>
@@ -168,7 +177,7 @@ details[open] summary::before{content:'▼ '}
   </div>
 </div>
 
-
+<!-- 賣出警示 --><div class="action-panel has-sell"><div class="action-title">⚡ 即將賣出</div><div class="action-row"><span class="action-label sell-label">賣出 2026/05/26</span><a href="https://tw.stock.yahoo.com/quote/3481.TW" target="_blank" class="action-chip sell">3481 群創 <span>(停利)</span></a> <a href="https://tw.stock.yahoo.com/quote/6442.TW" target="_blank" class="action-chip sell">6442 光聖 <span>(消失4天)</span></a> <a href="https://tw.stock.yahoo.com/quote/7795.TW" target="_blank" class="action-chip sell">7795 長廣 <span>(消失4天)</span></a> </div></div>
 
 <div class="ops-panel"><div class="ops-panel-title">今天操作<span class="ops-date">2026/05/25 開盤執行</span></div><div class="ops-row"><span class="ops-label ops-sell-lbl">🔴 賣出</span><a href="https://tw.stock.yahoo.com/quote/2486.TW" target="_blank" class="ops-chip ops-sell">2486 <span class="ops-name">一詮</span><span class="ops-reason">(消失4天)</span><span class="ops-pnl ops-pnl-neg">-11,330</span></a> <a href="https://tw.stock.yahoo.com/quote/3006.TW" target="_blank" class="ops-chip ops-sell">3006 <span class="ops-name">晶豪科</span><span class="ops-reason">(消失4天)</span><span class="ops-pnl ops-pnl-neg">-6,787</span></a> <a href="https://tw.stock.yahoo.com/quote/2368.TW" target="_blank" class="ops-chip ops-sell">2368 <span class="ops-name">金像電</span><span class="ops-reason">(消失4天)</span><span class="ops-pnl ops-pnl-pos">+33,320</span></a> </div><div class="ops-row"><span class="ops-label ops-buy-lbl">🟢 買入</span><a href="https://tw.stock.yahoo.com/quote/3167.TW" target="_blank" class="ops-chip ops-buy">3167 <span class="ops-name">大量</span><span class="ops-prob">64%</span></a> <a href="https://tw.stock.yahoo.com/quote/6531.TW" target="_blank" class="ops-chip ops-buy">6531 <span class="ops-name">愛普*</span><span class="ops-prob">62%</span></a> </div></div>
 
@@ -246,7 +255,7 @@ details[open] summary::before{content:'▼ '}
       <th class="num">未實現損益</th><th>狀態</th><th class="num">Prob</th>
     </tr></thead>
     <tbody>
-<tr class="row-urgent">
+<tr class="row-sell">
   <td>
     <a href="https://tw.stock.yahoo.com/quote/6442.TW" target="_blank" class="ticker-link">6442</a>
     <div class="sub-name">光聖</div>
@@ -256,10 +265,10 @@ details[open] summary::before{content:'▼ '}
   <td class="num">1,890.0</td>
   <td class="num pos">2,060.0 <div class="sub-name pos">+9.0%</div></td>
   <td class="num pos bold">+26,860</td>
-  <td><span class="badge badge-urgent">⚠ 消失4天・明日賣</span></td>
+  <td><span class="badge badge-sell">賣出 2026/05/26</span></td>
   <td class="num sub-name">64%</td>
 </tr>
-<tr class="row-urgent">
+<tr class="row-sell">
   <td>
     <a href="https://tw.stock.yahoo.com/quote/7795.TW" target="_blank" class="ticker-link">7795</a>
     <div class="sub-name">長廣</div>
@@ -269,8 +278,21 @@ details[open] summary::before{content:'▼ '}
   <td class="num">344.0</td>
   <td class="num pos">430.0 <div class="sub-name pos">+25.0%</div></td>
   <td class="num pos bold">+74,992</td>
-  <td><span class="badge badge-urgent">⚠ 消失4天・明日賣</span></td>
+  <td><span class="badge badge-sell">賣出 2026/05/26</span></td>
   <td class="num sub-name">61%</td>
+</tr>
+<tr class="row-sell">
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/3481.TW" target="_blank" class="ticker-link">3481</a>
+    <div class="sub-name">群創</div>
+  </td>
+  <td class="sub-name">光電業</td>
+  <td>2026/05/15<div class="sub-name">10天前</div></td>
+  <td class="num">35.8</td>
+  <td class="num pos">49.1 <div class="sub-name pos">+37.2%</div></td>
+  <td class="num pos bold">+111,441</td>
+  <td><span class="badge badge-sell">賣出 2026/05/26</span></td>
+  <td class="num sub-name">66%</td>
 </tr>
 <tr class="row-urgent">
   <td>
@@ -310,19 +332,6 @@ details[open] summary::before{content:'▼ '}
   <td class="num pos bold">+28,267</td>
   <td><span class="badge badge-urgent">⚠ 消失3天・明日賣</span></td>
   <td class="num sub-name">60%</td>
-</tr>
-<tr class="row-warn">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/3481.TW" target="_blank" class="ticker-link">3481</a>
-    <div class="sub-name">群創</div>
-  </td>
-  <td class="sub-name">光電業</td>
-  <td>2026/05/15<div class="sub-name">10天前</div></td>
-  <td class="num">35.8</td>
-  <td class="num pos">49.1 <div class="sub-name pos">+37.2%</div></td>
-  <td class="num pos bold">+111,441</td>
-  <td><span class="badge badge-warn">消失1/4天</span></td>
-  <td class="num sub-name">66%</td>
 </tr>
 <tr class="row-warn">
   <td>
@@ -418,13 +427,27 @@ details[open] summary::before{content:'▼ '}
   </table>
 </div>
 
-<!-- 觀察中 / 明日排程 -->
+<!-- 明日排程（買入 + 賣出並排）-->
 <div class="section">
   <div class="sec-hdr">
-    <h2>明日排程買入</h2>
-    <span class="sec-count">2 筆</span>
+    <h2>明日排程</h2>
   </div>
-  <div class="watch-wrap"><div class="watch-chip"><a href="https://tw.stock.yahoo.com/quote/3443.TW" target="_blank" class="ticker-link">3443</a><span class="watch-prob">61%</span><span class="watch-ind">半導體業</span><span class="watch-since">買入 2026/05/26</span></div><div class="watch-chip"><a href="https://tw.stock.yahoo.com/quote/7610.TW" target="_blank" class="ticker-link">7610</a><span class="watch-prob">61%</span><span class="watch-ind">綠能環保</span><span class="watch-since">買入 2026/05/26</span></div></div>
+  <div class="sched-grid">
+    <div>
+      <div class="sched-col-hdr">
+        🟢 明日排程買入
+        <span class="sc-count">2 筆</span>
+      </div>
+      <div class="watch-wrap"><div class="watch-chip"><a href="https://tw.stock.yahoo.com/quote/3443.TW" target="_blank" class="ticker-link">3443</a><span class="watch-name">創意</span><span class="watch-prob">61%</span><span class="watch-ind">半導體業</span><span class="watch-since">2026/05/26 買入</span></div><div class="watch-chip"><a href="https://tw.stock.yahoo.com/quote/7610.TW" target="_blank" class="ticker-link">7610</a><span class="watch-name">聯友金屬-創</span><span class="watch-prob">61%</span><span class="watch-ind">綠能環保</span><span class="watch-since">2026/05/26 買入</span></div></div>
+    </div>
+    <div>
+      <div class="sched-col-hdr">
+        🔴 排程賣出
+        <span class="sc-count">3 筆</span>
+      </div>
+      <div class="watch-wrap"><div class="watch-chip watch-chip-sell"><a href="https://tw.stock.yahoo.com/quote/3481.TW" target="_blank" class="ticker-link">3481</a><span class="watch-name">群創</span><span class="watch-sell-reason">停利</span><span class="watch-since">2026/05/26 賣出</span></div><div class="watch-chip watch-chip-sell"><a href="https://tw.stock.yahoo.com/quote/6442.TW" target="_blank" class="ticker-link">6442</a><span class="watch-name">光聖</span><span class="watch-sell-reason">消失4天</span><span class="watch-since">2026/05/26 賣出</span></div><div class="watch-chip watch-chip-sell"><a href="https://tw.stock.yahoo.com/quote/7795.TW" target="_blank" class="ticker-link">7795</a><span class="watch-name">長廣</span><span class="watch-sell-reason">消失4天</span><span class="watch-since">2026/05/26 賣出</span></div></div>
+    </div>
+  </div>
 </div>
 
 <!-- 勝率分項 -->
@@ -1047,7 +1070,7 @@ details[open] summary::before{content:'▼ '}
   <a href="../sim5/index.html">V5精選</a> ·
   <a href="../sim55/index.html">V5.5加碼</a> ·
   <a href="../index.html">首頁</a>
-  &nbsp;|&nbsp; 2026/05/26 03:55
+  &nbsp;|&nbsp; 2026/05/26 04:01
 </div>
 
 <script>
