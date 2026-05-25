@@ -18,11 +18,29 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
 .hdr-title{font-size:19px;font-weight:800;letter-spacing:.5px}
 .hdr-date{font-size:12px;background:rgba(0,0,0,.25);border-radius:12px;
   padding:3px 11px;opacity:.9}
-.hdr-nav{display:flex;gap:8px}
+.hdr-nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .hdr-nav a{color:#ffe082;font-size:12px;text-decoration:none;
   background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.35);
   border-radius:16px;padding:4px 14px;white-space:nowrap;transition:background .2s}
 .hdr-nav a:hover{background:rgba(0,0,0,.5)}
+/* ── 下拉群組 ── */
+.nav-group{position:relative;display:inline-block}
+.nav-group-btn{color:#c9b8e8;font-size:12px;cursor:pointer;
+  background:rgba(0,0,0,.15);border:1px solid rgba(255,255,255,.2);
+  border-radius:16px;padding:4px 14px;white-space:nowrap;
+  user-select:none;display:inline-block;transition:background .2s}
+.nav-group:hover .nav-group-btn{background:rgba(0,0,0,.4);color:#ffe082}
+.nav-dropdown{display:none;position:absolute;top:calc(100% + 6px);right:0;
+  background:#2d1b69;border:1px solid rgba(255,255,255,.2);
+  border-radius:10px;padding:6px;z-index:999;min-width:140px;
+  box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.nav-group:hover .nav-dropdown{display:flex;flex-direction:column;gap:4px}
+.nav-dropdown a{color:#ffe082;font-size:12px;text-decoration:none;
+  padding:5px 12px;border-radius:6px;white-space:nowrap;
+  background:transparent;border:none;display:block}
+.nav-dropdown a:hover{background:rgba(255,255,255,.1)}
+.nav-dropdown .dd-label{font-size:10px;color:rgba(255,255,255,.4);
+  padding:2px 12px;letter-spacing:.5px;text-transform:uppercase}
 
 /* ── Market bar ── */
 .mkt-bar{background:#fff;border-bottom:2px solid #e0d6f5;padding:8px 24px;
@@ -180,17 +198,35 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
     <span class="hdr-date">2026/05/22</span>
   </div>
   <div class="hdr-nav">
-    <a href="v6/index.html" style="background:rgba(41,128,185,.35);border-color:rgba(100,200,255,.5)">🔬 v6 機構異質</a>
-    <a href="v5/index.html" style="background:rgba(26,188,156,.25);border-color:rgba(100,255,200,.4)">🧠 v5 訊號記憶</a>
-    <a href="simfinal/index.html" style="background:rgba(243,156,18,.35);border-color:rgba(255,220,100,.5)">⭐ Final 實戰模擬</a>
-    <a href="sim55/index.html" style="background:rgba(192,57,43,.35);border-color:rgba(255,150,150,.5)">🚀 V5.5 加碼模擬</a>
-    <a href="sim5/index.html" style="background:rgba(39,174,96,.35);border-color:rgba(100,255,150,.5)">🎯 V5 精選模擬</a>
+    <a href="simfinal/index.html" style="background:rgba(243,156,18,.35);border-color:rgba(255,220,100,.5)">⭐ Final 實戰</a>
+    <a href="sim5/index.html" style="background:rgba(39,174,96,.35);border-color:rgba(100,255,150,.5)">🎯 V5精選</a>
+    <a href="sim55/index.html" style="background:rgba(192,57,43,.35);border-color:rgba(255,150,150,.5)">🚀 V5.5加碼</a>
     <a href="v45/index.html" style="background:rgba(231,76,60,.35);border-color:rgba(255,200,200,.5)">🧪 v4.5</a>
-    <a href="sim45/index.html" style="background:rgba(142,68,173,.35);border-color:rgba(200,150,255,.5)">💼 V4.5 模擬</a>
-    <a href="sim/index.html" style="background:rgba(155,89,182,.25);border-color:rgba(200,150,255,.4)">💼 V4 模擬</a>
-    <a href="v3/index.html">📊 v3 籌碼策略</a>
-    <a href="v2/index.html">📋 v2 傳統版</a>
-    <a href="stock-record.html">📈 現股記錄</a>
+    <div class="nav-group">
+      <span class="nav-group-btn">🔬 開發中 ▾</span>
+      <div class="nav-dropdown">
+        <span class="dd-label">開發中</span>
+        <a href="v6/index.html">🔬 v6 機構異質</a>
+        <a href="v5/index.html">🧠 v5 訊號記憶</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-btn">💼 舊模擬 ▾</span>
+      <div class="nav-dropdown">
+        <span class="dd-label">舊模擬</span>
+        <a href="sim45/index.html">💼 V4.5 模擬</a>
+        <a href="sim/index.html">💼 V4 模擬</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-btn">📁 舊策略 ▾</span>
+      <div class="nav-dropdown">
+        <span class="dd-label">舊策略</span>
+        <a href="v3/index.html">📊 v3 籌碼策略</a>
+        <a href="v2/index.html">📋 v2 傳統版</a>
+      </div>
+    </div>
+    <a href="stock-record.html">📈 現股</a>
     <a href="trading-record.html">📋 實戰記錄</a>
   </div>
 </div>
@@ -207,7 +243,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
   <strong style="color:#18a058">+2.7%</strong>
   <span class="mkt-lbl">20日</span>
   <strong style="color:#18a058">+12.1%</strong>
-  <span class="mkt-time">更新 2026-05-24 22:33</span>
+  <span class="mkt-time">更新 2026-05-25 19:41</span>
 </div>
 
 <!-- ── KPI row ── -->
@@ -347,7 +383,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
   <a href="sim45/index.html">V4.5模擬 💼</a>&nbsp;·&nbsp;
   <a href="v3/index.html">v3</a>&nbsp;·&nbsp;
   <a href="v2/index.html">v2</a>&nbsp;|&nbsp;
-  2026/05/22 · 2026-05-24 22:33
+  2026/05/22 · 2026-05-25 19:41
 </div>
 
 <script>
