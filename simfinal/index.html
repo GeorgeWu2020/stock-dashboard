@@ -8,15 +8,15 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif;
-      background:#0d1117;color:#c9d1d9;font-size:13px;line-height:1.5}
+      background:#0d1117;color:#c9d1d9;font-size:15px;line-height:1.6}
 
 /* ── 導覽 ── */
 .topbar{display:flex;align-items:center;justify-content:space-between;
-         padding:10px 20px;background:#010409;border-bottom:1px solid #21262d;flex-wrap:wrap;gap:8px}
-.topbar-title{font-size:15px;font-weight:700;color:#e6edf3;white-space:nowrap}
-.topbar-sub{font-size:11px;color:#8b949e;margin-left:10px}
+         padding:12px 22px;background:#010409;border-bottom:1px solid #21262d;flex-wrap:wrap;gap:8px}
+.topbar-title{font-size:17px;font-weight:700;color:#e6edf3;white-space:nowrap}
+.topbar-sub{font-size:13px;color:#8b949e;margin-left:10px}
 .topbar-nav{display:flex;gap:6px;flex-wrap:wrap}
-.topbar-nav a{font-size:11px;color:#8b949e;text-decoration:none;padding:3px 8px;
+.topbar-nav a{font-size:13px;color:#8b949e;text-decoration:none;padding:4px 10px;
                border:1px solid #30363d;border-radius:4px;white-space:nowrap}
 .topbar-nav a:hover{color:#e6edf3;border-color:#58a6ff}
 
@@ -25,82 +25,82 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-seri
                padding:12px 20px;margin:16px 20px;border-radius:6px;
                border:1px solid #238636;border-left-width:4px}
 .action-panel.has-sell{border-color:#da3633;border-left-color:#da3633}
-.action-title{font-size:12px;font-weight:600;color:#8b949e;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.action-title{font-size:13px;font-weight:600;color:#8b949e;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
 .action-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-.action-label{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.action-label{font-size:13px;font-weight:600;padding:3px 10px;border-radius:4px;white-space:nowrap}
 .sell-label{background:rgba(218,54,51,.2);color:#f85149}
 .buy-label{background:rgba(35,134,54,.2);color:#3fb950}
-.action-chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;
-              padding:4px 10px;border-radius:6px;text-decoration:none;transition:.15s}
+.action-chip{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:600;
+              padding:5px 12px;border-radius:6px;text-decoration:none;transition:.15s}
 .action-chip.sell{background:rgba(218,54,51,.15);color:#f85149;border:1px solid rgba(218,54,51,.3)}
 .action-chip.sell:hover{background:rgba(218,54,51,.3)}
 .action-chip.buy{background:rgba(35,134,54,.15);color:#3fb950;border:1px solid rgba(35,134,54,.3)}
 .action-chip.buy:hover{background:rgba(35,134,54,.3)}
-.action-chip span{font-size:10px;opacity:.7}
+.action-chip span{font-size:12px;opacity:.7}
 .action-empty{display:none}
 
 /* ── 今天操作 ── */
 .ops-panel{background:#161b22;border:1px solid #30363d;border-radius:8px;
-            padding:14px 18px;margin:12px 20px}
-.ops-panel-title{font-size:13px;font-weight:700;color:#e6edf3;margin-bottom:10px;
+            padding:16px 20px;margin:12px 20px}
+.ops-panel-title{font-size:15px;font-weight:700;color:#e6edf3;margin-bottom:12px;
                   display:flex;align-items:center;gap:10px}
-.ops-date{font-size:11px;font-weight:400;color:#8b949e}
-.ops-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.ops-date{font-size:13px;font-weight:400;color:#8b949e}
+.ops-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 .ops-row:last-child{margin-bottom:0}
-.ops-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;
+.ops-label{font-size:13px;font-weight:700;padding:4px 12px;border-radius:20px;
             white-space:nowrap;flex-shrink:0}
 .ops-sell-lbl{background:rgba(218,54,51,.2);color:#f85149}
 .ops-buy-lbl{background:rgba(35,134,54,.2);color:#3fb950}
 .ops-held-lbl{background:rgba(139,148,158,.15);color:#8b949e}
 .ops-cap-lbl{background:rgba(210,153,34,.2);color:#d29922}
-.ops-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;
-           padding:4px 10px;border-radius:6px;text-decoration:none;transition:.15s;margin-bottom:3px}
+.ops-chip{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;
+           padding:5px 12px;border-radius:6px;text-decoration:none;transition:.15s;margin-bottom:4px}
 .ops-chip.ops-sell{background:rgba(218,54,51,.12);color:#f85149;border:1px solid rgba(218,54,51,.25)}
 .ops-chip.ops-sell:hover{background:rgba(218,54,51,.28)}
 .ops-chip.ops-buy{background:rgba(35,134,54,.12);color:#3fb950;border:1px solid rgba(35,134,54,.25)}
 .ops-chip.ops-buy:hover{background:rgba(35,134,54,.28)}
 .ops-chip.ops-held{background:rgba(139,148,158,.1);color:#8b949e;border:1px solid rgba(139,148,158,.2)}
 .ops-chip.ops-held:hover{background:rgba(139,148,158,.2)}
-.ops-name{font-size:10px;opacity:.8}
-.ops-prob{font-size:10px;opacity:.7}
-.ops-reason{font-size:10px;opacity:.7}
-.ops-cap-note{font-size:11px;color:#d29922}
-.ops-pnl{font-size:11px;font-weight:700}
+.ops-name{font-size:12px;opacity:.8}
+.ops-prob{font-size:12px;opacity:.7}
+.ops-reason{font-size:12px;opacity:.7}
+.ops-cap-note{font-size:13px;color:#d29922}
+.ops-pnl{font-size:13px;font-weight:700}
 .ops-pnl-pos{color:#3fb950}.ops-pnl-neg{color:#f85149}
 
 /* ── KPI 卡片 ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-           gap:10px;padding:0 20px 16px}
-.kpi{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:14px 16px}
-.kpi .k-label{font-size:11px;color:#8b949e;margin-bottom:6px}
-.kpi .k-val{font-size:20px;font-weight:700;color:#e6edf3;line-height:1.1}
-.kpi .k-sub{font-size:11px;color:#8b949e;margin-top:3px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+           gap:10px;padding:0 20px 18px}
+.kpi{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px 18px}
+.kpi .k-label{font-size:13px;color:#8b949e;margin-bottom:7px}
+.kpi .k-val{font-size:24px;font-weight:700;color:#e6edf3;line-height:1.1}
+.kpi .k-sub{font-size:12px;color:#8b949e;margin-top:4px}
 .kpi .k-val.pos{color:#3fb950}.kpi .k-val.neg{color:#f85149}
 .kpi.highlight{border-color:#388bfd;background:linear-gradient(135deg,#161b22,#1c2333)}
 
 /* ── 進度條 ── */
-.prog-wrap{padding:0 20px 6px}
-.prog-label{font-size:11px;color:#8b949e;margin-bottom:4px;display:flex;justify-content:space-between}
-.prog-bar{height:6px;background:#21262d;border-radius:3px;overflow:hidden}
+.prog-wrap{padding:0 20px 8px}
+.prog-label{font-size:13px;color:#8b949e;margin-bottom:5px;display:flex;justify-content:space-between}
+.prog-bar{height:7px;background:#21262d;border-radius:3px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,#388bfd,#58a6ff);border-radius:3px;transition:.3s}
 
 /* ── 圖表 ── */
 .chart-wrap{padding:0 20px 20px}
-.chart-box{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:14px}
-.chart-title{font-size:12px;color:#8b949e;margin-bottom:10px;font-weight:600}
+.chart-box{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px}
+.chart-title{font-size:13px;color:#8b949e;margin-bottom:10px;font-weight:600}
 
 /* ── 區塊標題 ── */
-.section{padding:0 20px 20px}
+.section{padding:0 20px 22px}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;
-          margin-bottom:10px;border-bottom:1px solid #21262d;padding-bottom:8px}
-.sec-hdr h2{font-size:13px;font-weight:700;color:#e6edf3}
-.sec-hdr .sec-count{font-size:11px;color:#8b949e}
+          margin-bottom:12px;border-bottom:1px solid #21262d;padding-bottom:9px}
+.sec-hdr h2{font-size:15px;font-weight:700;color:#e6edf3}
+.sec-hdr .sec-count{font-size:13px;color:#8b949e}
 
 /* ── 表格 ── */
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:#161b22;color:#6e7681;padding:7px 10px;text-align:left;
-    border-bottom:2px solid #21262d;white-space:nowrap;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
-td{padding:8px 10px;border-bottom:1px solid #161b22;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:#161b22;color:#6e7681;padding:9px 12px;text-align:left;
+    border-bottom:2px solid #21262d;white-space:nowrap;font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+td{padding:10px 12px;border-bottom:1px solid #161b22;vertical-align:middle}
 tr.row-sell td{background:rgba(218,54,51,.07);border-left:3px solid #da3633}
 tr.row-urgent td{background:rgba(210,153,34,.07);border-left:3px solid #d29922}
 tr.row-warn td{background:rgba(210,153,34,.04);border-left:3px solid rgba(210,153,34,.4)}
@@ -108,14 +108,14 @@ tr:hover td{background:#1c2128}
 .num{text-align:right;font-variant-numeric:tabular-nums}
 .bold{font-weight:700}
 .pos{color:#3fb950}.neg{color:#f85149}
-.sub-name{font-size:11px;color:#8b949e;margin-top:1px}
+.sub-name{font-size:12px;color:#8b949e;margin-top:2px}
 
 /* ── 股票連結 ── */
-.ticker-link{color:#58a6ff;font-weight:700;text-decoration:none;font-size:13px}
+.ticker-link{color:#58a6ff;font-weight:700;text-decoration:none;font-size:15px}
 .ticker-link:hover{text-decoration:underline}
 
 /* ── 狀態 badge ── */
-.badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.badge{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap}
 .badge-ok{background:rgba(63,185,80,.15);color:#3fb950}
 .badge-warn{background:rgba(210,153,34,.15);color:#d29922}
 .badge-urgent{background:rgba(248,81,73,.2);color:#f85149}
@@ -126,37 +126,37 @@ tr:hover td{background:#1c2128}
 /* ── 明日排程（買入 + 賣出並排）── */
 .sched-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:600px){.sched-grid{grid-template-columns:1fr}}
-.sched-col-hdr{font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;
-                letter-spacing:.4px;margin-bottom:8px;display:flex;align-items:center;
+.sched-col-hdr{font-size:13px;font-weight:700;color:#8b949e;text-transform:uppercase;
+                letter-spacing:.4px;margin-bottom:10px;display:flex;align-items:center;
                 justify-content:space-between}
-.sched-col-hdr .sc-count{font-size:11px;font-weight:400;color:#484f58}
-.watch-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.sched-col-hdr .sc-count{font-size:13px;font-weight:400;color:#484f58}
+.watch-wrap{display:flex;flex-wrap:wrap;gap:9px}
 .watch-chip{background:#161b22;border:1px solid #21262d;border-radius:8px;
-             padding:8px 12px;display:flex;align-items:center;gap:8px}
+             padding:10px 14px;display:flex;align-items:center;gap:10px}
 .watch-chip-sell{border-color:rgba(218,54,51,.25);background:rgba(218,54,51,.05)}
-.watch-name{font-size:12px;font-weight:600;color:#e6edf3}
-.watch-prob{font-size:11px;font-weight:700;color:#d29922}
-.watch-ind{font-size:11px;color:#8b949e}
-.watch-since{font-size:10px;color:#484f58}
-.watch-sell-reason{font-size:11px;color:#f85149;font-weight:600}
+.watch-name{font-size:14px;font-weight:600;color:#e6edf3}
+.watch-prob{font-size:13px;font-weight:700;color:#d29922}
+.watch-ind{font-size:13px;color:#8b949e}
+.watch-since{font-size:12px;color:#484f58}
+.watch-sell-reason{font-size:13px;color:#f85149;font-weight:600}
 
 /* ── 分項統計 ── */
-.stat-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
-.stat-item{font-size:11px;color:#8b949e}
+.stat-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:8px}
+.stat-item{font-size:13px;color:#8b949e}
 .stat-item strong{color:#e6edf3}
 
 /* ── 策略摘要 (收合) ── */
-details{margin:0 20px 16px;border:1px solid #21262d;border-radius:6px}
-summary{padding:8px 14px;font-size:12px;color:#8b949e;cursor:pointer;list-style:none}
+details{margin:0 20px 18px;border:1px solid #21262d;border-radius:6px}
+summary{padding:10px 16px;font-size:13px;color:#8b949e;cursor:pointer;list-style:none}
 summary::-webkit-details-marker{display:none}
-summary::before{content:'▶ ';font-size:10px}
+summary::before{content:'▶ ';font-size:11px}
 details[open] summary::before{content:'▼ '}
-.rule-grid{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 12px}
-.rule-chip{background:#21262d;padding:3px 9px;border-radius:20px;font-size:11px;color:#8b949e}
+.rule-grid{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px 14px}
+.rule-chip{background:#21262d;padding:4px 11px;border-radius:20px;font-size:13px;color:#8b949e}
 .rule-chip strong{color:#e6edf3}
 
 /* ── 頁尾 ── */
-.footer{padding:12px 20px;font-size:11px;color:#484f58;border-top:1px solid #21262d;margin-top:4px}
+.footer{padding:14px 20px;font-size:13px;color:#484f58;border-top:1px solid #21262d;margin-top:4px}
 .footer a{color:#8b949e;text-decoration:none}
 .footer a:hover{color:#58a6ff}
 </style>
@@ -167,7 +167,7 @@ details[open] summary::before{content:'▼ '}
 <div class="topbar">
   <div>
     <span class="topbar-title">🏆 Final 實戰版</span>
-    <span class="topbar-sub">2026/04/20 ～ 2026/05/25 &nbsp;·&nbsp; 更新 2026/05/26 04:08</span>
+    <span class="topbar-sub">2026/04/20 ～ 2026/05/25 &nbsp;·&nbsp; 更新 2026/05/26 04:20</span>
   </div>
   <div class="topbar-nav">
     <a href="../index.html">首頁</a>
@@ -1068,7 +1068,7 @@ details[open] summary::before{content:'▼ '}
   <a href="../sim5/index.html">V5精選</a> ·
   <a href="../sim55/index.html">V5.5加碼</a> ·
   <a href="../index.html">首頁</a>
-  &nbsp;|&nbsp; 2026/05/26 04:08
+  &nbsp;|&nbsp; 2026/05/26 04:20
 </div>
 
 <script>
