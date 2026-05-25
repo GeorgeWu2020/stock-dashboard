@@ -39,6 +39,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-seri
 .action-chip span{font-size:10px;opacity:.7}
 .action-empty{display:none}
 
+/* ── 今天操作 ── */
+.ops-panel{background:#161b22;border:1px solid #30363d;border-radius:8px;
+            padding:14px 18px;margin:12px 20px}
+.ops-panel-title{font-size:13px;font-weight:700;color:#e6edf3;margin-bottom:10px;
+                  display:flex;align-items:center;gap:10px}
+.ops-date{font-size:11px;font-weight:400;color:#8b949e}
+.ops-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.ops-row:last-child{margin-bottom:0}
+.ops-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;
+            white-space:nowrap;flex-shrink:0}
+.ops-sell-lbl{background:rgba(218,54,51,.2);color:#f85149}
+.ops-buy-lbl{background:rgba(35,134,54,.2);color:#3fb950}
+.ops-held-lbl{background:rgba(139,148,158,.15);color:#8b949e}
+.ops-cap-lbl{background:rgba(210,153,34,.2);color:#d29922}
+.ops-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;
+           padding:4px 10px;border-radius:6px;text-decoration:none;transition:.15s;margin-bottom:3px}
+.ops-chip.ops-sell{background:rgba(218,54,51,.12);color:#f85149;border:1px solid rgba(218,54,51,.25)}
+.ops-chip.ops-sell:hover{background:rgba(218,54,51,.28)}
+.ops-chip.ops-buy{background:rgba(35,134,54,.12);color:#3fb950;border:1px solid rgba(35,134,54,.25)}
+.ops-chip.ops-buy:hover{background:rgba(35,134,54,.28)}
+.ops-chip.ops-held{background:rgba(139,148,158,.1);color:#8b949e;border:1px solid rgba(139,148,158,.2)}
+.ops-chip.ops-held:hover{background:rgba(139,148,158,.2)}
+.ops-name{font-size:10px;opacity:.8}
+.ops-prob{font-size:10px;opacity:.7}
+.ops-reason{font-size:10px;opacity:.7}
+.ops-cap-note{font-size:11px;color:#d29922}
+
 /* ── KPI 卡片 ── */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
            gap:10px;padding:0 20px 16px}
@@ -129,7 +156,7 @@ details[open] summary::before{content:'▼ '}
 <div class="topbar">
   <div>
     <span class="topbar-title">🏆 Final 實戰版</span>
-    <span class="topbar-sub">2026/04/20 ～ 2026/05/22 &nbsp;·&nbsp; 更新 2026/05/25 20:02</span>
+    <span class="topbar-sub">2026/04/20 ～ 2026/05/25 &nbsp;·&nbsp; 更新 2026/05/25 22:32</span>
   </div>
   <div class="topbar-nav">
     <a href="../index.html">首頁</a>
@@ -141,31 +168,33 @@ details[open] summary::before{content:'▼ '}
 
 
 
+<div class="ops-panel"><div class="ops-panel-title">今天操作<span class="ops-date">最後交易日（等待新資料）</span></div><div class="ops-row"><span class="ops-label ops-held-lbl">⚫ 已持有</span><a href="https://tw.stock.yahoo.com/quote/2303.TW" target="_blank" class="ops-chip ops-held">2303 <span class="ops-name">聯電</span><span class="ops-prob">66%</span></a> <a href="https://tw.stock.yahoo.com/quote/4919.TW" target="_blank" class="ops-chip ops-held">4919 <span class="ops-name">新唐</span><span class="ops-prob">64%</span></a> </div></div>
+
 <!-- 績效 KPI -->
 <div class="kpi-grid">
   <div class="kpi highlight">
     <div class="k-label">總損益（含未實現）</div>
-    <div class="k-val pos">+806,494</div>
-    <div class="k-sub">已實現 +492,161</div>
+    <div class="k-val pos">+1,004,733</div>
+    <div class="k-sub">已實現 +730,166</div>
   </div>
   <div class="kpi">
     <div class="k-label">未實現損益</div>
-    <div class="k-val pos">+314,333</div>
-    <div class="k-sub">持倉 14 支</div>
+    <div class="k-val pos">+274,567</div>
+    <div class="k-sub">持倉 6 支</div>
   </div>
   <div class="kpi">
     <div class="k-label">勝率</div>
-    <div class="k-val">67%</div>
-    <div class="k-sub">共 42 筆結清</div>
+    <div class="k-val">69%</div>
+    <div class="k-sub">共 52 筆結清</div>
   </div>
   <div class="kpi">
     <div class="k-label">平均持有</div>
-    <div class="k-val">7.6 天</div>
-    <div class="k-sub">停利 18 筆 / 消失 24 筆</div>
+    <div class="k-val">7.8 天</div>
+    <div class="k-sub">停利 18 筆 / 消失 34 筆</div>
   </div>
   <div class="kpi">
     <div class="k-label">可用額度</div>
-    <div class="k-val">80 萬</div>
+    <div class="k-val">320 萬</div>
     <div class="k-sub">上限 500 萬</div>
   </div>
 </div>
@@ -173,10 +202,10 @@ details[open] summary::before{content:'▼ '}
 <!-- 資金使用率 -->
 <div class="prog-wrap">
   <div class="prog-label">
-    <span>資金使用率 84%</span>
-    <span>持倉 420 萬 / 500 萬</span>
+    <span>資金使用率 36%</span>
+    <span>持倉 180 萬 / 500 萬</span>
   </div>
-  <div class="prog-bar"><div class="prog-fill" style="width:83.9%"></div></div>
+  <div class="prog-bar"><div class="prog-fill" style="width:36.0%"></div></div>
 </div>
 
 <!-- 累積損益曲線 -->
@@ -206,7 +235,7 @@ details[open] summary::before{content:'▼ '}
 <div class="section">
   <div class="sec-hdr">
     <h2>持倉監控</h2>
-    <span class="sec-count">14 支 · 成本 420 萬</span>
+    <span class="sec-count">6 支 · 成本 180 萬</span>
   </div>
   <table>
     <thead><tr>
@@ -215,161 +244,44 @@ details[open] summary::before{content:'▼ '}
       <th class="num">未實現損益</th><th>狀態</th><th class="num">Prob</th>
     </tr></thead>
     <tbody>
-<tr class="row-urgent">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/2486.TW" target="_blank" class="ticker-link">2486</a>
-    <div class="sub-name">一詮</div>
-  </td>
-  <td class="sub-name">光電業</td>
-  <td>2026/05/11<div class="sub-name">11天前</div></td>
-  <td class="num">291.0</td>
-  <td class="num neg">271.0 <div class="sub-name neg">-6.9%</div></td>
-  <td class="num neg bold">-20,600</td>
-  <td><span class="badge badge-urgent">⚠ 消失4天・明日賣</span></td>
-  <td class="num sub-name">61%</td>
-</tr>
-<tr class="row-urgent">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/3006.TW" target="_blank" class="ticker-link">3006</a>
-    <div class="sub-name">晶豪科</div>
-  </td>
-  <td class="sub-name">半導體業</td>
-  <td>2026/05/18<div class="sub-name">4天前</div></td>
-  <td class="num">243.0</td>
-  <td class="num neg">237.5 <div class="sub-name neg">-2.3%</div></td>
-  <td class="num neg bold">-6,787</td>
-  <td><span class="badge badge-urgent">⚠ 消失4天・明日賣</span></td>
-  <td class="num sub-name">61%</td>
-</tr>
-<tr class="row-urgent">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/2368.TW" target="_blank" class="ticker-link">2368</a>
-    <div class="sub-name">金像電</div>
-  </td>
-  <td class="sub-name">電子零組件業</td>
-  <td>2026/05/19<div class="sub-name">3天前</div></td>
-  <td class="num">1,260.0</td>
-  <td class="num pos">1,330.0 <div class="sub-name pos">+5.6%</div></td>
-  <td class="num pos bold">+16,660</td>
-  <td><span class="badge badge-urgent">⚠ 消失4天・明日賣</span></td>
-  <td class="num sub-name">61%</td>
-</tr>
-<tr class="row-urgent">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/3037.TW" target="_blank" class="ticker-link">3037</a>
-    <div class="sub-name">欣興</div>
-  </td>
-  <td class="sub-name">電子零組件業</td>
-  <td>2026/05/04<div class="sub-name">18天前</div></td>
-  <td class="num">912.0</td>
-  <td class="num pos">970.0 <div class="sub-name pos">+6.4%</div></td>
-  <td class="num pos bold">+19,024</td>
-  <td><span class="badge badge-urgent">⚠ 消失3天・明日賣</span></td>
-  <td class="num sub-name">69%</td>
-</tr>
-<tr class="row-urgent">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/6442.TW" target="_blank" class="ticker-link">6442</a>
-    <div class="sub-name">光聖</div>
-  </td>
-  <td class="sub-name">通信網路業</td>
-  <td>2026/05/15<div class="sub-name">7天前</div></td>
-  <td class="num">1,890.0</td>
-  <td class="num neg">1,875.0 <div class="sub-name neg">-0.8%</div></td>
-  <td class="num neg bold">-2,370</td>
-  <td><span class="badge badge-urgent">⚠ 消失3天・明日賣</span></td>
-  <td class="num sub-name">64%</td>
-</tr>
-<tr class="row-urgent">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/6451.TW" target="_blank" class="ticker-link">6451</a>
-    <div class="sub-name">訊芯-KY</div>
-  </td>
-  <td class="sub-name">半導體業</td>
-  <td>2026/05/20<div class="sub-name">2天前</div></td>
-  <td class="num">485.0</td>
-  <td class="num pos">524.0 <div class="sub-name pos">+8.0%</div></td>
-  <td class="num pos bold">+24,102</td>
-  <td><span class="badge badge-urgent">⚠ 消失3天・明日賣</span></td>
-  <td class="num sub-name">61%</td>
-</tr>
-<tr class="row-urgent">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/7795.TW" target="_blank" class="ticker-link">7795</a>
-    <div class="sub-name">長廣</div>
-  </td>
-  <td class="sub-name">電子零組件業</td>
-  <td>2026/05/20<div class="sub-name">2天前</div></td>
-  <td class="num">344.0</td>
-  <td class="num pos">414.5 <div class="sub-name pos">+20.5%</div></td>
-  <td class="num pos bold">+61,476</td>
-  <td><span class="badge badge-urgent">⚠ 消失3天・明日賣</span></td>
-  <td class="num sub-name">61%</td>
-</tr>
 <tr class="row-warn">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/3653.TW" target="_blank" class="ticker-link">3653</a>
-    <div class="sub-name">健策</div>
-  </td>
-  <td class="sub-name">電子零組件業</td>
-  <td>2026/05/15<div class="sub-name">7天前</div></td>
-  <td class="num">3,365.0</td>
-  <td class="num pos">3,660.0 <div class="sub-name pos">+8.8%</div></td>
-  <td class="num pos bold">+26,255</td>
-  <td><span class="badge badge-warn">消失2/4天</span></td>
-  <td class="num sub-name">66%</td>
-</tr>
-<tr class="row-warn">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/2329.TW" target="_blank" class="ticker-link">2329</a>
-    <div class="sub-name">華泰</div>
-  </td>
-  <td class="sub-name">半導體業</td>
-  <td>2026/05/21<div class="sub-name">1天前</div></td>
-  <td class="num">52.6</td>
-  <td class="num pos">54.6 <div class="sub-name pos">+3.8%</div></td>
-  <td class="num pos bold">+11,406</td>
-  <td><span class="badge badge-warn">消失2/4天</span></td>
-  <td class="num sub-name">62%</td>
-</tr>
-<tr class="row-warn">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/6213.TW" target="_blank" class="ticker-link">6213</a>
-    <div class="sub-name">聯茂</div>
-  </td>
-  <td class="sub-name">電子零組件業</td>
-  <td>2026/05/21<div class="sub-name">1天前</div></td>
-  <td class="num">244.0</td>
-  <td class="num pos">262.0 <div class="sub-name pos">+7.4%</div></td>
-  <td class="num pos bold">+22,122</td>
-  <td><span class="badge badge-warn">消失2/4天</span></td>
-  <td class="num sub-name">60%</td>
-</tr>
-<tr class="row-warn">
-  <td>
-    <a href="https://tw.stock.yahoo.com/quote/2303.TW" target="_blank" class="ticker-link">2303</a>
-    <div class="sub-name">聯電</div>
-  </td>
-  <td class="sub-name">半導體業</td>
-  <td>2026/05/22<div class="sub-name">0天前</div></td>
-  <td class="num">119.5</td>
-  <td class="num neg">114.0 <div class="sub-name neg">-4.6%</div></td>
-  <td class="num neg bold">-13,805</td>
-  <td><span class="badge badge-warn">消失1/4天</span></td>
-  <td class="num sub-name">64%</td>
-</tr>
-<tr class="">
   <td>
     <a href="https://tw.stock.yahoo.com/quote/3481.TW" target="_blank" class="ticker-link">3481</a>
     <div class="sub-name">群創</div>
   </td>
   <td class="sub-name">光電業</td>
-  <td>2026/05/15<div class="sub-name">7天前</div></td>
+  <td>2026/05/15<div class="sub-name">10天前</div></td>
   <td class="num">35.8</td>
-  <td class="num pos">44.7 <div class="sub-name pos">+24.7%</div></td>
-  <td class="num pos bold">+74,154</td>
-  <td><span class="badge badge-ok">訊號正常</span></td>
+  <td class="num pos">49.1 <div class="sub-name pos">+37.2%</div></td>
+  <td class="num pos bold">+111,441</td>
+  <td><span class="badge badge-warn">消失1/4天</span></td>
   <td class="num sub-name">66%</td>
+</tr>
+<tr class="row-warn">
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/2388.TW" target="_blank" class="ticker-link">2388</a>
+    <div class="sub-name">威盛</div>
+  </td>
+  <td class="sub-name">半導體業</td>
+  <td>2026/05/22<div class="sub-name">3天前</div></td>
+  <td class="num">88.5</td>
+  <td class="num neg">84.2 <div class="sub-name neg">-4.9%</div></td>
+  <td class="num neg bold">-14,573</td>
+  <td><span class="badge badge-warn">消失1/4天</span></td>
+  <td class="num sub-name">62%</td>
+</tr>
+<tr class="row-warn">
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/6531.TW" target="_blank" class="ticker-link">6531</a>
+    <div class="sub-name">愛普*</div>
+  </td>
+  <td class="sub-name">半導體業</td>
+  <td>2026/05/25<div class="sub-name">0天前</div></td>
+  <td class="num">1,010.0</td>
+  <td class="num pos">1,055.0 <div class="sub-name pos">+4.5%</div></td>
+  <td class="num pos bold">+13,365</td>
+  <td><span class="badge badge-warn">消失1/4天</span></td>
+  <td class="num sub-name">62%</td>
 </tr>
 <tr class="">
   <td>
@@ -377,25 +289,38 @@ details[open] summary::before{content:'▼ '}
     <div class="sub-name">新唐</div>
   </td>
   <td class="sub-name">半導體業</td>
-  <td>2026/05/19<div class="sub-name">3天前</div></td>
+  <td>2026/05/19<div class="sub-name">6天前</div></td>
   <td class="num">148.0</td>
-  <td class="num pos">199.5 <div class="sub-name pos">+34.8%</div></td>
-  <td class="num pos bold">+104,390</td>
+  <td class="num pos">219.0 <div class="sub-name pos">+48.0%</div></td>
+  <td class="num pos bold">+143,917</td>
   <td><span class="badge badge-ok">訊號正常</span></td>
   <td class="num sub-name">61%</td>
 </tr>
 <tr class="">
   <td>
-    <a href="https://tw.stock.yahoo.com/quote/2388.TW" target="_blank" class="ticker-link">2388</a>
-    <div class="sub-name">威盛</div>
+    <a href="https://tw.stock.yahoo.com/quote/2303.TW" target="_blank" class="ticker-link">2303</a>
+    <div class="sub-name">聯電</div>
   </td>
   <td class="sub-name">半導體業</td>
-  <td>2026/05/22<div class="sub-name">0天前</div></td>
-  <td class="num">88.5</td>
-  <td class="num neg">88.0 <div class="sub-name neg">-0.6%</div></td>
-  <td class="num neg bold">-1,694</td>
+  <td>2026/05/22<div class="sub-name">3天前</div></td>
+  <td class="num">119.5</td>
+  <td class="num pos">125.0 <div class="sub-name pos">+4.6%</div></td>
+  <td class="num pos bold">+13,805</td>
   <td><span class="badge badge-ok">訊號正常</span></td>
-  <td class="num sub-name">62%</td>
+  <td class="num sub-name">64%</td>
+</tr>
+<tr class="">
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/3167.TW" target="_blank" class="ticker-link">3167</a>
+    <div class="sub-name">大量</div>
+  </td>
+  <td class="sub-name">電機機械</td>
+  <td>2026/05/25<div class="sub-name">0天前</div></td>
+  <td class="num">860.0</td>
+  <td class="num pos">879.0 <div class="sub-name pos">+2.2%</div></td>
+  <td class="num pos bold">+6,612</td>
+  <td><span class="badge badge-ok">訊號正常</span></td>
+  <td class="num sub-name">64%</td>
 </tr></tbody>
   </table>
 </div>
@@ -416,9 +341,9 @@ details[open] summary::before{content:'▼ '}
     <div class="stat-item">停利出場：<strong>18 筆</strong>
       &nbsp;勝率 <strong class="pos">100%</strong>
       &nbsp;均損益 <strong class="pos">+35,263</strong></div>
-    <div class="stat-item">訊號消失出場：<strong>24 筆</strong>
-      &nbsp;勝率 <strong class="neg">42%</strong>
-      &nbsp;均損益 <strong class="neg">-5,940</strong></div>
+    <div class="stat-item">訊號消失出場：<strong>34 筆</strong>
+      &nbsp;勝率 <strong class="pos">53%</strong>
+      &nbsp;均損益 <strong class="pos">+2,807</strong></div>
   </div>
 </div>
 
@@ -426,7 +351,7 @@ details[open] summary::before{content:'▼ '}
 <div class="section">
   <div class="sec-hdr">
     <h2>交易紀錄</h2>
-    <span class="sec-count">42 筆 · 最新在前</span>
+    <span class="sec-count">52 筆 · 最新在前</span>
   </div>
   <table>
     <thead><tr>
@@ -435,6 +360,136 @@ details[open] summary::before{content:'▼ '}
       <th>出場原因</th><th class="num">Prob</th>
     </tr></thead>
     <tbody>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/6213.TW" target="_blank" class="ticker-link">6213</a>
+    <div class="sub-name">聯茂</div>
+  </td>
+  <td class="sub-name">電子零組件業</td>
+  <td>2026/05/21<div class="sub-name">@244.0</div></td>
+  <td>2026/05/25<div class="sub-name">@270.0</div></td>
+  <td class="num sub-name">4天</td>
+  <td class="num pos bold">+31,954<div class="sub-name pos">+10.7%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">60%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/2329.TW" target="_blank" class="ticker-link">2329</a>
+    <div class="sub-name">華泰</div>
+  </td>
+  <td class="sub-name">半導體業</td>
+  <td>2026/05/21<div class="sub-name">@52.6</div></td>
+  <td>2026/05/25<div class="sub-name">@55.7</div></td>
+  <td class="num sub-name">4天</td>
+  <td class="num pos bold">+17,679<div class="sub-name pos">+5.9%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">62%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/7795.TW" target="_blank" class="ticker-link">7795</a>
+    <div class="sub-name">長廣</div>
+  </td>
+  <td class="sub-name">電子零組件業</td>
+  <td>2026/05/20<div class="sub-name">@344.0</div></td>
+  <td>2026/05/25<div class="sub-name">@415.5</div></td>
+  <td class="num sub-name">5天</td>
+  <td class="num pos bold">+62,348<div class="sub-name pos">+20.8%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">61%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/6451.TW" target="_blank" class="ticker-link">6451</a>
+    <div class="sub-name">訊芯-KY</div>
+  </td>
+  <td class="sub-name">半導體業</td>
+  <td>2026/05/20<div class="sub-name">@485.0</div></td>
+  <td>2026/05/25<div class="sub-name">@549.0</div></td>
+  <td class="num sub-name">5天</td>
+  <td class="num pos bold">+39,552<div class="sub-name pos">+13.2%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">61%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/2368.TW" target="_blank" class="ticker-link">2368</a>
+    <div class="sub-name">金像電</div>
+  </td>
+  <td class="sub-name">電子零組件業</td>
+  <td>2026/05/19<div class="sub-name">@1,260.0</div></td>
+  <td>2026/05/25<div class="sub-name">@1,400.0</div></td>
+  <td class="num sub-name">6天</td>
+  <td class="num pos bold">+33,320<div class="sub-name pos">+11.1%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">61%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/3006.TW" target="_blank" class="ticker-link">3006</a>
+    <div class="sub-name">晶豪科</div>
+  </td>
+  <td class="sub-name">半導體業</td>
+  <td>2026/05/18<div class="sub-name">@243.0</div></td>
+  <td>2026/05/25<div class="sub-name">@237.5</div></td>
+  <td class="num sub-name">7天</td>
+  <td class="num neg bold">-6,787<div class="sub-name neg">-2.3%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">61%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/6442.TW" target="_blank" class="ticker-link">6442</a>
+    <div class="sub-name">光聖</div>
+  </td>
+  <td class="sub-name">通信網路業</td>
+  <td>2026/05/15<div class="sub-name">@1,890.0</div></td>
+  <td>2026/05/25<div class="sub-name">@1,900.0</div></td>
+  <td class="num sub-name">10天</td>
+  <td class="num pos bold">+1,580<div class="sub-name pos">+0.5%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">64%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/3653.TW" target="_blank" class="ticker-link">3653</a>
+    <div class="sub-name">健策</div>
+  </td>
+  <td class="sub-name">電子零組件業</td>
+  <td>2026/05/15<div class="sub-name">@3,365.0</div></td>
+  <td>2026/05/25<div class="sub-name">@3,750.0</div></td>
+  <td class="num sub-name">10天</td>
+  <td class="num pos bold">+34,265<div class="sub-name pos">+11.4%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">66%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/2486.TW" target="_blank" class="ticker-link">2486</a>
+    <div class="sub-name">一詮</div>
+  </td>
+  <td class="sub-name">光電業</td>
+  <td>2026/05/11<div class="sub-name">@291.0</div></td>
+  <td>2026/05/25<div class="sub-name">@280.0</div></td>
+  <td class="num sub-name">14天</td>
+  <td class="num neg bold">-11,330<div class="sub-name neg">-3.8%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">61%</td>
+</tr>
+<tr>
+  <td>
+    <a href="https://tw.stock.yahoo.com/quote/3037.TW" target="_blank" class="ticker-link">3037</a>
+    <div class="sub-name">欣興</div>
+  </td>
+  <td class="sub-name">電子零組件業</td>
+  <td>2026/05/04<div class="sub-name">@912.0</div></td>
+  <td>2026/05/25<div class="sub-name">@1,020.0</div></td>
+  <td class="num sub-name">21天</td>
+  <td class="num pos bold">+35,424<div class="sub-name pos">+11.8%</div></td>
+  <td><span class="badge badge-ab">訊號消失</span></td>
+  <td class="num sub-name">69%</td>
+</tr>
 <tr>
   <td>
     <a href="https://tw.stock.yahoo.com/quote/6278.TW" target="_blank" class="ticker-link">6278</a>
@@ -990,7 +1045,7 @@ details[open] summary::before{content:'▼ '}
   <a href="../sim5/index.html">V5精選</a> ·
   <a href="../sim55/index.html">V5.5加碼</a> ·
   <a href="../index.html">首頁</a>
-  &nbsp;|&nbsp; 2026/05/25 20:02
+  &nbsp;|&nbsp; 2026/05/25 22:32
 </div>
 
 <script>
@@ -998,11 +1053,11 @@ const ctx = document.getElementById('eqChart').getContext('2d');
 new Chart(ctx, {
   type: 'line',
   data: {
-    labels: ["20260420", "20260421", "20260422", "20260423", "20260424", "20260427", "20260428", "20260429", "20260430", "20260504", "20260505", "20260506", "20260507", "20260508", "20260511", "20260512", "20260513", "20260514", "20260515", "20260518", "20260519", "20260520", "20260521", "20260522"],
+    labels: ["20260420", "20260421", "20260422", "20260423", "20260424", "20260427", "20260428", "20260429", "20260430", "20260504", "20260505", "20260506", "20260507", "20260508", "20260511", "20260512", "20260513", "20260514", "20260515", "20260518", "20260519", "20260520", "20260521", "20260522", "20260522", "20260522", "20260525"],
     datasets: [
       {
         label: '總損益',
-        data: [0, -21265, 4103, -78168, -116757, -201495, -77554, -16619, 169450, 344767, 361740, 392194, 437020, 320054, 542026, 633291, 540807, 530415, 404562, 445555, 310287, 303666, 566888, 806494],
+        data: [0, -21265, 4103, -78168, -116757, -201495, -77554, -16619, 169450, 344767, 361740, 392194, 437020, 320054, 542026, 633291, 540807, 530415, 404562, 445555, 310287, 303666, 566888, 806494, 806494, 806494, 1004733],
         borderColor: '#58a6ff',
         backgroundColor: 'rgba(88,166,255,0.06)',
         borderWidth: 2,
@@ -1012,7 +1067,7 @@ new Chart(ctx, {
       },
       {
         label: '已實現',
-        data: [0, 0, 0, 27376, 73619, 73619, 119744, 106853, 188241, 226746, 218946, 368490, 529665, 529665, 510345, 619103, 630959, 594439, 637477, 499382, 450553, 476630, 441358, 492161],
+        data: [0, 0, 0, 27376, 73619, 73619, 119744, 106853, 188241, 226746, 218946, 368490, 529665, 529665, 510345, 619103, 630959, 594439, 637477, 499382, 450553, 476630, 441358, 492161, 492161, 492161, 730166],
         borderColor: '#3fb950',
         backgroundColor: 'transparent',
         borderWidth: 1.5,
