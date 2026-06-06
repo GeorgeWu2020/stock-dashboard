@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>分析水池｜5日機率追蹤</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:#0d1117;color:#c9d1d9;font-size:14px;line-height:1.5}
+
+/* ── topbar ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+         padding:12px 22px;background:#010409;border-bottom:1px solid #21262d;flex-wrap:wrap;gap:8px}
+.topbar-title{font-size:17px;font-weight:700;color:#e6edf3}
+.topbar-sub{font-size:13px;color:#8b949e;margin-left:10px}
+.topbar-nav{display:flex;gap:6px;flex-wrap:wrap}
+.topbar-nav a{font-size:13px;color:#8b949e;text-decoration:none;padding:4px 10px;
+               border:1px solid #30363d;border-radius:4px}
+.topbar-nav a:hover{color:#e6edf3;border-color:#58a6ff}
+
+/* ── 統計摘要 ── */
+.summary{display:flex;gap:16px;padding:14px 22px;background:#010409;
+          border-bottom:1px solid #21262d;flex-wrap:wrap}
+.stat-chip{background:#161b22;border:1px solid #30363d;border-radius:8px;
+            padding:8px 16px;text-align:center}
+.stat-val{font-size:22px;font-weight:700;color:#e6edf3;display:block}
+.stat-lbl{font-size:12px;color:#8b949e;margin-top:2px}
+
+/* ── 篩選列 ── */
+.filter-bar{display:flex;align-items:center;gap:12px;padding:12px 22px;
+             background:#0d1117;border-bottom:1px solid #21262d;flex-wrap:wrap}
+.filter-bar label{font-size:13px;color:#8b949e}
+.filter-bar input[type=checkbox]{accent-color:#58a6ff;margin-right:4px}
+.filter-bar input[type=text]{background:#161b22;border:1px solid #30363d;border-radius:6px;
+                               color:#e6edf3;padding:5px 10px;font-size:13px;width:160px}
+.sort-btn{font-size:12px;background:#21262d;border:1px solid #30363d;border-radius:4px;
+           color:#8b949e;padding:4px 10px;cursor:pointer}
+.sort-btn:hover{color:#e6edf3;border-color:#58a6ff}
+.sort-btn.active{color:#58a6ff;border-color:#58a6ff;background:#1c2a3a}
+
+/* ── 表格 ── */
+.pool-wrap{overflow-x:auto;padding:16px 22px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#161b22;color:#8b949e;font-weight:600;padding:8px 10px;
+    text-align:center;border-bottom:1px solid #30363d;white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:#e6edf3}
+th.sorted-asc::after{content:" ▲";color:#58a6ff;font-size:10px}
+th.sorted-desc::after{content:" ▼";color:#58a6ff;font-size:10px}
+td{padding:8px 10px;border-bottom:1px solid #21262d;vertical-align:middle}
+.pool-row:hover td{background:#161b22}
+.pool-row.row-gone td{opacity:.65}
+
+/* ── ticker欄 ── */
+.ticker-col{min-width:90px}
+.tk-link{font-size:14px;font-weight:600;color:#58a6ff;text-decoration:none}
+.tk-link:hover{text-decoration:underline}
+.tk-name{font-size:11px;color:#8b949e;margin-top:2px}
+.held-badge{background:rgba(35,134,54,.3);border:1px solid #238636;border-radius:3px;
+             color:#3fb950;font-size:10px;padding:1px 5px;margin-left:4px}
+.ind-col{font-size:12px;color:#8b949e;min-width:90px}
+
+/* ── 機率格 ── */
+.prob-cell{position:relative;min-width:72px;text-align:center;padding:6px 8px}
+.prob-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:0 3px 3px 0;opacity:.7}
+.prob-val{position:relative;font-size:13px;font-weight:600;z-index:1}
+.prob-absent .prob-val{color:#484f58;font-weight:400}
+.prob-high  .prob-bar{background:#3fb950}
+.prob-high  .prob-val{color:#3fb950}
+.prob-mid   .prob-bar{background:#58a6ff}
+.prob-mid   .prob-val{color:#79c0ff}
+.prob-low   .prob-bar{background:#d29922}
+.prob-low   .prob-val{color:#e3b341}
+.prob-sub   .prob-bar{background:#6e7681}
+.prob-sub   .prob-val{color:#6e7681}
+.prob-today{background:#0d2137!important;border-left:2px solid #1f6feb}
+
+/* ── 其他欄 ── */
+.days-col{text-align:center;color:#8b949e;font-size:12px;min-width:50px}
+.fi-col,.it-col{text-align:center;font-size:12px;min-width:60px;color:#8b949e}
+.trend-col{text-align:center;min-width:80px}
+
+/* ── trend badge ── */
+.trend-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.tr-up    {background:rgba(63,185,80,.2);color:#3fb950;border:1px solid #238636}
+.tr-stable{background:rgba(88,166,255,.15);color:#79c0ff;border:1px solid #1f6feb}
+.tr-down  {background:rgba(218,54,51,.2);color:#f85149;border:1px solid #da3633}
+.tr-new   {background:rgba(188,140,255,.2);color:#d2a8ff;border:1px solid #8957e5}
+.tr-gone  {background:rgba(110,118,129,.15);color:#6e7681;border:1px solid #30363d}
+
+/* ── 圖例 ── */
+.legend{display:flex;gap:12px;padding:10px 22px;flex-wrap:wrap;
+         border-bottom:1px solid #21262d;background:#010409}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#8b949e}
+.leg-dot{width:10px;height:10px;border-radius:2px}
+
+/* ── 手機版 ── */
+@media(max-width:768px){
+  .summary{gap:10px}
+  .pool-wrap{padding:8px}
+  .ind-col,.fi-col,.it-col,.days-col{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <span class="topbar-title">🔬 分析水池</span>
+    <span class="topbar-sub">06/01 ～ 06/05 近 5 日 &nbsp;·&nbsp; 更新 2026/06/06 18:00</span>
+  </div>
+  <div class="topbar-nav">
+    <a href="../index.html">首頁</a>
+    <a href="../simfinal/index.html">⭐ Final 實戰</a>
+    <a href="../simfinal_2025/index.html">📅 2025回測</a>
+  </div>
+</div>
+
+<!-- 統計摘要 -->
+<div class="summary">
+  <div class="stat-chip">
+    <span class="stat-val" style="color:#3fb950">10</span>
+    <div class="stat-lbl">今日仍在場</div>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-val" style="color:#6e7681">16</span>
+    <div class="stat-lbl">訊號消失</div>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-val">26</span>
+    <div class="stat-lbl">5日水池總數</div>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-val" style="color:#d2a8ff">15</span>
+    <div class="stat-lbl">目前持倉</div>
+  </div>
+</div>
+
+<!-- 圖例 -->
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#3fb950"></div>≥65% 強訊號</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#58a6ff"></div>60~65% 標準</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#d29922"></div>55~60% 邊緣</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#6e7681"></div>&lt;55% 偏弱</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#484f58"></div>— 當日未入選</div>
+</div>
+
+<!-- 篩選列 -->
+<div class="filter-bar">
+  <label><input type="checkbox" id="chkTodayOnly"> 只看今日在場</label>
+  <label><input type="checkbox" id="chkHeld"> 只看持倉</label>
+  <input type="text" id="searchBox" placeholder="搜尋股號 / 名稱 / 產業">
+  <button class="sort-btn active" data-col="today_prob" data-dir="desc" id="sortBtn">排序：今日機率↓</button>
+</div>
+
+<!-- 表格 -->
+<div class="pool-wrap">
+<table id="poolTable">
+<thead>
+<tr>
+  <th data-key="ticker">股票</th>
+  <th data-key="industry">產業</th>
+  <th class="dh" data-key="prob_20260601">D-4<br><span class='dh-date'>06/01</span></th><th class="dh" data-key="prob_20260602">D-3<br><span class='dh-date'>06/02</span></th><th class="dh" data-key="prob_20260603">D-2<br><span class='dh-date'>06/03</span></th><th class="dh" data-key="prob_20260604">D-1<br><span class='dh-date'>06/04</span></th><th class="dh dh-today" data-key="prob_20260605">今日<br><span class='dh-date'>06/05</span></th>
+  <th data-key="appear_days">出現天數</th>
+  <th data-key="fi">外資滲</th>
+  <th data-key="it">投信滲</th>
+  <th data-key="trend">趨勢</th>
+</tr>
+</thead>
+<tbody id="poolBody">
+
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/2303.TW" target="_blank" class="tk-link">2303</a>
+    <div class="tk-name">聯電 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-mid"><div class="prob-bar" style="width:37%"></div><span class="prob-val">61.3%</span></td><td class="prob-cell prob-low"><div class="prob-bar" style="width:31%"></div><span class="prob-val">59.6%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:47%"></div><span class="prob-val">64.4%</span></td><td class="prob-cell prob-high prob-today"><div class="prob-bar" style="width:55%"></div><span class="prob-val">66.8%</span></td>
+  <td class="days-col">4/5</td>
+  <td class="fi-col">20.8%</td>
+  <td class="it-col">15.1%</td>
+  <td class="trend-col"><span class="trend-badge tr-up">↑ 上升</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/4919.TW" target="_blank" class="tk-link">4919</a>
+    <div class="tk-name">新唐 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-mid"><div class="prob-bar" style="width:42%"></div><span class="prob-val">62.7%</span></td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:41%"></div><span class="prob-val">62.5%</span></td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:41%"></div><span class="prob-val">62.3%</span></td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:40%"></div><span class="prob-val">62.2%</span></td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:40%"></div><span class="prob-val">62.1%</span></td>
+  <td class="days-col">5/5</td>
+  <td class="fi-col">15.3%</td>
+  <td class="it-col">40.6%</td>
+  <td class="trend-col"><span class="trend-badge tr-stable">→ 穩定</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/8454.TW" target="_blank" class="tk-link">8454</a>
+    <div class="tk-name">富邦媒</div>
+  </td>
+  <td class="ind-col">數位雲端</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:38%"></div><span class="prob-val">61.5%</span></td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">9.4%</td>
+  <td class="it-col">25.8%</td>
+  <td class="trend-col"><span class="trend-badge tr-new">✦ 新入</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/3481.TW" target="_blank" class="tk-link">3481</a>
+    <div class="tk-name">群創 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">光電業</td>
+  <td class="prob-cell prob-mid"><div class="prob-bar" style="width:39%"></div><span class="prob-val">61.8%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:48%"></div><span class="prob-val">64.7%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:37%"></div><span class="prob-val">61.3%</span></td>
+  <td class="days-col">3/5</td>
+  <td class="fi-col">7.5%</td>
+  <td class="it-col">0.5%</td>
+  <td class="trend-col"><span class="trend-badge tr-stable">→ 穩定</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/9105.TW" target="_blank" class="tk-link">9105</a>
+    <div class="tk-name">泰金寶-DR <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">其他</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:45%"></div><span class="prob-val">63.7%</span></td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:37%"></div><span class="prob-val">61.1%</span></td>
+  <td class="days-col">2/5</td>
+  <td class="fi-col">7.2%</td>
+  <td class="it-col">—</td>
+  <td class="trend-col"><span class="trend-badge tr-down">↓ 下降</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/3450.TW" target="_blank" class="tk-link">3450</a>
+    <div class="tk-name">聯鈞 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-mid"><div class="prob-bar" style="width:46%"></div><span class="prob-val">64.0%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:44%"></div><span class="prob-val">63.5%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:35%"></div><span class="prob-val">60.7%</span></td>
+  <td class="days-col">3/5</td>
+  <td class="fi-col">8.9%</td>
+  <td class="it-col">0.2%</td>
+  <td class="trend-col"><span class="trend-badge tr-down">↓ 下降</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/3532.TW" target="_blank" class="tk-link">3532</a>
+    <div class="tk-name">台勝科 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:43%"></div><span class="prob-val">63.1%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:34%"></div><span class="prob-val">60.4%</span></td>
+  <td class="days-col">2/5</td>
+  <td class="fi-col">5.7%</td>
+  <td class="it-col">11.3%</td>
+  <td class="trend-col"><span class="trend-badge tr-down">↓ 下降</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/6415.TW" target="_blank" class="tk-link">6415</a>
+    <div class="tk-name">矽力-KY</div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-mid"><div class="prob-bar" style="width:34%"></div><span class="prob-val">60.3%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:34%"></div><span class="prob-val">60.4%</span></td>
+  <td class="days-col">2/5</td>
+  <td class="fi-col">11.5%</td>
+  <td class="it-col">4.3%</td>
+  <td class="trend-col"><span class="trend-badge tr-stable">→ 穩定</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/2409.TW" target="_blank" class="tk-link">2409</a>
+    <div class="tk-name">友達 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">光電業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-high"><div class="prob-bar" style="width:54%"></div><span class="prob-val">66.2%</span></td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:45%"></div><span class="prob-val">63.5%</span></td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:49%"></div><span class="prob-val">64.8%</span></td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:34%"></div><span class="prob-val">60.4%</span></td>
+  <td class="days-col">4/5</td>
+  <td class="fi-col">3.7%</td>
+  <td class="it-col">0.0%</td>
+  <td class="trend-col"><span class="trend-badge tr-down">↓ 下降</span></td>
+</tr>
+<tr class="pool-row" data-today="1">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/6830.TW" target="_blank" class="tk-link">6830</a>
+    <div class="tk-name">汎銓</div>
+  </td>
+  <td class="ind-col">其他電子業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid prob-today"><div class="prob-bar" style="width:33%"></div><span class="prob-val">60.2%</span></td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">4.5%</td>
+  <td class="it-col">1.0%</td>
+  <td class="trend-col"><span class="trend-badge tr-new">✦ 新入</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/3189.TW" target="_blank" class="tk-link">3189</a>
+    <div class="tk-name">景碩</div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:34%"></div><span class="prob-val">60.5%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/3037.TW" target="_blank" class="tk-link">3037</a>
+    <div class="tk-name">欣興 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">電子零組件業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:39%"></div><span class="prob-val">61.7%</span></td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:37%"></div><span class="prob-val">61.4%</span></td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">2/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/3006.TW" target="_blank" class="tk-link">3006</a>
+    <div class="tk-name">晶豪科</div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:35%"></div><span class="prob-val">60.7%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/2454.TW" target="_blank" class="tk-link">2454</a>
+    <div class="tk-name">聯發科</div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:39%"></div><span class="prob-val">62.0%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/2408.TW" target="_blank" class="tk-link">2408</a>
+    <div class="tk-name">南亞科</div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-high"><div class="prob-bar" style="width:50%"></div><span class="prob-val">65.2%</span></td><td class="prob-cell prob-high"><div class="prob-bar" style="width:55%"></div><span class="prob-val">66.7%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">2/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/2360.TW" target="_blank" class="tk-link">2360</a>
+    <div class="tk-name">致茂 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">其他電子業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:44%"></div><span class="prob-val">63.5%</span></td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/2344.TW" target="_blank" class="tk-link">2344</a>
+    <div class="tk-name">華邦電 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-mid"><div class="prob-bar" style="width:39%"></div><span class="prob-val">61.7%</span></td><td class="prob-cell prob-low"><div class="prob-bar" style="width:32%"></div><span class="prob-val">59.7%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:47%"></div><span class="prob-val">64.3%</span></td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">3/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/2327.TW" target="_blank" class="tk-link">2327</a>
+    <div class="tk-name">國巨</div>
+  </td>
+  <td class="ind-col">電子零組件業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:38%"></div><span class="prob-val">61.7%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/6451.TW" target="_blank" class="tk-link">6451</a>
+    <div class="tk-name">訊芯-KY <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-low"><div class="prob-bar" style="width:33%"></div><span class="prob-val">60.0%</span></td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:36%"></div><span class="prob-val">61.1%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:44%"></div><span class="prob-val">63.4%</span></td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">3/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/6239.TW" target="_blank" class="tk-link">6239</a>
+    <div class="tk-name">力成 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-high"><div class="prob-bar" style="width:59%"></div><span class="prob-val">67.9%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/3711.TW" target="_blank" class="tk-link">3711</a>
+    <div class="tk-name">日月光投控 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:36%"></div><span class="prob-val">60.9%</span></td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/6515.TW" target="_blank" class="tk-link">6515</a>
+    <div class="tk-name">穎崴</div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:34%"></div><span class="prob-val">60.4%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/6770.TW" target="_blank" class="tk-link">6770</a>
+    <div class="tk-name">力積電</div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-high"><div class="prob-bar" style="width:56%"></div><span class="prob-val">67.1%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/6531.TW" target="_blank" class="tk-link">6531</a>
+    <div class="tk-name">愛普* <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-mid"><div class="prob-bar" style="width:42%"></div><span class="prob-val">62.7%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:37%"></div><span class="prob-val">61.4%</span></td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">2/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/8046.TW" target="_blank" class="tk-link">8046</a>
+    <div class="tk-name">南電 <span class="held-badge">持倉</span></div>
+  </td>
+  <td class="ind-col">電子零組件業</td>
+  <td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-mid"><div class="prob-bar" style="width:41%"></div><span class="prob-val">62.4%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+<tr class="pool-row row-gone" data-today="0">
+  <td class="ticker-col">
+    <a href="https://tw.stock.yahoo.com/quote/8028.TW" target="_blank" class="tk-link">8028</a>
+    <div class="tk-name">昇陽半導體</div>
+  </td>
+  <td class="ind-col">半導體業</td>
+  <td class="prob-cell prob-mid"><div class="prob-bar" style="width:34%"></div><span class="prob-val">60.4%</span></td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td><td class="prob-cell prob-absent">—</td>
+  <td class="days-col">1/5</td>
+  <td class="fi-col">nan%</td>
+  <td class="it-col">nan%</td>
+  <td class="trend-col"><span class="trend-badge tr-gone">✕ 消失</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<script>
+// ── 資料陣列（從 DOM 讀取）────────────────────────────────────────────────
+const rows = Array.from(document.querySelectorAll('#poolBody .pool-row'));
+
+// ── 篩選 ──────────────────────────────────────────────────────────────────
+function applyFilters() {
+  const todayOnly = document.getElementById('chkTodayOnly').checked;
+  const heldOnly  = document.getElementById('chkHeld').checked;
+  const kw = document.getElementById('searchBox').value.toLowerCase();
+
+  rows.forEach(r => {
+    const isToday = r.dataset.today === '1';
+    const text    = r.innerText.toLowerCase();
+    const hasBadge = r.querySelector('.held-badge') !== null;
+
+    let show = true;
+    if (todayOnly && !isToday) show = false;
+    if (heldOnly  && !hasBadge) show = false;
+    if (kw && !text.includes(kw)) show = false;
+
+    r.style.display = show ? '' : 'none';
+  });
+}
+
+document.getElementById('chkTodayOnly').addEventListener('change', applyFilters);
+document.getElementById('chkHeld').addEventListener('change', applyFilters);
+document.getElementById('searchBox').addEventListener('input', applyFilters);
+
+// ── 搜尋高亮快捷鍵 ───────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+    e.preventDefault();
+    document.getElementById('searchBox').focus();
+  }
+});
+</script>
+
+</body>
+</html>
