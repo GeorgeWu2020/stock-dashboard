@@ -310,7 +310,7 @@
       <!-- Table -->
       <div class="table-wrap">
         <div class="tbar">
-          <input type="text" id="search" placeholder="搜尋代號或名稱…" oninput="renderTable()">
+          <input type="text" id="search" placeholder="搜尋代號或名稱…" oninput="renderTable()" autocomplete="off">
           <button class="btn btn-sm btn-export" onclick="exportCSV()">匯出 CSV</button>
         </div>
         <div class="tbl-inner">
@@ -335,7 +335,8 @@
             </thead>
             <tbody id="tbody"></tbody>
           </table>
-          <div class="empty-state" id="empty">尚無交易記錄，請從左側新增</div>
+          <div class="empty-state" id="empty-no-data">尚無交易記錄，請從左側新增</div>
+          <div class="empty-state" id="empty-no-match" style="display:none">找不到符合的記錄</div>
         </div>
       </div>
     </div>
@@ -977,7 +978,14 @@ function sortBy(key) {
 }
 
 // ── Persist ───────────────────────────────────────────────────────────────
-function save() { localStorage.setItem('trades_v2', JSON.stringify(trades)); }
+function save() {
+  try {
+    localStorage.setItem('trades_v2', JSON.stringify(trades));
+  } catch(e) {
+    console.error('[save] localStorage 寫入失敗：', e);
+    showToast('⚠️ 本機儲存失敗，資料僅在頁面記憶體中', true);
+  }
+}
 
 // ── Render ────────────────────────────────────────────────────────────────
 function render() { renderStats(); renderTable(); renderChart(); }
@@ -1033,7 +1041,8 @@ function renderTable() {
   document.querySelectorAll('th').forEach(th => { th.classList.remove('sa','sd'); });
 
   const tbody = document.getElementById('tbody');
-  document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+  document.getElementById('empty-no-data').style.display  = (trades.length === 0) ? 'block' : 'none';
+  document.getElementById('empty-no-match').style.display = (trades.length > 0 && list.length === 0) ? 'block' : 'none';
 
   tbody.innerHTML = list.map(t => {
     const pnl = calcPnl(t), roe = calcRoe(t);
