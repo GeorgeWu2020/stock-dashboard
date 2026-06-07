@@ -396,7 +396,21 @@
 
 <script>
 // ── State ────────────────────────────────────────────────────────────────
-let trades = JSON.parse(localStorage.getItem('trades_v2') || '[]');
+const STORAGE_KEY_TR = 'trades_v2';
+const SESSION_KEY_TR = 'trades_v2_session';
+
+function _loadTrades() {
+  try {
+    const local = localStorage.getItem(STORAGE_KEY_TR);
+    if (local) { const arr = JSON.parse(local); if (Array.isArray(arr) && arr.length > 0) return arr; }
+  } catch(e) {}
+  try {
+    const sess = sessionStorage.getItem(SESSION_KEY_TR);
+    if (sess) { const arr = JSON.parse(sess); if (Array.isArray(arr) && arr.length > 0) return arr; }
+  } catch(e) {}
+  return [];
+}
+let trades = _loadTrades();
 let sortKey = 'entry_date', sortDir = -1;
 let deleteTarget = null;
 let chartInst = null;
@@ -979,16 +993,20 @@ function sortBy(key) {
 
 // ── Persist ───────────────────────────────────────────────────────────────
 function save() {
-  try {
-    localStorage.setItem('trades_v2', JSON.stringify(trades));
-  } catch(e) {
-    console.error('[save] localStorage 寫入失敗：', e);
-    showToast('⚠️ 本機儲存失敗，資料僅在頁面記憶體中', true);
+  const json = JSON.stringify(trades);
+  try { localStorage.setItem(STORAGE_KEY_TR, json); } catch(e) { console.error('[save] localStorage:', e); }
+  try { sessionStorage.setItem(SESSION_KEY_TR, json); } catch(e) {}
+}
+
+function _syncFromStorage() {
+  if (trades.length === 0) {
+    const restored = _loadTrades();
+    if (restored.length > 0) { trades = restored; }
   }
 }
 
 // ── Render ────────────────────────────────────────────────────────────────
-function render() { renderStats(); renderTable(); renderChart(); }
+function render() { _syncFromStorage(); renderStats(); renderTable(); renderChart(); }
 
 function renderStats() {
   const closed = trades.filter(t => t.exit && t.shares);

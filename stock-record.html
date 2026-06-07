@@ -352,8 +352,22 @@
 <script>
 // ── State ─────────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'stock_trades_v1';
+const SESSION_KEY = 'stock_trades_v1_session';
 const GIST_FILE   = 'stock-record-data.json';
-let trades = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+// 優先從 localStorage 讀；若空則嘗試 sessionStorage（防止 Chrome tab 凍結/恢復後資料消失）
+function _loadTrades() {
+  try {
+    const local = localStorage.getItem(STORAGE_KEY);
+    if (local) { const arr = JSON.parse(local); if (Array.isArray(arr) && arr.length > 0) return arr; }
+  } catch(e) {}
+  try {
+    const sess = sessionStorage.getItem(SESSION_KEY);
+    if (sess) { const arr = JSON.parse(sess); if (Array.isArray(arr) && arr.length > 0) return arr; }
+  } catch(e) {}
+  return [];
+}
+let trades = _loadTrades();
 let sortKey = 'entry_date', sortDir = -1;
 let deleteTarget = null;
 let chartInst = null;
@@ -903,16 +917,21 @@ function sortBy(key) {
 
 // ── Persist ───────────────────────────────────────────────────────────────
 function save() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
-  } catch(e) {
-    console.error('[save] localStorage 寫入失敗：', e);
-    showToast('⚠️ 本機儲存失敗，資料僅在頁面記憶體中', true);
+  const json = JSON.stringify(trades);
+  try { localStorage.setItem(STORAGE_KEY, json); } catch(e) { console.error('[save] localStorage:', e); }
+  try { sessionStorage.setItem(SESSION_KEY, json); } catch(e) {}
+}
+
+// render 前先確保 trades 與 storage 一致（防止 Chrome bfcache/tab 凍結後變數消失）
+function _syncFromStorage() {
+  if (trades.length === 0) {
+    const restored = _loadTrades();
+    if (restored.length > 0) { trades = restored; }
   }
 }
 
 // ── Render ────────────────────────────────────────────────────────────────
-function render() { renderStats(); renderTable(); renderChart(); }
+function render() { _syncFromStorage(); renderStats(); renderTable(); renderChart(); }
 
 function renderStats() {
   const closed   = trades.filter(t => t.exit && t.shares);
