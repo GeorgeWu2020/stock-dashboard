@@ -34,14 +34,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 .leg-dot{width:9px;height:9px;border-radius:2px}
 
 /* 篩選列 */
-.fbar{display:flex;align-items:center;gap:12px;padding:10px 22px;flex-wrap:wrap;
+.fbar{display:flex;align-items:center;gap:10px;padding:10px 22px;flex-wrap:wrap;
         border-bottom:1px solid #21262d}
 .fbar label{font-size:13px;color:#8b949e;display:flex;align-items:center;gap:5px;cursor:pointer}
 .fbar input[type=checkbox]{accent-color:#58a6ff;width:14px;height:14px}
 .fbar input[type=text]{background:#161b22;border:1px solid #30363d;border-radius:6px;
-                         color:#e6edf3;padding:5px 10px;font-size:13px;width:180px}
-.fbar input[type=range]{accent-color:#58a6ff;width:100px;cursor:pointer}
-.fbar .range-lbl{font-size:12px;color:#58a6ff;min-width:38px}
+                         color:#e6edf3;padding:5px 10px;font-size:13px;width:160px}
+.fbar-sep{width:1px;height:20px;background:#30363d;margin:0 4px}
+.fbar-grp{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.fbar-grp-lbl{font-size:11px;color:#6e7681;white-space:nowrap}
+/* 今日機率快速篩選按鈕 */
+.tier-btn{font-size:12px;font-weight:600;padding:4px 10px;border-radius:5px;
+           cursor:pointer;border:1px solid #30363d;background:transparent;
+           color:#8b949e;transition:.15s;white-space:nowrap}
+.tier-btn:hover{color:#e6edf3;border-color:#8b949e}
+.tier-btn.active{color:#fff!important;border-color:transparent!important}
+.tier-btn[data-tier="all"].active  {background:#21262d}
+.tier-btn[data-tier="high"].active {background:#1a4731;border-color:#238636!important;color:#3fb950!important}
+.tier-btn[data-tier="mid"].active  {background:#1c2a3a;border-color:#1f6feb!important;color:#58a6ff!important}
+.tier-btn[data-tier="low"].active  {background:#2d2007;border-color:#9e6a03!important;color:#e3b341!important}
+.tier-btn[data-tier="sub"].active  {background:#21262d;border-color:#6e7681!important;color:#8b949e!important}
+.tier-btn[data-tier="dim"].active  {background:#1c1c1c;border-color:#484f58!important;color:#6e7681!important}
+/* 入圍Top10 篩選 */
+.top10-btn{font-size:12px;padding:4px 10px;border-radius:5px;cursor:pointer;
+            border:1px solid #30363d;background:transparent;color:#8b949e;transition:.15s}
+.top10-btn:hover{color:#e6edf3;border-color:#8b949e}
+.top10-btn.active{background:#1c2a3a;border-color:#1f6feb;color:#58a6ff}
 .count-lbl{font-size:12px;color:#6e7681;margin-left:auto}
 
 /* 表格 */
@@ -101,7 +119,7 @@ td{padding:7px 10px;border-bottom:1px solid #161b22;vertical-align:middle}
 <div class="topbar">
   <div>
     <span class="topbar-title">🔬 分析水池</span>
-    <span class="topbar-sub">全股票 5 日機率追蹤 &nbsp;·&nbsp; 06/01～06/05 &nbsp;·&nbsp; 更新 2026/06/07 17:00</span>
+    <span class="topbar-sub">全股票 5 日機率追蹤 &nbsp;·&nbsp; 06/01～06/05 &nbsp;·&nbsp; 更新 2026/06/07 17:19</span>
   </div>
   <div class="topbar-nav">
     <a href="../index.html">首頁</a>
@@ -151,11 +169,27 @@ td{padding:7px 10px;border-bottom:1px solid #161b22;vertical-align:middle}
 
 <!-- 篩選列 -->
 <div class="fbar">
+  <!-- 今日機率區間快選 -->
+  <div class="fbar-grp">
+    <span class="fbar-grp-lbl">今日機率：</span>
+    <button class="tier-btn active" data-tier="all"   data-min="0"    data-max="100">全部</button>
+    <button class="tier-btn"        data-tier="high"  data-min="65"   data-max="100">≥65% 強</button>
+    <button class="tier-btn"        data-tier="mid"   data-min="60"   data-max="65">60~65%</button>
+    <button class="tier-btn"        data-tier="low"   data-min="55"   data-max="60">55~60%</button>
+    <button class="tier-btn"        data-tier="sub"   data-min="50"   data-max="55">50~55%</button>
+    <button class="tier-btn"        data-tier="dim"   data-min="0"    data-max="50">&lt;50%</button>
+  </div>
+  <div class="fbar-sep"></div>
+  <!-- 入圍 Top-10 快選 -->
+  <div class="fbar-grp">
+    <span class="fbar-grp-lbl">入圍Top10：</span>
+    <button class="top10-btn active" data-min="0">全部</button>
+    <button class="top10-btn" data-min="1">≥1次</button>
+    <button class="top10-btn" data-min="3">≥3次</button>
+    <button class="top10-btn" data-min="5">5次</button>
+  </div>
+  <div class="fbar-sep"></div>
   <label><input type="checkbox" id="chkHeld"> 只看持倉</label>
-  <label>
-    最低機率 ≥ <input type="range" id="minProbSlider" min="0" max="70" value="0" step="5">
-    <span class="range-lbl" id="minProbLbl">0%</span>
-  </label>
   <input type="text" id="searchBox" placeholder="股號 / 名稱 / 產業（Ctrl+F）">
   <span class="count-lbl" id="countLbl">303 支</span>
 </div>
@@ -167,7 +201,7 @@ td{padding:7px 10px;border-bottom:1px solid #161b22;vertical-align:middle}
 <tr>
   <th data-key="ticker" style="text-align:left">股票</th>
   <th data-key="ind" style="text-align:left">產業</th>
-  <th class="dh">D-4<br><small>06/01</small></th><th class="dh">D-3<br><small>06/02</small></th><th class="dh">D-2<br><small>06/03</small></th><th class="dh">D-1<br><small>06/04</small></th><th class="dh dh-today">今日<br><small>06/05</small></th>
+  <th class="dh">D-4<br><small>06/01</small></th><th class="dh">D-3<br><small>06/02</small></th><th class="dh">D-2<br><small>06/03</small></th><th class="dh">D-1<br><small>06/04</small></th><th class="dh dh-today" data-key="prob-today">今日<br><small>06/05</small></th>
   <th data-key="fi">外資滲</th>
   <th data-key="it">投信滲</th>
   <th data-key="days">入圍Top10</th>
@@ -3817,25 +3851,58 @@ td{padding:7px 10px;border-bottom:1px solid #161b22;vertical-align:middle}
 </div>
 
 <script>
-// ── 篩選 ──────────────────────────────────────────────────────────────────
-const rows  = Array.from(document.querySelectorAll('#poolBody .pool-row'));
+// ── 狀態 ──────────────────────────────────────────────────────────────────
+const rows   = Array.from(document.querySelectorAll('#poolBody .pool-row'));
 const cntLbl = document.getElementById('countLbl');
+let tierMin = 0, tierMax = 100;   // 今日機率區間（%）
+let top10Min = 0;                 // 入圍 Top10 最低次數
 
+// ── 今日機率快選按鈕 ──────────────────────────────────────────────────────
+document.querySelectorAll('.tier-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tier-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    tierMin = parseFloat(btn.dataset.min);
+    tierMax = parseFloat(btn.dataset.max);
+    applyFilters();
+  });
+});
+
+// ── 入圍Top10 快選按鈕 ────────────────────────────────────────────────────
+document.querySelectorAll('.top10-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.top10-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    top10Min = parseInt(btn.dataset.min);
+    applyFilters();
+  });
+});
+
+// ── 套用所有篩選條件 ──────────────────────────────────────────────────────
 function applyFilters() {
   const heldOnly = document.getElementById('chkHeld').checked;
-  const minProb  = parseInt(document.getElementById('minProbSlider').value) / 100;
   const kw       = document.getElementById('searchBox').value.toLowerCase();
 
   let visible = 0;
   rows.forEach(r => {
-    const prob    = parseFloat(r.dataset.prob || 0);
+    const prob     = parseFloat(r.dataset.prob || 0) * 100;  // 轉成 %
+    const top10    = parseInt(r.dataset.top10 || 0);
     const hasBadge = !!r.querySelector('.held-badge');
-    const text     = (r.dataset.name + ' ' + r.dataset.ind + ' ' + r.querySelector('.tk-link').textContent).toLowerCase();
+    const text     = (r.dataset.name + ' ' + r.dataset.ind + ' ' +
+                      r.querySelector('.tk-link').textContent).toLowerCase();
 
     let show = true;
-    if (heldOnly && !hasBadge) show = false;
-    if (prob < minProb)        show = false;
-    if (kw && !text.includes(kw)) show = false;
+    // 今日機率區間（全部按鈕 max=100 涵蓋所有；<50% 包含 prob=0 即今日無資料）
+    if (tierMin === 0 && tierMax === 50) {
+      if (prob >= 50) show = false;          // <50%：包含 prob=0
+    } else if (tierMin === 0 && tierMax === 100) {
+      // 全部，不過濾
+    } else {
+      if (prob < tierMin || prob >= tierMax) show = false;
+    }
+    if (top10 < top10Min)                 show = false;  // 入圍次數
+    if (heldOnly && !hasBadge)            show = false;
+    if (kw && !text.includes(kw))         show = false;
 
     r.style.display = show ? '' : 'none';
     if (show) visible++;
@@ -3844,10 +3911,6 @@ function applyFilters() {
 }
 
 document.getElementById('chkHeld').addEventListener('change', applyFilters);
-document.getElementById('minProbSlider').addEventListener('input', function() {
-  document.getElementById('minProbLbl').textContent = this.value + '%';
-  applyFilters();
-});
 document.getElementById('searchBox').addEventListener('input', applyFilters);
 
 // ── Ctrl+F 快捷鍵 ─────────────────────────────────────────────────────────
