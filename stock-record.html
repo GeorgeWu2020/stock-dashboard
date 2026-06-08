@@ -272,7 +272,7 @@
 
       <div class="table-wrap">
         <div class="tbar">
-          <input type="text" id="search" placeholder="搜尋代號或名稱…" oninput="renderTable()" autocomplete="off">
+          <input type="text" id="search" placeholder="搜尋代號或名稱…" oninput="renderTable()">
           <button class="btn btn-sm btn-export" onclick="exportCSV()">匯出 CSV</button>
         </div>
         <div class="tbl-inner">
@@ -295,8 +295,7 @@
             </thead>
             <tbody id="tbody"></tbody>
           </table>
-          <div class="empty-state" id="empty-no-data">尚無交易記錄，請從左側新增</div>
-          <div class="empty-state" id="empty-no-match" style="display:none">找不到符合的記錄</div>
+          <div class="empty-state" id="empty">尚無交易記錄，請從左側新增</div>
         </div>
       </div>
     </div>
@@ -352,22 +351,8 @@
 <script>
 // ── State ─────────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'stock_trades_v1';
-const SESSION_KEY = 'stock_trades_v1_session';
 const GIST_FILE   = 'stock-record-data.json';
-
-// 優先從 localStorage 讀；若空則嘗試 sessionStorage（防止 Chrome tab 凍結/恢復後資料消失）
-function _loadTrades() {
-  try {
-    const local = localStorage.getItem(STORAGE_KEY);
-    if (local) { const arr = JSON.parse(local); if (Array.isArray(arr) && arr.length > 0) return arr; }
-  } catch(e) {}
-  try {
-    const sess = sessionStorage.getItem(SESSION_KEY);
-    if (sess) { const arr = JSON.parse(sess); if (Array.isArray(arr) && arr.length > 0) return arr; }
-  } catch(e) {}
-  return [];
-}
-let trades = _loadTrades();
+let trades = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 let sortKey = 'entry_date', sortDir = -1;
 let deleteTarget = null;
 let chartInst = null;
@@ -916,22 +901,10 @@ function sortBy(key) {
 }
 
 // ── Persist ───────────────────────────────────────────────────────────────
-function save() {
-  const json = JSON.stringify(trades);
-  try { localStorage.setItem(STORAGE_KEY, json); } catch(e) { console.error('[save] localStorage:', e); }
-  try { sessionStorage.setItem(SESSION_KEY, json); } catch(e) {}
-}
-
-// render 前先確保 trades 與 storage 一致（防止 Chrome bfcache/tab 凍結後變數消失）
-function _syncFromStorage() {
-  if (trades.length === 0) {
-    const restored = _loadTrades();
-    if (restored.length > 0) { trades = restored; }
-  }
-}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(trades)); }
 
 // ── Render ────────────────────────────────────────────────────────────────
-function render() { _syncFromStorage(); renderStats(); renderTable(); renderChart(); }
+function render() { renderStats(); renderTable(); renderChart(); }
 
 function renderStats() {
   const closed   = trades.filter(t => t.exit && t.shares);
@@ -985,9 +958,7 @@ function renderTable() {
   document.querySelectorAll('th').forEach(th => { th.classList.remove('sa','sd'); });
 
   const tbody = document.getElementById('tbody');
-  // 分開「完全沒資料」vs「過濾沒結果」兩種狀態
-  document.getElementById('empty-no-data').style.display  = (trades.length === 0) ? 'block' : 'none';
-  document.getElementById('empty-no-match').style.display = (trades.length > 0 && list.length === 0) ? 'block' : 'none';
+  document.getElementById('empty').style.display = list.length ? 'none' : 'block';
 
   tbody.innerHTML = list.map(t => {
     const pnl = calcPnl(t), roe = calcRoe(t);
