@@ -187,53 +187,6 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
 .v4-tab-btn:hover{color:#2c1654;background:#f9f6ff}
 .v4-tab-pane{display:none}
 .v4-tab-pane.active{display:block}
-
-/* ══ Mobile ══ */
-@media (max-width:768px){
-  /* Header */
-  .hdr{height:auto;padding:10px 16px;flex-direction:column;
-    align-items:flex-start;gap:8px}
-  .hdr-title{font-size:16px}
-  .hdr-nav{width:100%;overflow-x:auto;flex-wrap:nowrap;
-    padding-bottom:4px;-webkit-overflow-scrolling:touch;
-    scrollbar-width:none}
-  .hdr-nav::-webkit-scrollbar{display:none}
-
-  /* Market bar */
-  .mkt-bar{padding:8px 16px;gap:10px}
-  .mkt-time{margin-left:0}
-
-  /* KPI */
-  .kpi-row{padding:12px 16px 0;gap:10px}
-  .kpi-card{min-width:calc(50% - 5px);padding:12px 14px}
-  .kpi-num{font-size:22px}
-
-  /* Warn */
-  .warn-bar{margin:10px 16px 0}
-
-  /* Tab bar */
-  .v4-tab-bar{padding:0 16px}
-  .v4-tab-btn{padding:10px 14px;font-size:13px}
-
-  /* Controls */
-  .ctrl-bar{padding:12px 16px 0}
-  .ctrl-bar input{width:100%}
-
-  /* Legend */
-  .legend-bar{padding:8px 16px}
-
-  /* Main */
-  .main{padding:12px 16px 24px}
-
-  /* Cards grid → 1 欄 */
-  .cards-grid{grid-template-columns:1fr;padding:12px 14px;gap:12px}
-
-  /* Industry header */
-  .ind-hdr{padding:12px 16px}
-
-  /* Footer */
-  .footer{padding:14px 16px}
-}
 </style>
 </head>
 <body>
@@ -246,7 +199,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
   </div>
   <div class="hdr-nav">
     <a href="simfinal/index.html" style="background:rgba(243,156,18,.35);border-color:rgba(255,220,100,.5)">⭐ Final 實戰</a>
-    <a href="simfinal_2025/index.html" style="background:rgba(52,152,219,.35);border-color:rgba(100,180,255,.5)">📅 2025回測</a>
+    <a href="simfinal_tp3/index.html" style="background:rgba(39,174,96,.35);border-color:rgba(100,220,150,.5)">🎯 Final 當沖</a>
     <a href="pool-tracker/index.html" style="background:rgba(139,92,246,.35);border-color:rgba(196,162,255,.5)">🔬 分析水池</a>
     <a href="v45/index.html" style="background:rgba(231,76,60,.35);border-color:rgba(255,200,200,.5)">🧪 v4.5</a>
     <div class="nav-group">
@@ -261,6 +214,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
       <span class="nav-group-btn">💼 舊模擬 ▾</span>
       <div class="nav-dropdown">
         <span class="dd-label">舊模擬</span>
+        <a href="simfinal_2025/index.html">📅 Final 2025 回測</a>
         <a href="sim55/index.html">🚀 V5.5加碼</a>
         <a href="sim5/index.html">🎯 V5精選</a>
         <a href="sim45/index.html">💼 V4.5 模擬</a>
@@ -292,7 +246,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
   <strong style="color:#18a058">+7.7%</strong>
   <span class="mkt-lbl">20日</span>
   <strong style="color:#18a058">+12.3%</strong>
-  <span class="mkt-time">更新 2026-06-18 22:32</span>
+  <span class="mkt-time">更新 2026-06-19 17:25</span>
 </div>
 
 <!-- ── KPI row ── -->
@@ -321,12 +275,20 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
 
 
 
-<!-- ── 打賞 / 感謝區 ── -->
-<div style="margin:12px 16px;padding:14px 20px;background:linear-gradient(135deg,rgba(39,174,96,.08),rgba(52,152,219,.06));border:1px solid rgba(39,174,96,.25);border-radius:12px;display:flex;align-items:center;gap:12px;">
-  <span style="font-size:18px;flex-shrink:0">🫰</span>
-  <p style="font-size:17px;color:var(--text-secondary,#666);line-height:1.7;margin:0">
-    <strong style="color:var(--text,#333)">George 的好友們</strong>，若你因參考此模型獲利，可以 Line Pay donate 給喬治，作為設備與模型持續升級的基金 💻；有什麼機制上的建議也歡迎隨時討論 😊
-  </p>
+<!-- ── V6 Banner ── -->
+<div style="margin:12px 16px;padding:14px 18px;background:linear-gradient(135deg,rgba(41,128,185,.15),rgba(39,174,96,.10));border:1px solid rgba(41,128,185,.35);border-radius:10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+  <span style="font-size:20px">🔬</span>
+  <div style="flex:1;min-width:200px">
+    <strong style="color:#2980b9">v6 機構行為異質性模型</strong>
+    <span style="color:#888;font-size:13px;margin-left:8px">三機構獨立子模型 + Max Ensemble</span>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:13px">
+    <span style="background:rgba(41,128,185,.2);color:#2980b9;padding:3px 10px;border-radius:12px">🌐 外資</span>
+    <span style="background:rgba(230,126,34,.2);color:#e67e22;padding:3px 10px;border-radius:12px">📦 投信</span>
+    <span style="background:rgba(39,174,96,.2);color:#27ae60;padding:3px 10px;border-radius:12px">🏦 自營商</span>
+    <span style="background:rgba(142,68,173,.2);color:#8e44ad;padding:3px 10px;border-radius:12px">✨ 共識</span>
+  </div>
+  <a href="v6/index.html" style="background:#2980b9;color:#fff;padding:6px 16px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap">查看 v6 →</a>
 </div>
 
 <!-- ── Tab bar ── -->
@@ -415,7 +377,8 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
   v4 空頭 ML · XGBoost · 90維 · 標籤5日最低≤-3% · 閾值0.76（~66%） &nbsp;|&nbsp;
   <a href="v45/index.html">v4.5 🧪</a>&nbsp;·&nbsp;
   <a href="simfinal/index.html">Final實戰 ⭐</a>&nbsp;·&nbsp;
-  <a href="simfinal_2025/index.html">2025回測 📅</a>&nbsp;·&nbsp;
+  <a href="simfinal_tp3/index.html">Final當沖 🎯</a>&nbsp;·&nbsp;
+  <a href="simfinal_2025/index.html">Final 2025回測 📅</a>&nbsp;·&nbsp;
   <a href="pool-tracker/index.html">分析水池 🔬</a>&nbsp;·&nbsp;
   <a href="sim5/index.html">V5精選 🎯</a>&nbsp;·&nbsp;
   <a href="sim55/index.html">V5.5加碼 🚀</a>&nbsp;·&nbsp;
@@ -423,7 +386,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;
   <a href="sim45/index.html">V4.5模擬 💼</a>&nbsp;·&nbsp;
   <a href="v3/index.html">v3</a>&nbsp;·&nbsp;
   <a href="v2/index.html">v2</a>&nbsp;|&nbsp;
-  2026/06/18 · 2026-06-18 22:32
+  2026/06/18 · 2026-06-19 17:25
 </div>
 
 <script>
